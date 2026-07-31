@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <style>
+    body { margin: 0; background: oklch(0.97 0.004 90); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    a { color: oklch(0.55 0.13 230); text-decoration: none; }
+    a:hover { color: oklch(0.45 0.13 230); }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<div style="padding: 56px 64px 100px; min-width: 1500px;">
+
+  <div style="margin-bottom: 44px; max-width: 860px;">
+    <h1 style="font-size: 34px; font-weight: 800; letter-spacing: -0.6px; color: oklch(0.22 0.01 90); margin: 0 0 12px;">Redesign concepts — field-first UI</h1>
+    <p style="font-size: 16px; line-height: 1.65; color: oklch(0.45 0.01 90); margin: 0;">
+      Two directions on the same data. Both are built around one idea: point to <strong>where</strong> a regulation lives — the exact document, clause, page or folder tab — with a short preview, not a rewritten verdict. Both keep a "Classic" switch that drops straight into today's dark, dense look for the crew who already know it. Tap through each phone below.
+    </p>
+  </div>
+
+  <section style="display: flex; gap: 64px; align-items: flex-start; flex-wrap: wrap;">
+
+    <!-- ============================= OPTION 1a ============================= -->
+    <div id="1a" style="width: 420px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 7px; background: oklch(0.22 0.01 90); color: #fff; font-size: 12px; font-weight: 800;">1a</span>
+        <h2 style="font-size: 19px; font-weight: 800; color: oklch(0.22 0.01 90); margin: 0;">Quick Find — search-first</h2>
+      </div>
+      <p style="font-size: 14px; line-height: 1.55; color: oklch(0.48 0.01 90); margin: 0 0 20px; max-width: 380px;">
+        A big smart search box up front plus one-tap job chips. Fastest path when you already know the word — "backflow", "tempering valve" — and the app remembers your last job.
+      </p>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402,874">
+        <div style="height: 100%; display: flex; flex-direction: column; position: relative; background: #F2F2F7;">
+
+          <!-- scrollable content -->
+          <div style="flex: 1; overflow: auto; padding: 58px 0 96px;">
+
+            <!-- top bar: offline pill + sign in -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 18px 14px;">
+              <div style="display: inline-flex; align-items: center; gap: 6px; background: oklch(0.92 0.05 150); color: oklch(0.32 0.10 150); padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">
+                <div style="width: 7px; height: 7px; border-radius: 50%; background: oklch(0.55 0.14 150);"></div>
+                Offline ready
+              </div>
+              <sc-if value="{{ aSignedIn }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ aToggleSignIn }}" style="width: 32px; height: 32px; border-radius: 50%; background: oklch(0.68 0.19 45); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; cursor: pointer;">AR</div>
+              </sc-if>
+              <sc-if value="{{ aSignedOff }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ aToggleSignIn }}" style="border: 1px solid oklch(0.8 0.01 90); background: #fff; color: oklch(0.30 0.01 90); font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 999px; cursor: pointer;">Sign in</button>
+              </sc-if>
+            </div>
+
+            <!-- HOME -->
+            <sc-if value="{{ aIsHome }}" hint-placeholder-val="{{ true }}">
+              <div style="padding: 0 18px;">
+                <h3 style="font-size: 26px; font-weight: 800; color: #1C1C1E; margin: 4px 0 16px; letter-spacing: -0.4px;">Find a reg</h3>
+
+                <!-- resume card -->
+                <div style="background: #fff; border-radius: 16px; padding: 14px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.05);">
+                  <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: oklch(0.55 0.13 230); margin-bottom: 5px;">Continue where you left off</div>
+                  <div style="font-size: 15px; font-weight: 700; color: #1C1C1E; margin-bottom: 10px;">{{ aResumeTitle }}</div>
+                  <button onClick="{{ aResumeAction }}" style="background: oklch(0.68 0.19 45); color: #fff; border: none; padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">Resume</button>
+                </div>
+
+                <!-- search box (tap -> search tab) -->
+                <div onClick="{{ aGotoSearch }}" style="display: flex; align-items: center; gap: 8px; background: #E9E9EB; border-radius: 12px; padding: 12px 14px; margin-bottom: 20px; cursor: pointer;">
+                  <div style="width: 15px; height: 15px; border: 2px solid rgba(60,60,67,0.5); border-radius: 50%; flex-shrink: 0; position: relative;"><div style="position: absolute; width: 2px; height: 7px; background: rgba(60,60,67,0.5); right: -4px; bottom: -5px; transform: rotate(45deg); border-radius: 1px;"></div></div>
+                  <span style="font-size: 15px; color: rgba(60,60,67,0.6);">Search clauses, keywords, refs…</span>
+                </div>
+
+                <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(60,60,67,0.5); margin-bottom: 10px;">Quick jobs</div>
+                <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 22px;">
+                  <sc-for list="{{ aQuickChips }}" as="chip" hint-placeholder-count="4">
+                    <div onClick="{{ chip.onSelect }}" style="flex-shrink: 0; width: 84px; text-align: center; cursor: pointer;">
+                      <div style="width: 56px; height: 56px; border-radius: 16px; background: {{ chip.color }}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; margin: 0 auto 6px;">{{ chip.mono }}</div>
+                      <div style="font-size: 11px; font-weight: 700; color: #3C3C43; line-height: 1.3;">{{ chip.label }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(60,60,67,0.5); margin-bottom: 10px;">Recent searches</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <sc-for list="{{ aRecentChips }}" as="rc" hint-placeholder-count="3">
+                    <button onClick="{{ rc.onSelect }}" style="border: 1px solid #D1D1D6; background: #fff; color: #3C3C43; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 999px; cursor: pointer;">{{ rc.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- SEARCH -->
+            <sc-if value="{{ aIsSearch }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 18px;">
+                <input value="{{ aQuery }}" onChange="{{ aOnQueryChange }}" placeholder="Search clauses, keywords, refs…" style="width: 100%; font-size: 16px; padding: 12px 14px; border-radius: 12px; border: none; background: #E9E9EB; margin-bottom: 16px; color: #1C1C1E;" />
+
+                <sc-if value="{{ aHasQuery }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size: 12px; font-weight: 700; color: rgba(60,60,67,0.5); margin-bottom: 10px;">{{ aResultCount }} result(s)</div>
+                  <sc-for list="{{ aResults }}" as="reg" hint-placeholder-count="2">
+                    <div onClick="{{ reg.onSelect }}" style="background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.04); cursor: pointer;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 8px; border-radius: 999px; background: {{ reg.obBg }}; color: {{ reg.obFg }};">{{ reg.obligationLabel }}</span>
+                        <div onClick="{{ reg.onBookmark }}" style="width: 16px; height: 16px; border-radius: 4px; border: 2px solid {{ reg.bookmarkBorder }}; background: {{ reg.bookmarkBg }}; flex-shrink: 0;"></div>
+                      </div>
+                      <div style="font-size: 15.5px; font-weight: 700; color: #1C1C1E; line-height: 1.3; margin-bottom: 6px;">{{ reg.title }}</div>
+                      <div style="display: flex; align-items: center; gap: 6px; background: #F2F2F7; border-radius: 8px; padding: 7px 9px; margin-bottom: 8px;">
+                        <div style="width: 6px; height: 6px; border-radius: 1px; background: oklch(0.55 0.13 230); flex-shrink: 0;"></div>
+                        <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: oklch(0.40 0.10 230); line-height: 1.4;">{{ reg.whereToFind }}</span>
+                      </div>
+                      <p style="font-size: 13px; color: #3C3C43; line-height: 1.5; margin: 0;">{{ reg.snippet }}</p>
+                    </div>
+                  </sc-for>
+                </sc-if>
+
+                <sc-if value="{{ aNoQuery }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(60,60,67,0.5); margin-bottom: 10px;">Recent searches</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <sc-for list="{{ aRecentChips }}" as="rc2" hint-placeholder-count="3">
+                      <button onClick="{{ rc2.onSelect }}" style="border: 1px solid #D1D1D6; background: #fff; color: #3C3C43; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 999px; cursor: pointer;">{{ rc2.label }}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- SAVED -->
+            <sc-if value="{{ aIsSaved }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 18px;">
+                <h3 style="font-size: 22px; font-weight: 800; color: #1C1C1E; margin: 4px 0 14px;">Saved</h3>
+                <sc-for list="{{ aSaved }}" as="sreg" hint-placeholder-count="2">
+                  <div onClick="{{ sreg.onSelect }}" style="background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.04); cursor: pointer;">
+                    <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 8px; border-radius: 999px; background: {{ sreg.obBg }}; color: {{ sreg.obFg }};">{{ sreg.obligationLabel }}</span>
+                    <div style="font-size: 15px; font-weight: 700; color: #1C1C1E; margin: 6px 0 4px;">{{ sreg.title }}</div>
+                    <div style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: oklch(0.40 0.10 230);">{{ sreg.whereToFind }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ aSavedEmpty }}" hint-placeholder-val="{{ false }}">
+                  <p style="text-align: center; color: rgba(60,60,67,0.4); font-size: 13px; margin-top: 40px;">Nothing saved yet. Tap the square on any result to save it.</p>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- SETTINGS -->
+            <sc-if value="{{ aIsSettings }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 18px;">
+                <h3 style="font-size: 22px; font-weight: 800; color: #1C1C1E; margin: 4px 0 14px;">Settings</h3>
+                <div style="background: #fff; border-radius: 14px; overflow: hidden;">
+                  <div onClick="{{ aToggleClassic }}" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #EDEDED; cursor: pointer;">
+                    <div>
+                      <div style="font-size: 15px; font-weight: 700; color: #1C1C1E;">Classic mode</div>
+                      <div style="font-size: 12px; color: rgba(60,60,67,0.5); margin-top: 2px;">Today's dark, dense layout</div>
+                    </div>
+                    <div style="width: 46px; height: 27px; border-radius: 999px; background: {{ aClassicTrack }}; position: relative; flex-shrink: 0;">
+                      <div style="width: 23px; height: 23px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: {{ aClassicKnob }}; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left 0.15s;"></div>
+                    </div>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #EDEDED;">
+                    <div style="font-size: 15px; font-weight: 700; color: #1C1C1E;">Export CSV</div>
+                    <div style="font-size: 12px; color: rgba(60,60,67,0.4);">On tablet/desktop</div>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #1C1C1E;">Offline data</div>
+                    <div style="font-size: 12px; color: oklch(0.45 0.12 150); font-weight: 700;">Up to date</div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- CLASSIC overlay -->
+          <sc-if value="{{ aClassicOn }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; inset: 0; background: oklch(0.16 0.01 240); padding: 58px 16px 20px; overflow: auto;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 800; color: #fff; font-family: 'Space Grotesk', sans-serif;">VIC Plumbing Code DB</div>
+                  <div style="font-size: 10px; color: oklch(0.65 0.02 240); font-family: ui-monospace, monospace;">Classic mode</div>
+                </div>
+                <button onClick="{{ aToggleClassic }}" style="background: oklch(0.72 0.18 65); color: oklch(0.10 0.01 240); border: none; font-size: 11px; font-weight: 800; padding: 7px 11px; border-radius: 4px; cursor: pointer;">Switch to New</button>
+              </div>
+              <div style="background: oklch(0.21 0.012 240); border: 1px solid oklch(0.32 0.015 240); border-radius: 4px; padding: 10px 12px; margin-bottom: 14px; color: oklch(0.6 0.01 240); font-size: 13px;">Search: 'Reg 26', 'backflow'…</div>
+              <sc-for list="{{ aClassicItems }}" as="creg" hint-placeholder-count="3">
+                <div onClick="{{ creg.onSelect }}" style="border-left: 4px solid oklch(0.60 0.15 200); background: oklch(0.21 0.012 240); border-radius: 4px; padding: 12px; margin-bottom: 10px; cursor: pointer;">
+                  <div style="font-family: ui-monospace, monospace; font-size: 11px; color: oklch(0.65 0.02 240); font-weight: 700; margin-bottom: 6px;">{{ creg.ref }} · {{ creg.doc }}</div>
+                  <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px;">{{ creg.title }}</div>
+                  <div style="font-size: 12px; color: oklch(0.68 0.01 240); line-height: 1.5;">{{ creg.snippet }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- tab bar -->
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 82px; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-top: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; padding-bottom: 20px;">
+            <sc-for list="{{ aTabs }}" as="tb" hint-placeholder-count="4">
+              <div onClick="{{ tb.onSelect }}" style="flex: 1; text-align: center; cursor: pointer;">
+                <div style="width: 5px; height: 5px; border-radius: 50%; margin: 0 auto 5px; background: {{ tb.dotColor }};"></div>
+                <div style="font-size: 11px; font-weight: {{ tb.weight }}; color: {{ tb.color }};">{{ tb.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- detail sheet -->
+          <sc-if value="{{ aSheetOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: flex-end;">
+              <div style="width: 100%; max-height: 78%; background: #fff; border-radius: 22px 22px 0 0; padding: 12px 20px 26px; overflow: auto;">
+                <div style="width: 36px; height: 5px; border-radius: 3px; background: #D1D1D6; margin: 0 auto 16px;"></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 9px; border-radius: 999px; background: {{ aOpenReg.obBg }}; color: {{ aOpenReg.obFg }};">{{ aOpenReg.obligationLabel }}</span>
+                  <button onClick="{{ aCloseSheet }}" style="border: none; background: #F2F2F7; width: 28px; height: 28px; border-radius: 50%; font-size: 15px; color: #3C3C43; cursor: pointer;">✕</button>
+                </div>
+                <h3 style="font-size: 19px; font-weight: 800; color: #1C1C1E; line-height: 1.3; margin: 0 0 6px;">{{ aOpenReg.title }}</h3>
+                <div style="font-size: 13px; color: rgba(60,60,67,0.6); margin-bottom: 14px;">{{ aOpenReg.doc }} · {{ aOpenReg.ref }}</div>
+
+                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: oklch(0.55 0.13 230); margin-bottom: 6px;">Where to find it</div>
+                <div style="display: flex; align-items: center; gap: 8px; background: #F2F2F7; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;">
+                  <div style="width: 8px; height: 8px; border-radius: 2px; background: oklch(0.55 0.13 230); flex-shrink: 0;"></div>
+                  <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px; color: oklch(0.35 0.10 230); line-height: 1.4;">{{ aOpenReg.whereToFind }}</span>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: rgba(60,60,67,0.5); margin-bottom: 6px;">Preview</div>
+                <p style="font-size: 14.5px; line-height: 1.6; color: #1C1C1E; margin: 0 0 20px;">{{ aOpenReg.snippet }}</p>
+
+                <div style="display: flex; gap: 10px;">
+                  <button onClick="{{ aOpenReg.onBookmark }}" style="flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid {{ aOpenReg.bookmarkBorder }}; background: {{ aOpenReg.bookmarkBg }}; color: {{ aOpenReg.bookmarkTextColor }}; font-size: 14px; font-weight: 700; cursor: pointer;">{{ aOpenReg.bookmarkLabel }}</button>
+                  <a href="#" style="flex: 1; text-align: center; padding: 12px; border-radius: 12px; background: oklch(0.68 0.19 45); color: #fff; font-size: 14px; font-weight: 700;">Open source</a>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </x-import>
+
+      <!-- desktop / tablet strip -->
+      <div style="margin-top: 16px;">
+        <div style="font-size: 11px; font-weight: 700; color: rgba(60,60,67,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px;">Same data, on tablet / desktop</div>
+        <div style="display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 14px; padding: 12px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.05);">
+          <span style="font-size: 13px; font-weight: 800; color: #1C1C1E; flex-shrink: 0;">VIC Plumbing</span>
+          <div style="flex: 1; background: #F2F2F7; border-radius: 8px; padding: 8px 10px; font-size: 13px; color: rgba(60,60,67,0.5);">Search clauses, keywords, refs…</div>
+          <span style="font-size: 12px; font-weight: 700; color: #3C3C43; border: 1px solid #D1D1D6; padding: 6px 10px; border-radius: 8px; flex-shrink: 0;">Export CSV</span>
+          <span style="font-size: 12px; font-weight: 700; color: #3C3C43; border: 1px solid #D1D1D6; padding: 6px 10px; border-radius: 8px; flex-shrink: 0;">Classic</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================= OPTION 1b ============================= -->
+    <div id="1b" style="width: 420px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 7px; background: oklch(0.22 0.01 90); color: #fff; font-size: 12px; font-weight: 800;">1b</span>
+        <h2 style="font-size: 19px; font-weight: 800; color: oklch(0.22 0.01 90); margin: 0;">Job Builder — guided flow</h2>
+      </div>
+      <p style="font-size: 14px; line-height: 1.55; color: oklch(0.48 0.01 90); margin: 0 0 20px; max-width: 380px;">
+        No filters to tick. Tap the job you're doing, confirm the tasks, get the list. Best when you don't know the exact keyword yet — it narrows for you.
+      </p>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402,874">
+        <div style="height: 100%; display: flex; flex-direction: column; position: relative; background: #F2F2F7;">
+
+          <div style="flex: 1; overflow: auto; padding: 58px 0 30px;">
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 18px 14px;">
+              <div style="display: inline-flex; align-items: center; gap: 6px; background: oklch(0.92 0.05 150); color: oklch(0.32 0.10 150); padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">
+                <div style="width: 7px; height: 7px; border-radius: 50%; background: oklch(0.55 0.14 150);"></div>
+                Offline ready
+              </div>
+              <sc-if value="{{ bSignedIn }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ bOpenAccount }}" style="width: 32px; height: 32px; border-radius: 50%; background: oklch(0.60 0.15 25); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; cursor: pointer;">{{ bUserInitials }}</div>
+              </sc-if>
+              <sc-if value="{{ bSignedOff }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ bOpenSignIn }}" style="border: 1px solid oklch(0.8 0.01 90); background: #fff; color: oklch(0.30 0.01 90); font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 999px; cursor: pointer;">Sign in</button>
+              </sc-if>
+            </div>
+
+            <!-- HOME: search-forward, recent + pinned -->
+            <sc-if value="{{ bIsHome }}" hint-placeholder-val="{{ true }}">
+              <div style="padding: 0 18px;">
+                <h3 style="font-size: 24px; font-weight: 800; color: #1C1C1E; margin: 4px 0 12px; letter-spacing: -0.3px;">What's the job?</h3>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 18px;">
+                  <input value="{{ bQuery }}" onChange="{{ bOnQueryChange }}" onKeyDown="{{ bSearchKeyDown }}" placeholder="Search clauses, keywords, refs…" style="flex: 1; font-size: 15px; padding: 11px 13px; border-radius: 12px; border: none; background: #E9E9EB; color: #1C1C1E;" />
+                  <button onClick="{{ bRunSearchFromHome }}" style="background: oklch(0.60 0.15 25); color: #fff; border: none; padding: 0 16px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;">Go</button>
+                </div>
+
+                <div style="background: #fff; border-radius: 16px; padding: 14px; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.05);">
+                  <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: oklch(0.60 0.15 25); margin-bottom: 5px;">Continue where you left off</div>
+                  <div style="font-size: 15px; font-weight: 700; color: #1C1C1E; margin-bottom: 10px;">{{ bResumeTitle }}</div>
+                  <button onClick="{{ bResumeAction }}" style="background: oklch(0.60 0.15 25); color: #fff; border: none; padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">Resume</button>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(60,60,67,0.5);">Recent searches</div>
+                  <div style="font-size: 10.5px; color: rgba(60,60,67,0.4); font-weight: 600;">Tap pin to keep on top</div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px;">
+                  <sc-for list="{{ bSearchChips }}" as="sq" hint-placeholder-count="3">
+                    <div onClick="{{ sq.onSelect }}" style="display: flex; align-items: center; gap: 7px; border: 1px solid #D1D1D6; background: #fff; color: #3C3C43; font-size: 12.5px; font-weight: 600; padding: 7px 8px 7px 12px; border-radius: 999px; cursor: pointer;">
+                      {{ sq.label }}
+                      <div onClick="{{ sq.onTogglePin }}" style="width: 18px; height: 18px; border-radius: 50%; background: {{ sq.pinBg }}; border: 1.5px solid {{ sq.pinBorder }}; flex-shrink: 0;"></div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(60,60,67,0.5);">Jobs — pinned &amp; recent</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                  <sc-for list="{{ bTiles }}" as="tile" hint-placeholder-count="4">
+                    <div onClick="{{ tile.onSelect }}" style="position: relative; background: #fff; border-radius: 18px; padding: 16px 14px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.05);">
+                      <div onClick="{{ tile.onTogglePin }}" style="position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; border-radius: 50%; background: {{ tile.pinBg }}; border: 1.5px solid {{ tile.pinBorder }};"></div>
+                      <div style="width: 44px; height: 44px; border-radius: 13px; background: {{ tile.color }}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; margin-bottom: 10px;">{{ tile.mono }}</div>
+                      <div style="font-size: 14px; font-weight: 700; color: #1C1C1E; line-height: 1.3;">{{ tile.label }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <button onClick="{{ bGotoSearchAll }}" style="width: 100%; text-align: center; padding: 12px; border-radius: 12px; border: 1px dashed #C7C7CC; background: transparent; color: #3C3C43; font-size: 13.5px; font-weight: 600; cursor: pointer;">Browse all regs ›</button>
+              </div>
+            </sc-if>
+
+            <!-- CATEGORY: confirm tasks -->
+            <sc-if value="{{ bIsCategory }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 18px;">
+                <div onClick="{{ bBackToHome }}" style="display: inline-flex; align-items: center; gap: 4px; color: oklch(0.55 0.13 230); font-size: 14px; font-weight: 700; margin-bottom: 14px; cursor: pointer;">‹ Jobs</div>
+                <h3 style="font-size: 22px; font-weight: 800; color: #1C1C1E; margin: 0 0 4px;">{{ bJobLabel }}</h3>
+                <p style="font-size: 13px; color: rgba(60,60,67,0.55); margin: 0 0 16px;">These tasks are included — untick anything that doesn't apply</p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
+                  <sc-for list="{{ bChips }}" as="chip2" hint-placeholder-count="3">
+                    <div onClick="{{ chip2.onToggle }}" style="display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 13px 14px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                      <div style="width: 20px; height: 20px; border-radius: 6px; background: {{ chip2.boxBg }}; border: 2px solid {{ chip2.boxBorder }}; flex-shrink: 0;"></div>
+                      <div style="font-size: 14.5px; font-weight: 600; color: #1C1C1E;">{{ chip2.label }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <button onClick="{{ bShowResults }}" style="width: 100%; padding: 14px; border-radius: 14px; border: none; background: oklch(0.60 0.15 25); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer;">Show me the regs</button>
+              </div>
+            </sc-if>
+
+            <!-- RESULTS -->
+            <sc-if value="{{ bIsResults }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 18px;">
+                <div onClick="{{ bBackToHome }}" style="display: inline-flex; align-items: center; gap: 4px; color: oklch(0.55 0.13 230); font-size: 14px; font-weight: 700; margin-bottom: 14px; cursor: pointer;">‹ Jobs</div>
+
+                <input value="{{ bQuery }}" onChange="{{ bOnQueryChange }}" placeholder="Filter these results…" style="width: 100%; font-size: 14px; padding: 10px 12px; border-radius: 10px; border: none; background: #E9E9EB; margin-bottom: 12px; color: #1C1C1E;" />
+
+                <div style="font-size: 12px; font-weight: 700; color: rgba(60,60,67,0.5); margin-bottom: 12px;">{{ bResultCount }} result(s) for {{ bJobLabel }}</div>
+
+                <sc-for list="{{ bResults }}" as="breg" hint-placeholder-count="3">
+                  <div onClick="{{ breg.onSelect }}" style="background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.04); cursor: pointer;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                      <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 8px; border-radius: 999px; background: {{ breg.obBg }}; color: {{ breg.obFg }};">{{ breg.obligationLabel }}</span>
+                      <div onClick="{{ breg.onBookmark }}" style="width: 16px; height: 16px; border-radius: 4px; border: 2px solid {{ breg.bookmarkBorder }}; background: {{ breg.bookmarkBg }}; flex-shrink: 0;"></div>
+                    </div>
+                    <div style="font-size: 15.5px; font-weight: 700; color: #1C1C1E; line-height: 1.3; margin-bottom: 6px;">{{ breg.title }}</div>
+                    <div style="display: flex; align-items: center; gap: 6px; background: #F2F2F7; border-radius: 8px; padding: 7px 9px; margin-bottom: 8px;">
+                      <div style="width: 6px; height: 6px; border-radius: 1px; background: oklch(0.60 0.15 25); flex-shrink: 0;"></div>
+                      <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: oklch(0.42 0.12 25); line-height: 1.4;">{{ breg.whereToFind }}</span>
+                    </div>
+                    <p style="font-size: 13px; color: #3C3C43; line-height: 1.5; margin: 0;">{{ breg.snippet }}</p>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- CLASSIC overlay -->
+          <sc-if value="{{ bClassicOn }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; inset: 0; background: oklch(0.16 0.01 240); padding: 58px 16px 20px; overflow: auto;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 800; color: #fff; font-family: 'Space Grotesk', sans-serif;">VIC Plumbing Code DB</div>
+                  <div style="font-size: 10px; color: oklch(0.65 0.02 240); font-family: ui-monospace, monospace;">Classic mode</div>
+                </div>
+                <button onClick="{{ bToggleClassic }}" style="background: oklch(0.72 0.18 65); color: oklch(0.10 0.01 240); border: none; font-size: 11px; font-weight: 800; padding: 7px 11px; border-radius: 4px; cursor: pointer;">Switch to New</button>
+              </div>
+              <div style="background: oklch(0.21 0.012 240); border: 1px solid oklch(0.32 0.015 240); border-radius: 4px; padding: 10px 12px; margin-bottom: 14px; color: oklch(0.6 0.01 240); font-size: 13px;">Search: 'Reg 26', 'backflow'…</div>
+              <sc-for list="{{ bClassicItems }}" as="dreg" hint-placeholder-count="3">
+                <div onClick="{{ dreg.onSelect }}" style="border-left: 4px solid oklch(0.60 0.15 200); background: oklch(0.21 0.012 240); border-radius: 4px; padding: 12px; margin-bottom: 10px; cursor: pointer;">
+                  <div style="font-family: ui-monospace, monospace; font-size: 11px; color: oklch(0.65 0.02 240); font-weight: 700; margin-bottom: 6px;">{{ dreg.ref }} · {{ dreg.doc }}</div>
+                  <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px;">{{ dreg.title }}</div>
+                  <div style="font-size: 12px; color: oklch(0.68 0.01 240); line-height: 1.5;">{{ dreg.snippet }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- small settings affordance (no tab bar in guided flow) -->
+          <sc-if value="{{ bClassicOff }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ bToggleClassic }}" style="position: absolute; right: 14px; bottom: 14px; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); padding: 8px 13px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: #3C3C43; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">Classic mode</div>
+          </sc-if>
+
+          <!-- SIGN-IN sheet -->
+          <sc-if value="{{ bSignInOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: flex-end; z-index: 20;">
+              <div style="width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 10px 22px 30px;">
+                <div style="width: 36px; height: 5px; border-radius: 3px; background: #D1D1D6; margin: 0 auto 20px;"></div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #1C1C1E; margin: 0 0 4px;">Sign in</h3>
+                <p style="font-size: 13px; color: rgba(60,60,67,0.55); margin: 0 0 20px;">Syncs your pinned jobs, saved regs and search history across devices.</p>
+
+                <button onClick="{{ bContinueSignIn }}" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 13px; border-radius: 12px; border: 1px solid #D1D1D6; background: #fff; color: #1C1C1E; font-size: 14.5px; font-weight: 700; margin-bottom: 10px; cursor: pointer;">
+                  <div style="width: 18px; height: 18px; border-radius: 4px; background: linear-gradient(135deg, oklch(0.65 0.20 25), oklch(0.65 0.18 130), oklch(0.60 0.18 250));"></div>
+                  Continue with Google
+                </button>
+                <button onClick="{{ bContinueSignIn }}" style="width: 100%; padding: 13px; border-radius: 12px; border: none; background: #1C1C1E; color: #fff; font-size: 14.5px; font-weight: 700; margin-bottom: 16px; cursor: pointer;">Continue with Apple</button>
+
+                <sc-if value="{{ bSigningIn }}" hint-placeholder-val="{{ false }}">
+                  <div style="text-align: center; font-size: 13px; color: rgba(60,60,67,0.5); margin-bottom: 16px;">Signing in…</div>
+                </sc-if>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                  <div style="flex: 1; height: 1px; background: #EDEDED;"></div>
+                  <span style="font-size: 11.5px; color: rgba(60,60,67,0.4); font-weight: 600;">OR</span>
+                  <div style="flex: 1; height: 1px; background: #EDEDED;"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                  <button onClick="{{ bCloseSignIn }}" style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #D1D1D6; background: #fff; color: #3C3C43; font-size: 13.5px; font-weight: 700; cursor: pointer;">Cancel</button>
+                  <button onClick="{{ bContinueAsGuest }}" style="flex: 1; padding: 12px; border-radius: 12px; border: 1px dashed #C7C7CC; background: transparent; color: #3C3C43; font-size: 13.5px; font-weight: 700; cursor: pointer;">Continue as guest</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ACCOUNT sheet -->
+          <sc-if value="{{ bAccountOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: flex-end; z-index: 20;">
+              <div style="width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 10px 22px 30px;">
+                <div style="width: 36px; height: 5px; border-radius: 3px; background: #D1D1D6; margin: 0 auto 20px;"></div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                  <div style="width: 46px; height: 46px; border-radius: 50%; background: oklch(0.60 0.15 25); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; flex-shrink: 0;">{{ bUserInitials }}</div>
+                  <div>
+                    <div style="font-size: 15.5px; font-weight: 800; color: #1C1C1E;">{{ bUserName }}</div>
+                    <div style="font-size: 12.5px; color: rgba(60,60,67,0.55);">{{ bUserEmail }}</div>
+                  </div>
+                </div>
+                <div style="background: #F2F2F7; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 12.5px; color: #3C3C43; line-height: 1.5;">Pinned jobs, saved regs and search history sync to this account.</div>
+                <div style="display: flex; gap: 10px;">
+                  <button onClick="{{ bCloseAccount }}" style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #D1D1D6; background: #fff; color: #3C3C43; font-size: 13.5px; font-weight: 700; cursor: pointer;">Close</button>
+                  <button onClick="{{ bSignOut }}" style="flex: 1; padding: 12px; border-radius: 12px; border: none; background: oklch(0.55 0.18 25); color: #fff; font-size: 13.5px; font-weight: 700; cursor: pointer;">Sign out</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- detail sheet -->
+          <sc-if value="{{ bSheetOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: flex-end;">
+              <div style="width: 100%; max-height: 78%; background: #fff; border-radius: 22px 22px 0 0; padding: 12px 20px 26px; overflow: auto;">
+                <div style="width: 36px; height: 5px; border-radius: 3px; background: #D1D1D6; margin: 0 auto 16px;"></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <span style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 9px; border-radius: 999px; background: {{ bOpenReg.obBg }}; color: {{ bOpenReg.obFg }};">{{ bOpenReg.obligationLabel }}</span>
+                  <button onClick="{{ bCloseSheet }}" style="border: none; background: #F2F2F7; width: 28px; height: 28px; border-radius: 50%; font-size: 15px; color: #3C3C43; cursor: pointer;">✕</button>
+                </div>
+                <h3 style="font-size: 19px; font-weight: 800; color: #1C1C1E; line-height: 1.3; margin: 0 0 6px;">{{ bOpenReg.title }}</h3>
+                <div style="font-size: 13px; color: rgba(60,60,67,0.6); margin-bottom: 14px;">{{ bOpenReg.doc }} · {{ bOpenReg.ref }}</div>
+
+                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: oklch(0.60 0.15 25); margin-bottom: 6px;">Where to find it</div>
+                <div style="display: flex; align-items: center; gap: 8px; background: #F2F2F7; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;">
+                  <div style="width: 8px; height: 8px; border-radius: 2px; background: oklch(0.60 0.15 25); flex-shrink: 0;"></div>
+                  <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px; color: oklch(0.42 0.12 25); line-height: 1.4;">{{ bOpenReg.whereToFind }}</span>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: rgba(60,60,67,0.5); margin-bottom: 6px;">Preview</div>
+                <p style="font-size: 14.5px; line-height: 1.6; color: #1C1C1E; margin: 0 0 20px;">{{ bOpenReg.snippet }}</p>
+
+                <div style="display: flex; gap: 10px;">
+                  <button onClick="{{ bOpenReg.onBookmark }}" style="flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid {{ bOpenReg.bookmarkBorder }}; background: {{ bOpenReg.bookmarkBg }}; color: {{ bOpenReg.bookmarkTextColor }}; font-size: 14px; font-weight: 700; cursor: pointer;">{{ bOpenReg.bookmarkLabel }}</button>
+                  <a href="#" style="flex: 1; text-align: center; padding: 12px; border-radius: 12px; background: oklch(0.60 0.15 25); color: #fff; font-size: 14px; font-weight: 700;">Open source</a>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </x-import>
+
+      <div style="margin-top: 16px;">
+        <div style="font-size: 11px; font-weight: 700; color: rgba(60,60,67,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px;">Same data, on tablet / desktop</div>
+        <div style="display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 14px; padding: 12px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(0,0,0,0.05);">
+          <span style="font-size: 13px; font-weight: 800; color: #1C1C1E; flex-shrink: 0;">VIC Plumbing</span>
+          <div style="flex: 1; background: #F2F2F7; border-radius: 8px; padding: 8px 10px; font-size: 13px; color: rgba(60,60,67,0.5);">Job tiles expand into a full grid…</div>
+          <span style="font-size: 12px; font-weight: 700; color: #3C3C43; border: 1px solid #D1D1D6; padding: 6px 10px; border-radius: 8px; flex-shrink: 0;">Export CSV</span>
+          <span style="font-size: 12px; font-weight: 700; color: #3C3C43; border: 1px solid #D1D1D6; padding: 6px 10px; border-radius: 8px; flex-shrink: 0;">Classic</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TRADE_TASK_LABELS = {
+  "water-supply": "Water Supply",
+  "sanitary-drainage": "Sanitary Drainage",
+  "roofing-stormwater": "Stormwater",
+  "gasfitting": "Gasfitting",
+  "heated-water": "Hot Water",
+  "backflow": "Backflow",
+};
+
+const OBLIGATION_META = {
+  technical:     { label: "Technical",     bg: "oklch(0.93 0.03 230)", fg: "oklch(0.40 0.12 230)" },
+  licensing:     { label: "Licensing",     bg: "oklch(0.93 0.03 300)", fg: "oklch(0.40 0.12 300)" },
+  documentation: { label: "Documentation", bg: "oklch(0.93 0.05 80)",  fg: "oklch(0.42 0.13 80)" },
+  whs:           { label: "WHS / Safety",  bg: "oklch(0.93 0.04 25)",  fg: "oklch(0.45 0.16 25)" },
+  product:       { label: "Product",       bg: "oklch(0.93 0.04 150)", fg: "oklch(0.40 0.12 150)" },
+};
+
+const JOB_PRESETS = [
+  { id: "reno",     label: "Residential Reno", mono: "RR", tasks: ["water-supply", "sanitary-drainage", "heated-water"], color: "oklch(0.68 0.19 45)" },
+  { id: "newbuild", label: "New Build",        mono: "NB", tasks: ["water-supply", "sanitary-drainage", "roofing-stormwater", "heated-water", "backflow"], color: "oklch(0.55 0.13 230)" },
+  { id: "gashw",    label: "Gas + Hot Water",  mono: "GH", tasks: ["gasfitting", "heated-water"], color: "oklch(0.60 0.15 25)" },
+  { id: "storm",    label: "Stormwater",       mono: "SW", tasks: ["roofing-stormwater"], color: "oklch(0.55 0.10 200)" },
+];
+
+const REGS = [
+  { id: "b1", title: "Backflow devices — registration & testing", ref: "Reg 60", doc: "Plumbing Regs 2018", obligation: "licensing", tradeTasks: ["backflow"],
+    whereToFind: "Plumbing Regs 2018, Reg 60 · printed copy, tab 4, p.38",
+    snippet: "Testable backflow prevention devices must be registered with council and tested by a licensed plumber at required intervals.", tags: ["backflow", "registration"] },
+  { id: "s1", title: "Sanitary drainage inspection before covering", ref: "Part 12A — s.221ZZZ", doc: "Building Act 1993", obligation: "documentation", tradeTasks: ["sanitary-drainage"],
+    whereToFind: "Building Act 1993, Part 12A · legislation.vic.gov.au",
+    snippet: "Arrange council inspection of sanitary drainage work at prescribed stages before covering or concealing it.", tags: ["inspection", "mandatory"] },
+  { id: "g1", title: "Gas appliance flueing clearances", ref: "AS/NZS 5601.1 §6.4", doc: "AS/NZS 5601.1:2022", obligation: "technical", tradeTasks: ["gasfitting"],
+    whereToFind: "AS/NZS 5601.1:2022 §6.4 · site folder, tab 2, p.71",
+    snippet: "Flue terminals must maintain minimum clearances from openable windows, eaves and mechanical air intakes.", tags: ["gas", "flue", "clearance"] },
+  { id: "h1", title: "Tempering valve required on hot water outlets", ref: "Cl. B2.2", doc: "NCC Vol 3 (PCA) 2022", obligation: "technical", tradeTasks: ["heated-water"],
+    whereToFind: "NCC 2022 Vol 3, B2.2 · PCA online portal",
+    snippet: "Heated water to bathroom fixtures in new work must not exceed 50°C at the outlet, via tempering valve.", tags: ["hot water", "safety", "tempering"] },
+  { id: "w1", title: "SWMS required for trenches over 1.5m", ref: "Excavation Code", doc: "WorkSafe Victoria", obligation: "whs", tradeTasks: ["sanitary-drainage", "water-supply"],
+    whereToFind: "WorkSafe Vic Excavation Code · worksafe.vic.gov.au",
+    snippet: "A safe work method statement is required before excavation deeper than 1.5m where a person may enter the trench.", tags: ["whs", "excavation", "swms"] },
+  { id: "p1", title: "WaterMark-certified fittings only", ref: "Reg 130", doc: "Plumbing Regs 2018", obligation: "product", tradeTasks: ["water-supply", "heated-water"],
+    whereToFind: "Plumbing Regs 2018, Reg 130 · printed copy, tab 6, p.54",
+    snippet: "All plumbing products used must carry current WaterMark certification for their category of use.", tags: ["watermark", "certification"] },
+  { id: "r1", title: "Stormwater discharge to legal point", ref: "Cl. 3.4", doc: "AS/NZS 3500.3:2021", obligation: "technical", tradeTasks: ["roofing-stormwater"],
+    whereToFind: "AS/NZS 3500.3:2021 Cl.3.4 · site folder, tab 3, p.29",
+    snippet: "Roof and surface stormwater must discharge to a legal point of discharge approved by council.", tags: ["stormwater", "discharge"] },
+  { id: "l1", title: "Licence class required for gasfitting work", ref: "Part 12A — s.221ZZK", doc: "Building Act 1993", obligation: "licensing", tradeTasks: ["gasfitting"],
+    whereToFind: "Building Act 1993, s.221ZZK · legislation.vic.gov.au",
+    snippet: "Gasfitting work may only be carried out by a plumber licensed in the gasfitting class, or under direct supervision.", tags: ["licence", "gasfitting"] },
+];
+
+class Component extends DCLogic {
+  state = {
+    bookmarks: ["b1", "h1"],
+    a: { tab: "home", query: "", signedIn: false, classic: false, openRegId: null },
+    b: {
+      stage: "home", jobId: null, chips: [], query: "", signedIn: false, classic: false, openRegId: null,
+      searches: [
+        { id: "sq1", label: "backflow test interval", pinned: true },
+        { id: "sq2", label: "tempering valve temp", pinned: false },
+        { id: "sq3", label: "trench depth SWMS", pinned: false },
+      ],
+      pinnedJobs: ["reno", "gashw"],
+      jobUsage: [],
+      signInOpen: false, signingIn: false, accountOpen: false,
+    },
+  };
+
+  matches(reg, q) {
+    if (!q) return true;
+    const hay = (reg.title + " " + reg.ref + " " + reg.doc + " " + reg.snippet + " " + reg.tags.join(" ")).toLowerCase();
+    return hay.includes(q.toLowerCase());
+  }
+
+  toggleBookmark(id) {
+    this.setState((s) => {
+      const has = s.bookmarks.includes(id);
+      return { bookmarks: has ? s.bookmarks.filter((x) => x !== id) : [...s.bookmarks, id] };
+    });
+  }
+
+  setA(patch) { this.setState((s) => ({ a: { ...s.a, ...patch } })); }
+  setB(patch) { this.setState((s) => ({ b: { ...s.b, ...patch } })); }
+
+  openReg(key, id) { key === "a" ? this.setA({ openRegId: id }) : this.setB({ openRegId: id }); }
+  closeReg(key) { this.openReg(key, null); }
+
+  addRecentSearchB(q) {
+    if (!q || !q.trim()) return;
+    this.setState((s) => {
+      const existing = s.b.searches.filter((x) => x.label.toLowerCase() !== q.toLowerCase());
+      const next = [{ id: "sq-" + Date.now(), label: q, pinned: false }, ...existing].slice(0, 6);
+      return { b: { ...s.b, searches: next } };
+    });
+  }
+
+  toggleSearchPinB(id) {
+    this.setState((s) => ({ b: { ...s.b, searches: s.b.searches.map((x) => x.id === id ? { ...x, pinned: !x.pinned } : x) } }));
+  }
+
+  toggleJobPinB(id) {
+    this.setState((s) => {
+      const has = s.b.pinnedJobs.includes(id);
+      return { b: { ...s.b, pinnedJobs: has ? s.b.pinnedJobs.filter((x) => x !== id) : [...s.b.pinnedJobs, id] } };
+    });
+  }
+
+  selectJobB(job) {
+    this.setState((s) => ({
+      b: { ...s.b, jobId: job.id, stage: "category", chips: job.tasks, jobUsage: [job.id, ...s.b.jobUsage.filter((x) => x !== job.id)] },
+    }));
+  }
+
+  runSearchFromHomeB() {
+    const q = this.state.b.query;
+    this.addRecentSearchB(q);
+    this.setB({ stage: "results", jobId: null, chips: [] });
+  }
+
+  openSignInB() { this.setB({ signInOpen: true }); }
+  closeSignInB() { this.setB({ signInOpen: false, signingIn: false }); }
+  continueSignInB() {
+    this.setB({ signingIn: true });
+    setTimeout(() => { this.setB({ signedIn: true, signingIn: false, signInOpen: false }); }, 700);
+  }
+  continueAsGuestB() { this.setB({ signInOpen: false }); }
+  openAccountB() { this.setB({ accountOpen: true }); }
+  closeAccountB() { this.setB({ accountOpen: false }); }
+  signOutB() { this.setB({ signedIn: false, accountOpen: false }); }
+
+  mkItem(reg, key, bookmarks) {
+    const ob = OBLIGATION_META[reg.obligation];
+    const bookmarked = bookmarks.includes(reg.id);
+    return {
+      id: reg.id, title: reg.title, ref: reg.ref, doc: reg.doc,
+      obligationLabel: ob.label, obBg: ob.bg, obFg: ob.fg,
+      whereToFind: reg.whereToFind, snippet: reg.snippet,
+      bookmarkBorder: bookmarked ? "oklch(0.68 0.19 45)" : "#D1D1D6",
+      bookmarkBg: bookmarked ? "oklch(0.68 0.19 45)" : "transparent",
+      bookmarkTextColor: bookmarked ? "oklch(0.45 0.14 45)" : "#3C3C43",
+      bookmarkLabel: bookmarked ? "Saved ✓" : "Save",
+      onSelect: () => this.openReg(key, reg.id),
+      onBookmark: (e) => { e.stopPropagation(); this.toggleBookmark(reg.id); },
+    };
+  }
+
+  renderVals() {
+    const { bookmarks, a, b } = this.state;
+    const mk = (reg, key) => this.mkItem(reg, key, bookmarks);
+
+    // ---------- A ----------
+    const aQ = a.query;
+    const aResults = aQ ? REGS.filter((r) => this.matches(r, aQ)).map((r) => mk(r, "a")) : [];
+    const aSaved = REGS.filter((r) => bookmarks.includes(r.id)).map((r) => mk(r, "a"));
+    const aOpenRegSrc = a.openRegId ? REGS.find((r) => r.id === a.openRegId) : null;
+    const aOpenReg = aOpenRegSrc ? mk(aOpenRegSrc, "a") : null;
+
+    const aTabs = [
+      { id: "home", label: "Home" }, { id: "search", label: "Search" },
+      { id: "saved", label: "Saved" }, { id: "settings", label: "Settings" },
+    ].map((t) => ({
+      ...t, active: a.tab === t.id,
+      color: a.tab === t.id ? "#1C1C1E" : "rgba(60,60,67,0.5)",
+      weight: a.tab === t.id ? 800 : 500,
+      dotColor: a.tab === t.id ? "oklch(0.68 0.19 45)" : "transparent",
+      onSelect: () => this.setA({ tab: t.id }),
+    }));
+
+    const aQuickChips = JOB_PRESETS.map((p) => ({
+      id: p.id, label: p.label, mono: p.mono, color: p.color,
+      onSelect: () => this.setA({ tab: "search", query: p.label }),
+    }));
+
+    const aRecentChips = ["backflow test interval", "tempering valve temp", "trench depth SWMS"].map((q) => ({
+      label: q, onSelect: () => this.setA({ tab: "search", query: q }),
+    }));
+
+    const resumeReg = REGS.find((r) => r.id === "g1");
+
+    // ---------- B ----------
+    const bJobSrc = b.jobId ? JOB_PRESETS.find((p) => p.id === b.jobId) : null;
+
+    const usageIndex = (id) => { const i = b.jobUsage.indexOf(id); return i === -1 ? 999 + JOB_PRESETS.findIndex((p) => p.id === id) : i; };
+    const pinnedJobsOrdered = b.pinnedJobs.map((id) => JOB_PRESETS.find((p) => p.id === id)).filter(Boolean);
+    const unpinnedJobsOrdered = JOB_PRESETS.filter((p) => !b.pinnedJobs.includes(p.id)).sort((x, y) => usageIndex(x.id) - usageIndex(y.id));
+    const bTiles = [...pinnedJobsOrdered, ...unpinnedJobsOrdered].map((p) => {
+      const pinned = b.pinnedJobs.includes(p.id);
+      return {
+        id: p.id, label: p.label, mono: p.mono, color: p.color, pinned,
+        pinBg: pinned ? "oklch(0.60 0.15 25)" : "rgba(255,255,255,0.85)",
+        pinBorder: pinned ? "oklch(0.60 0.15 25)" : "rgba(60,60,67,0.25)",
+        onSelect: () => this.selectJobB(p),
+        onTogglePin: (e) => { e.stopPropagation(); this.toggleJobPinB(p.id); },
+      };
+    });
+
+    const bSearchChips = [...b.searches].sort((x, y) => (y.pinned ? 1 : 0) - (x.pinned ? 1 : 0)).map((sq) => ({
+      id: sq.id, label: sq.label, pinned: sq.pinned,
+      pinBg: sq.pinned ? "oklch(0.60 0.15 25)" : "transparent",
+      pinBorder: sq.pinned ? "oklch(0.60 0.15 25)" : "#C7C7CC",
+      onSelect: () => { this.setB({ query: sq.label, stage: "results", jobId: null, chips: [] }); },
+      onTogglePin: (e) => { e.stopPropagation(); this.toggleSearchPinB(sq.id); },
+    }));
+
+    const bChips = bJobSrc ? bJobSrc.tasks.map((t) => {
+      const active = b.chips.includes(t);
+      return {
+        id: t, label: TRADE_TASK_LABELS[t], active,
+        boxBg: active ? "oklch(0.60 0.15 25)" : "transparent",
+        boxBorder: active ? "oklch(0.60 0.15 25)" : "#C7C7CC",
+        onToggle: () => this.setB({ chips: active ? b.chips.filter((x) => x !== t) : [...b.chips, t] }),
+      };
+    }) : [];
+
+    const bResults = REGS.filter((r) => {
+      const taskOk = b.chips.length ? r.tradeTasks.some((t) => b.chips.includes(t)) : true;
+      return taskOk && this.matches(r, b.query);
+    }).map((r) => mk(r, "b"));
+
+    const bOpenRegSrc = b.openRegId ? REGS.find((r) => r.id === b.openRegId) : null;
+    const bOpenReg = bOpenRegSrc ? mk(bOpenRegSrc, "b") : null;
+
+    return {
+      // A
+      aIsHome: a.tab === "home", aIsSearch: a.tab === "search", aIsSaved: a.tab === "saved", aIsSettings: a.tab === "settings",
+      aQuery: a.query, aHasQuery: !!a.query, aNoQuery: !a.query,
+      aOnQueryChange: (e) => this.setA({ query: e.target.value }),
+      aGotoSearch: () => this.setA({ tab: "search" }),
+      aResults, aResultCount: aResults.length,
+      aSaved, aSavedEmpty: aSaved.length === 0,
+      aQuickChips, aRecentChips,
+      aTabs,
+      aResumeTitle: resumeReg.title,
+      aResumeAction: () => this.setA({ tab: "search", openRegId: "g1" }),
+      aSignedIn: a.signedIn, aSignedOff: !a.signedIn,
+      aToggleSignIn: () => this.setA({ signedIn: !a.signedIn }),
+      aClassicOn: a.classic, aClassicOff: !a.classic,
+      aClassicTrack: a.classic ? "oklch(0.68 0.19 45)" : "#E9E9EB",
+      aClassicKnob: a.classic ? "21px" : "2px",
+      aToggleClassic: () => this.setA({ classic: !a.classic }),
+      aClassicItems: REGS.slice(0, 4).map((r) => mk(r, "a")),
+      aSheetOpen: !!a.openRegId, aOpenReg,
+      aCloseSheet: () => this.closeReg("a"),
+
+      // B
+      bIsHome: b.stage === "home", bIsCategory: b.stage === "category", bIsResults: b.stage === "results",
+      bTiles, bSearchChips,
+      bJobLabel: bJobSrc ? bJobSrc.label : "All regs",
+      bChips,
+      bQuery: b.query, bOnQueryChange: (e) => this.setB({ query: e.target.value }),
+      bSearchKeyDown: (e) => { if (e.key === "Enter") this.runSearchFromHomeB(); },
+      bRunSearchFromHome: () => this.runSearchFromHomeB(),
+      bResults, bResultCount: bResults.length,
+      bBackToHome: () => this.setB({ stage: "home" }),
+      bShowResults: () => this.setB({ stage: "results" }),
+      bGotoSearchAll: () => this.setB({ stage: "results", jobId: null, chips: [], query: "" }),
+      bResumeTitle: resumeReg.title,
+      bResumeAction: () => this.setB({ stage: "results", jobId: null, chips: [], openRegId: "g1" }),
+      bSignedIn: b.signedIn, bSignedOff: !b.signedIn,
+      bSignInOpen: b.signInOpen, bSigningIn: b.signingIn, bAccountOpen: b.accountOpen,
+      bOpenSignIn: () => this.openSignInB(),
+      bCloseSignIn: () => this.closeSignInB(),
+      bContinueSignIn: () => this.continueSignInB(),
+      bContinueAsGuest: () => this.continueAsGuestB(),
+      bOpenAccount: () => this.openAccountB(),
+      bCloseAccount: () => this.closeAccountB(),
+      bSignOut: () => this.signOutB(),
+      bUserInitials: "AR", bUserName: "Alex Rowe", bUserEmail: "alex.rowe@email.com",
+      bClassicOn: b.classic, bClassicOff: !b.classic,
+      bToggleClassic: () => this.setB({ classic: !b.classic }),
+      bClassicItems: REGS.slice(0, 4).map((r) => mk(r, "b")),
+      bSheetOpen: !!b.openRegId, bOpenReg,
+      bCloseSheet: () => this.closeReg("b"),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

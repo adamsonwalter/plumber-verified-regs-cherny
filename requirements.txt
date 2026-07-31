@@ -1,0 +1,4 @@
+# Dependencies for the scheduled Python function (functions/verify_register_scheduled.py)
+# and the publish gate (scripts/verify_register.py). Installed by the Netlify
+# Python function build when this file is present.
+requests>=2.31,<3

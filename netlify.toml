@@ -1,0 +1,61 @@
+# Netlify configuration for the Verified Plumbing & Roofing Regulations Register.
+#
+# Architecture: a static single page (public/) whose sole source of truth is a
+# git-committed register.json, plus a scheduled Python function that re-verifies
+# every source URL on the platform's own scheduler and proposes an updated
+# register (committed back if a publish token is configured).
+
+[build]
+  # The published site is the static public/ directory.
+  publish = "public"
+  # The scheduled re-verification function lives in functions/.
+  functions = "functions"
+  # Publish gate as a build CI check: run the verify gate against the committed
+  # register on every build. Fail the build if any verified entry can't be
+  # confirmed against the live source. Comment out `command` to skip live
+  # network checks in the build pipeline.
+  command = "python3 scripts/verify_register.py --live || (echo 'PUBLISH GATE FAILED — see scripts/verify_register.py'; exit 1)"
+
+[build.environment]
+  # Pin the Python runtime the scheduled function runs on.
+  PYTHON_VERSION = "3.12"
+
+# ----------------------------------------------------------------------------
+# Scheduled re-verification agent (capability b).
+# This is the platform's OWN scheduler — NOT an in-process setInterval timer.
+# Runs weekly, Monday 07:00 UTC. The handler in
+# functions/verify_register_scheduled.py is idempotent and keyed on the
+# Netlify-provided invocation id; it never trusts a request body.
+#
+# IMPORTANT: scheduled functions only fire automatically for PUBLISHED deploys.
+# A 30 s execution limit applies to *synchronous* scheduled functions; because
+# re-verifying ~30 Cloudflare-protected sources needs minutes, the function is
+# also invocable as a background function. If you hit the 30 s wall on a very
+# cold/unlucky run, rename the file to verify_register_scheduled-background.py
+# to run it as a background function (up to 15 min) — the handler signature is
+# identical.
+# ----------------------------------------------------------------------------
+[functions."verify_register_scheduled"]
+  schedule = "0 7 * * 1"
+
+# ----------------------------------------------------------------------------
+# Publish gate as a CI check (optional but recommended): runs the verify gate
+# against the committed register on every build. Fail the build if any verified
+# entry can't be confirmed against the live source.
+# Comment this out if you don't want live network checks in the build pipeline.
+# ----------------------------------------------------------------------------
+
+# Sensible security/ caching headers for the static assets.
+[[headers]]
+  for = "/register.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    # register.json changes only when the agent commits an update; let the CDN
+    # cache briefly but always revalidate so a fresh deploy is picked up.
+    Cache-Control = "public, max-age=60, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"

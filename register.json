@@ -1,0 +1,483 @@
+{
+  "schema_version": 1,
+  "register_version": "2026-07-31-build1",
+  "generated_on": "2026-07-31",
+  "generated_by_agent": "build-agent-2026-07-31",
+  "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
+  "allowed_domains": [
+    "bpc.vic.gov.au",
+    "legislation.vic.gov.au",
+    "worksafe.vic.gov.au",
+    "energysafe.vic.gov.au",
+    "consumer.vic.gov.au",
+    "planning.vic.gov.au",
+    "abcb.gov.au",
+    "ncc.abcb.gov.au"
+  ],
+  "entries": [
+    {
+      "id": "RS-STANDARD",
+      "jurisdiction": "VIC",
+      "claim": "BPC-mandated stormwater drainage edition is AS/NZS 3500.3:2025",
+      "value": "AS/NZS 3500.3:2025",
+      "key_substring": "3500.3:2025",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "page names a different edition or a newer amendment; standard not stated as current",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "AS/NZS 3500.3:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
+      }
+    },
+    {
+      "id": "RS-VALLEYGUTTER",
+      "jurisdiction": "VIC",
+      "claim": "Valley-gutter deemed-to-satisfy catchment limit increased from 20 m² to 40 m² (Clause 3.6.1, 2025 edition)",
+      "value": "40 m² (Clause 3.6.1)",
+      "key_substring": "40 m²",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "current edition states a different limit or clause number",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Clause 3.6.1 Limitations (Update to clause) ... In the 2025 edition, the limit has increased from 20 m² to 40 m²."
+      }
+    },
+    {
+      "id": "RS-EAVESOVERFLOW",
+      "jurisdiction": "VIC",
+      "claim": "Appendix F eaves-gutter overflow design (up to 400 m² catchment, 1% AEP) is now mandatory (normative) in the 2025 edition",
+      "value": "Appendix F mandatory / 400 m² / 1% AEP",
+      "key_substring": "400 m²",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "Appendix F is no longer mandatory, or catchment/AEP figures change",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Appendix F has become normative in the 2025 edition, meaning it is now a mandatory requirement. ... Appendix F specifies requirements for design of eaves gutter overflow measures for on roof catchments up to 400 m²."
+      }
+    },
+    {
+      "id": "WATER-STD",
+      "jurisdiction": "VIC",
+      "claim": "AS/NZS 3500.1:2025 Water services is the current referenced standard for water-supply plumbing work",
+      "value": "AS/NZS 3500.1:2025",
+      "key_substring": "3500.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "page names a different edition of AS/NZS 3500.1",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "S/NZS 3500 series Updated plumbing and drainage standards - Part 1: Water services AS/NZS 3500.1:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+      }
+    },
+    {
+      "id": "SAN-STD",
+      "jurisdiction": "VIC",
+      "claim": "AS/NZS 3500.2:2025 Sanitary plumbing and drainage is the current referenced standard for sanitary work",
+      "value": "AS/NZS 3500.2:2025",
+      "key_substring": "3500.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "page names a different edition of AS/NZS 3500.2",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "s Updated plumbing and drainage standards - Part 2: Sanitary plumbing and drainage AS/NZS 3500.2:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+      }
+    },
+    {
+      "id": "HEAT-STD",
+      "jurisdiction": "VIC",
+      "claim": "AS/NZS 3500.4:2025 Heated water services is the current referenced standard for heated-water work",
+      "value": "AS/NZS 3500.4:2025",
+      "key_substring": "3500.4",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+      "fails_if": "page names a different edition of AS/NZS 3500.4",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "500 series Updated plumbing and drainage standards - Part 4: Heated water services AS/NZS 3500.4:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+      }
+    },
+    {
+      "id": "CERT-THRESHOLD",
+      "jurisdiction": "VIC",
+      "claim": "A plumbing compliance certificate is required where total work value (materials, appliances, labour, GST) exceeds $750",
+      "value": "$750",
+      "key_substring": "$750",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/compliance-certificates",
+      "fails_if": "threshold figure changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/compliance-certificates",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "where the total value of work (including materials, appliances, labour and GST) exceeds $750"
+      }
+    },
+    {
+      "id": "PLUMB-REG18",
+      "jurisdiction": "VIC",
+      "claim": "Plumbing work in Victoria is governed by the Plumbing Regulations 2018 (instrument page in force on legislation.vic.gov.au)",
+      "value": "Plumbing Regulations 2018",
+      "key_substring": "Plumbing Regulations 2018",
+      "source_url": "https://www.legislation.vic.gov.au/in-force/statutory-rules/plumbing-regulations-2018/018",
+      "fails_if": "the instrument is repealed/remade or the page no longer names the 2018 regulations",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.legislation.vic.gov.au/in-force/statutory-rules/plumbing-regulations-2018/018",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Plumbing Regulations 2018 | legislation.vic.gov.au"
+      }
+    },
+    {
+      "id": "REGULATOR",
+      "jurisdiction": "VIC",
+      "claim": "Victorian building & plumbing regulator is the Building and Plumbing Commission (BPC), established 1 July 2025, replacing the VBA",
+      "value": "BPC, est. 1 July 2025",
+      "key_substring": "Building and Plumbing Commission",
+      "source_url": "https://www.planning.vic.gov.au/guides-and-resources/building-policy/building-reform",
+      "fails_if": "regulator identity changes again or establishment date changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.planning.vic.gov.au/guides-and-resources/building-policy/building-reform",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "The Building and Plumbing Commission (BPC) - a single, integrated regulator for the building system established on 1 July 2025."
+      }
+    },
+    {
+      "id": "BACKFLOW",
+      "jurisdiction": "VIC",
+      "claim": "Backflow prevention work is defined under Part 5 of the Plumbing Regulations 2018; field testing per AS/NZS 2845.3",
+      "value": "Part 5, Plumbing Regulations 2018",
+      "key_substring": "Part 5",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/backflow-prevention-work",
+      "fails_if": "Part number or referenced standard changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/backflow-prevention-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 5 of the Plumbing Regulations 2018, Backflow Prevention work is the repair, alteration, maintenance, testing or commissioning of a backflow prevention device"
+      }
+    },
+    {
+      "id": "GASFITTING",
+      "jurisdiction": "VIC",
+      "claim": "Gasfitting work is defined under Part 4 of the Plumbing Regulations 2018; includes Type A and Type B gasfitting",
+      "value": "Part 4, Plumbing Regulations 2018",
+      "key_substring": "Part 4",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/gasfitting-work",
+      "fails_if": "Part number or Type A/B classification changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/gasfitting-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 4 of the Plumbing Regulations 2018, gasfitting work is defined as the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning"
+      }
+    },
+    {
+      "id": "DRAINAGE",
+      "jurisdiction": "VIC",
+      "claim": "Drainage work (sanitary + stormwater below-ground) is defined under Part 4 of the Plumbing Regulations 2018",
+      "value": "Part 4, Plumbing Regulations 2018",
+      "key_substring": "Plumbing Regulations 2018",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/drainage-work",
+      "fails_if": "Part number or work definition changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/drainage-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 4 of the Plumbing Regulations 2018, drainage work is the construction, installation, replacement, repair, alteration, maintenance, relining, testing or commissioning"
+      }
+    },
+    {
+      "id": "SANITARY",
+      "jurisdiction": "VIC",
+      "claim": "Sanitary work is defined under Part 4 of the Plumbing Regulations 2018",
+      "value": "Part 4, Plumbing Regulations 2018",
+      "key_substring": "Plumbing Regulations 2018",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/sanitary-work",
+      "fails_if": "Part number or work definition changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/sanitary-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 4 of the Plumbing Regulations 2018, sanitary work is: the construction, installation, replacement, repair, alteration, maintenance, relining, testing or commissioning"
+      }
+    },
+    {
+      "id": "ROOFING-CLASS",
+      "jurisdiction": "VIC",
+      "claim": "Roofing (stormwater) work is defined under Part 4 of the Plumbing Regulations 2018",
+      "value": "Part 4, Plumbing Regulations 2018",
+      "key_substring": "Plumbing Regulations 2018",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/roofing-stormwater-work",
+      "fails_if": "Part number or work definition changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/roofing-stormwater-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 4 of the Plumbing Regulations 2018, roofing stormwater work is the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning of any roof covering"
+      }
+    },
+    {
+      "id": "WATERSUPPLY",
+      "jurisdiction": "VIC",
+      "claim": "Water supply work (drinking & non-drinking) is defined under Part 4 of the Plumbing Regulations 2018",
+      "value": "Part 4, Plumbing Regulations 2018",
+      "key_substring": "Plumbing Regulations 2018",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/water-supply-work",
+      "fails_if": "Part number or work definition changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/water-supply-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 4 of the Plumbing Regulations 2018, water supply work is: a. the construction, installation, replacement, repair, alteration, relining, maintenance, testing or commissioning"
+      }
+    },
+    {
+      "id": "MECH",
+      "jurisdiction": "VIC",
+      "claim": "Mechanical services work (HVAC) is defined under Part 4 of the Plumbing Regulations 2018",
+      "value": "Part 4, Plumbing Regulations 2018",
+      "key_substring": "Plumbing Regulations 2018",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/mechanical-services-work",
+      "fails_if": "Part number or work definition changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/mechanical-services-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Under Part 4 of the Plumbing Regulations 2018, mechanical services work is: a. the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning of a mechanical"
+      }
+    },
+    {
+      "id": "REGN",
+      "jurisdiction": "VIC",
+      "claim": "Plumbers must be registered/licensed with the BPC to lawfully carry out plumbing work in Victoria",
+      "value": "registration/licensing required",
+      "key_substring": "registration",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/registration-and-licensing",
+      "fails_if": "registration requirement or process changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/registration-and-licensing",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Plumbing registration and licensing | Building and Plumbing Commission --> --> --> Skip to main content Go to BPC Homepage Search BPC Login Menu Log in Log in to BPC Onlin"
+      }
+    },
+    {
+      "id": "HOTWATER",
+      "jurisdiction": "VIC",
+      "claim": "Hot water must be stored above 60°C (to control Legionella) and delivered via a tempering valve at a lower temperature to prevent scalding (50°C reference)",
+      "value": "store >60°C, temper at tap",
+      "key_substring": "60",
+      "source_url": "https://www.bpc.vic.gov.au/resource-hub/safety-guides/hot-water-safety",
+      "fails_if": "storage/tempering temperature guidance changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/resource-hub/safety-guides/hot-water-safety",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Hot water needs to be stored above 60°C in hot water systems to prevent bacteria growth (such as Legionella), but a tempering valve ensures that the water comes out of the tap at a lower temperature."
+      }
+    },
+    {
+      "id": "FALLS-2M",
+      "jurisdiction": "VIC",
+      "claim": "WorkSafe falls duties (housing construction) trigger for work above 2 metres, per the OHS Regulations 2017 compliance code",
+      "value": ">2 m trigger",
+      "key_substring": "2 metre",
+      "source_url": "https://www.worksafe.vic.gov.au/resources/compliance-code-prevention-falls-housing-construction",
+      "fails_if": "height trigger changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.worksafe.vic.gov.au/resources/compliance-code-prevention-falls-housing-construction",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "how to control risks associated with falls from more than 2 metres"
+      }
+    },
+    {
+      "id": "FALLS-GEN",
+      "jurisdiction": "VIC",
+      "claim": "WorkSafe falls duties (general construction) also apply from more than 2 metres, per the OHS Regulations 2017 compliance code",
+      "value": ">2 m trigger (general)",
+      "key_substring": "2 metre",
+      "source_url": "https://www.worksafe.vic.gov.au/resources/compliance-code-prevention-falls-general-construction",
+      "fails_if": "height trigger changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.worksafe.vic.gov.au/resources/compliance-code-prevention-falls-general-construction",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "how to control risks associated with falls from more than 2 metres"
+      }
+    },
+    {
+      "id": "ASBESTOS-CASE",
+      "jurisdiction": "VIC",
+      "claim": "Unlicensed non-friable asbestos removal capped at 10 m² total and 1 hour cumulative per 7-day period (OHS Regs 2017, Part 4.4)",
+      "value": "10 m² / 1 hour per 7 days",
+      "key_substring": "10 square metres",
+      "source_url": "https://www.worksafe.vic.gov.au/case-study-asbestos-removal-domestic-demolition",
+      "fails_if": "area cap, time cap, or part number change",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.worksafe.vic.gov.au/case-study-asbestos-removal-domestic-demolition",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "the area of asbestos-containing material to be removed does not exceed 10 square metres in total; and the total time taken to perform the asbestos removal work in any seven day period does not exceed one hour."
+      }
+    },
+    {
+      "id": "ASBESTOS-NOTIFY",
+      "jurisdiction": "VIC",
+      "claim": "Under Part VIA of the Dangerous Goods Act 1985, notify WorkSafe of asbestos installed on/after 1 January 2004 (non-domestic); enter agreement within 60 days",
+      "value": "Part VIA / 1 Jan 2004 / 60 days",
+      "key_substring": "60 days",
+      "source_url": "https://www.worksafe.vic.gov.au/properties-containing-asbestos-notification-and-plans",
+      "fails_if": "cutoff date, agreement period, or domestic exemption changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.worksafe.vic.gov.au/properties-containing-asbestos-notification-and-plans",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Notification of asbestos installed on or after 1 January 2004 ... The person must enter into an agreement with WorkSafe within 60 days"
+      }
+    },
+    {
+      "id": "CONFINED-SPACE",
+      "jurisdiction": "VIC",
+      "claim": "Confined-spaces duties arise under Victoria's OHS legislation; WorkSafe publishes a dedicated compliance code for confined-spaces work",
+      "value": "compliance code: confined spaces",
+      "key_substring": "confined spaces",
+      "source_url": "https://www.worksafe.vic.gov.au/resources/compliance-code-confined-spaces",
+      "fails_if": "the compliance code is withdrawn or the OHS-law basis changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.worksafe.vic.gov.au/resources/compliance-code-confined-spaces",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "this compliance code provides practical guidance on how to comply with your obligations under Victoria’s occupational health and safety legislation when your work involves confined spaces"
+      }
+    },
+    {
+      "id": "POWERLINE-APPROACH",
+      "jurisdiction": "VIC",
+      "claim": "No Go Zone for overhead powerline work is within 3.0 m; Spotter Zone is 3.0 m–6.4 m (registered spotter required), per Energy Safe Victoria / OHS Regs 2017",
+      "value": "3.0 m / 6.4 m",
+      "key_substring": "3.0m",
+      "source_url": "https://www.energysafe.vic.gov.au/industry-guidance/electrical/electrical-network-infrastructure/working-around-powerlines",
+      "fails_if": "the 3.0 m / 6.4 m thresholds or responsible regulator change",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.energysafe.vic.gov.au/industry-guidance/electrical/electrical-network-infrastructure/working-around-powerlines",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Work within 3.0m from an overhead power line, permit ... Work between 3.0m and 6.4m from an overhead power line, a registered Spotter is required."
+      }
+    },
+    {
+      "id": "WARRANTY-DBCA95",
+      "jurisdiction": "VIC",
+      "claim": "Implied warranties on domestic building work run up to 10 years from completion (Building Act 1993, per the Domestic Building Contracts Act 1995)",
+      "value": "10 years",
+      "key_substring": "10 years",
+      "source_url": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/implied-warranties-on-home-building-work",
+      "fails_if": "warranty period or governing Act reference changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/implied-warranties-on-home-building-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "The Building Act 1993 allows action to be brought against a builder for up to 10 years from the date the work was completed."
+      }
+    },
+    {
+      "id": "DBI-THRESHOLD",
+      "jurisdiction": "VIC",
+      "claim": "Domestic building insurance (DBI) is required on domestic building works over $16,000 (formerly 'builders warranty insurance')",
+      "value": "$16,000",
+      "key_substring": "$16,000",
+      "source_url": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/domestic-building-insurance",
+      "fails_if": "threshold figure changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/domestic-building-insurance",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "This is insurance that you take out for your client on works over $16,000. It was previously known as 'builders warranty insurance'."
+      }
+    },
+    {
+      "id": "NCC-GUTTERS",
+      "jurisdiction": "Federal",
+      "claim": "Low-rise gutters and downpipes governed by NCC 2022 Housing Provisions Part 7.4",
+      "value": "NCC 2022 Pt 7.4",
+      "key_substring": "Part 7.4",
+      "source_url": "https://ncc.abcb.gov.au/editions/ncc-2022/adopted/housing-provisions/7-roof-and-wall-cladding/part-74-gutters-and-downpipes",
+      "fails_if": "a newer NCC edition supersedes 2022, or Pt 7.4 is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://ncc.abcb.gov.au/editions/ncc-2022/adopted/housing-provisions/7-roof-and-wall-cladding/part-74-gutters-and-downpipes",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "Part 7.4 Gutters and downpipes"
+      }
+    },
+    {
+      "id": "BOXGUTTER-CARVEOUT",
+      "jurisdiction": "Federal",
+      "claim": "Box gutters are carved out of the deemed-to-satisfy path via clause H2D6(3) of NCC 2022 Volume Two",
+      "value": "H2D6(3)",
+      "key_substring": "H2D6(3)",
+      "source_url": "https://www.abcb.gov.au/news/2022/new-ncc-2022-requirements-gutters-and-downpipes",
+      "fails_if": "provision reference changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.abcb.gov.au/news/2022/new-ncc-2022-requirements-gutters-and-downpipes",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "An important change is set out in clause H2D6(3). It excludes box gutters from Part 7.4."
+      }
+    },
+    {
+      "id": "ACL-GUARANTEES",
+      "jurisdiction": "Federal",
+      "claim": "Consumer guarantees under the Australian Consumer Law (Sch 2, Competition and Consumer Act 2010) apply alongside Victorian warranties and cannot be excluded by contract",
+      "value": "Australian Consumer Law",
+      "key_substring": "Australian Consumer Law",
+      "source_url": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/implied-warranties-on-home-building-work",
+      "fails_if": "ACL's non-excludability of these guarantees changes",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/implied-warranties-on-home-building-work",
+        "on": "2026-07-31",
+        "by_agent": "build-agent-2026-07-31",
+        "quote": "These are called ‘warranties’ in the Domestic Building Contracts Act 1995, and ‘consumer guarantees’ in the Australian Consumer Law."
+      }
+    }
+  ]
+}

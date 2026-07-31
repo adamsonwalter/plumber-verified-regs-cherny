@@ -14,7 +14,17 @@
   # register on every build. Fail the build if any verified entry can't be
   # confirmed against the live source. Comment out `command` to skip live
   # network checks in the build pipeline.
-  command = "python3 scripts/verify_register.py --live || (echo 'PUBLISH GATE FAILED — see scripts/verify_register.py'; exit 1)"
+  # Offline gate for the build pipeline: checks structure, domain allow-list,
+  # and self-consistency — no live network fetches.  The full live gate
+  # (verify_register.py --live) is intended for local pre-commit checks and
+  # runs as part of the weekly scheduled agent on Netlify's functions
+  # runtime, where Cloudflare per-host sessions pass reliably.
+  #
+  # The build command was previously --live but Netlify's build servers
+  # get consistently 403'd by Cloudflare on bpc.vic.gov.au (different
+  # TLS/JA3 fingerprint than a local Python runtime), so the live gate
+  # cannot pass inside a Netlify build.  See docs/LESSONS-LEARNED.md §1.
+  command = "python3 scripts/verify_register.py --offline"
 
 [build.environment]
   # Pin the Python runtime the scheduled function runs on.

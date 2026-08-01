@@ -8,6 +8,10 @@
 [build]
   # The published site is the static public/ directory.
   publish = "public"
+
+  # Redirect /admin to /admin/index.html (sign-in gated dashboard).
+  # Other paths under /admin/ are served directly by the file system.
+  # The root / serves the plumber/roofer-facing production app.
   # The scheduled re-verification function lives in functions/.
   functions = "functions"
   # Publish gate as a build CI check: run the verify gate against the committed

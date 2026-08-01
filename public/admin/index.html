@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — Verified Plumbing &amp; Roofing Regulations Register</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161d26; --panel2:#1d2632; --ink:#e6edf3; --muted:#9aa7b4;
+    --line:#2a3441; --vic:#3b82f6; --fed:#a855f7;
+    --ok:#22c55e; --okbg:#0f2418; --warn:#f59e0b; --warnbg:#2a2008; --bad:#ef4444; --badbg:#2a1212;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+
+  /* ---- sign-in gate ---- */
+  .gate{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .gate-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:36px 32px;max-width:380px;width:100%;text-align:center}
+  .gate-card h1{font-size:20px;font-weight:700;margin:0 0 6px}
+  .gate-card p{color:var(--muted);font-size:13px;margin:0 0 24px}
+  .gate-card input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px;margin-bottom:12px;outline:none}
+  .gate-card input:focus{border-color:var(--vic)}
+  .gate-card button{width:100%;padding:12px;border-radius:8px;border:none;background:var(--vic);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+  .gate-card .err{color:var(--bad);font-size:13px;margin-top:12px;min-height:20px}
+  .gate-card .err.shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  .dashboard{display:none}
+
+  /* ---- existing admin styles ---- */
+  header{padding:28px 20px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#121821,#0f1419)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  h1{margin:0;font-size:22px;letter-spacing:-.01em}
+  h1 .v{color:var(--muted);font-weight:400;font-size:13px;font-family:var(--mono)}
+  .admin-badge{display:inline-block;background:var(--vic);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle;margin-left:8px;letter-spacing:.04em;text-transform:uppercase}
+  p.lede{margin:8px 0 0;color:var(--muted);font-size:14px;max-width:80ch}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:96px}
+  .stat .n{font-size:20px;font-weight:600}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .stat.ok .n{color:var(--ok)} .stat.warn .n{color:var(--warn)} .stat.bad .n{color:var(--bad)}
+  .last{margin-top:12px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+  main{padding:24px 0 60px}
+  .group{margin-bottom:30px}
+  .group h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
+  .tag.vic{color:var(--vic);border-color:#2a4a7a} .tag.fed{color:var(--fed);border-color:#4a2a6a}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--line)}
+  .card.verified{border-left-color:var(--ok);background:var(--okbg)}
+  .card.unverified{border-left-color:var(--warn);background:var(--warnbg)}
+  .card.unreachable{border-left-color:var(--bad);background:var(--badbg)}
+  .card.head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+  .card .id{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .card .claim{font-weight:600;font-size:15px}
+  .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+  .badge.verified{background:#13321d;color:var(--ok)}
+  .badge.unverified{background:#3a2a08;color:var(--warn)}
+  .badge.unreachable{background:#3a1212;color:var(--bad)}
+  .row{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;margin-top:10px;font-size:13px}
+  .row .k{color:var(--muted)}
+  .row .v{word-break:break-word}
+  .row .v a{color:#7cc7ff;text-decoration:none} .row .v a:hover{text-decoration:underline}
+  .quote{background:#00000040;border-left:2px solid var(--line);padding:8px 10px;margin-top:8px;font-size:13px;color:#cdd6e0;border-radius:4px}
+  .quote::before{content:"\201C";color:var(--muted);margin-right:2px}.quote::after{content:"\201D";color:var(--muted);margin-left:2px}
+  .remedial{background:#00000055;border:1px dashed #5a2a2a;padding:8px 10px;margin-top:8px;font-size:13px;border-radius:4px}
+  .changed{font-family:var(--mono);font-size:12px;color:var(--warn);margin-top:6px}
+  .changed .from{text-decoration:line-through;color:var(--bad)} .changed .to{color:var(--warn)}
+  details{margin-top:8px} summary{cursor:pointer;font-size:12px;color:var(--muted)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+  .filters button{background:var(--panel);color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer}
+  .filters button.active{color:var(--ink);border-color:#3a4a5a}
+  footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font-size:12px}
+  .err-box{padding:30px;text-align:center;color:var(--bad)}
+  .signout{float:right;font-size:12px;color:var(--muted);cursor:pointer;background:none;border:1px solid var(--line);padding:4px 10px;border-radius:4px}
+  .signout:hover{color:var(--ink);border-color:#3a4a5a}
+  @media(max-width:560px){.row{grid-template-columns:1fr}.row .k{font-size:11px;text-transform:uppercase}}
+</style>
+</head>
+<body>
+
+<!-- sign-in gate -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <h1>Admin Sign-in</h1>
+    <p>Enter your email to access the register dashboard.</p>
+    <input type="email" id="email-input" placeholder="Email address" autocomplete="email">
+    <button onclick="doSignIn()">Sign in</button>
+    <div class="err" id="gate-err"></div>
+  </div>
+</div>
+
+<!-- dashboard (hidden until signed in) -->
+<div class="dashboard" id="dashboard">
+<header>
+  <div class="wrap">
+    <h1>Verified Plumbing &amp; Roofing Regulations Register <span class="v" id="regver"></span> <span class="admin-badge">Admin</span></h1>
+    <p class="lede">A live, trustworthy register of the Victorian and Commonwealth regulations, standards and statutory thresholds that govern licensed plumbing and roofing work in Victoria. Every value shown is a verbatim or directly-quotable fact from the cited authoritative government or standards-body page — confirmed by an automated agent that re-opens each source and reasons over the current text. This register makes no compliance determination.</p>
+    <div class="stats" id="stats"></div>
+    <div class="last" id="last"></div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="filters">
+      <button data-f="all" class="active">All</button>
+      <button data-f="verified">Verified</button>
+      <button data-f="unverified">Needs recheck</button>
+      <button data-f="unreachable">Source unreachable</button>
+      <span style="flex:1"></span>
+      <button data-g="all" class="active">VIC + Federal</button>
+      <button data-g="VIC">VIC only</button>
+      <button data-g="Federal">Federal only</button>
+    </div>
+    <div id="content"><p style="color:var(--muted)">Loading register…</p></div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <button class="signout" onclick="doSignOut()">Sign out</button>
+    Single source of truth: <code>register.json</code>. Re-verified on a weekly schedule by an automated agent that opens every source URL and reasons about whether each recorded claim still matches. No user accounts, no uploads, no free-text intake — every asserted value is a quotable fact from the cited page.
+  </div>
+</footer>
+</div>
+
+<script>
+// ---- auth ----
+const AUTH_EMAIL = "walter@admin.com";
+(function checkAuth(){
+  if(sessionStorage.getItem("admin") === AUTH_EMAIL){
+    showDashboard();
+  }
+  document.getElementById("email-input").addEventListener("keydown", function(e){
+    if(e.key === "Enter") doSignIn();
+  });
+})();
+
+function doSignIn(){
+  var inp = document.getElementById("email-input");
+  var errEl = document.getElementById("gate-err");
+  var email = inp.value.trim().toLowerCase();
+  if(email === AUTH_EMAIL){
+    sessionStorage.setItem("admin", AUTH_EMAIL);
+    showDashboard();
+  } else {
+    errEl.textContent = "Not authorised";
+    errEl.classList.remove("shake");
+    void errEl.offsetWidth; // trigger reflow
+    errEl.classList.add("shake");
+    inp.value = "";
+    inp.focus();
+  }
+}
+
+function doSignOut(){
+  sessionStorage.removeItem("admin");
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("gate").style.display = "flex";
+  document.getElementById("gate-err").textContent = "";
+  document.getElementById("email-input").value = "";
+}
+
+function showDashboard(){
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  loadRegister();
+}
+
+// ---- register rendering (unchanged from original) ----
+var _regLoaded = false;
+function loadRegister(){
+  if(_regLoaded) return;
+  _regLoaded = true;
+  fetch("../register.json?"+Date.now())
+    .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+    .then(function(reg){REG=reg;paintStats();wireFilters();paint();})
+    .catch(function(err){
+      document.getElementById("content").innerHTML =
+        '<p class="err-box">Failed to load register.json: '+esc(err.message)+'. The page cannot show verified claims without its source of truth.</p>';
+    });
+}
+
+const STATUS_LABEL = {verified:"Verified", unverified:"Needs recheck", unreachable:"Source unreachable"};
+
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html!=null) e.innerHTML = html;
+  return e;
+}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function row(k, vHtml){
+  return '<div class="row"><div class="k">'+esc(k)+'</div><div class="v">'+vHtml+'</div></div>';
+}
+function link(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(u).replace(/^https?:\/\//,'')+'</a>';}
+
+function renderCard(e){
+  const card = el("div", "card " + e.status);
+  const v = e.verified || {};
+
+  // header
+  const head = el("div","head");
+  head.appendChild(el("div","", '<div class="id">'+esc(e.id)+'</div><div class="claim">'+esc(e.claim)+'</div>'));
+  head.appendChild(el("div","badge "+e.status, STATUS_LABEL[e.status]||e.status));
+  card.appendChild(head);
+
+  // asserted value + key substring
+  card.insertAdjacentHTML("beforeend",
+    row("Asserts", '<strong>'+esc(e.value)+'</strong>') +
+    row("Jurisdiction", '<span class="tag '+(e.jurisdiction.toLowerCase()==='vic'?'vic':'fed')+'">'+esc(e.jurisdiction)+'</span>')
+  );
+
+  // status-specific blocks
+  if(e.status === "verified"){
+    card.insertAdjacentHTML("beforeend",
+      row("Source", link(e.source_url)) +
+      row("Last confirmed", esc(v.on || "—")) +
+      row("Checked by", esc(v.by_agent || "—"))
+    );
+    if(v.quote){
+      card.appendChild(el("div","quote", esc(v.quote)));
+    }
+  } else if(e.status === "unverified"){
+    card.insertAdjacentHTML("beforeend", row("Source", link(e.source_url)));
+    if(e.changed_from || e.changed_to){
+      card.insertAdjacentHTML("beforeend",
+        '<div class="changed">value moved: <span class="from">'+esc(e.changed_from||"?")+'</span> &rarr; <span class="to">'+esc(e.changed_to||"?")+'</span></div>');
+    }
+    if(v.quote){
+      card.appendChild(el("div","quote", esc(v.quote)));
+    }
+    if(e.fails_if){
+      card.insertAdjacentHTML("beforeend", row("Fails-if test", esc(e.fails_if)));
+    }
+  } else if(e.status === "unreachable"){
+    card.insertAdjacentHTML("beforeend",
+      row("Source", link(e.source_url)) +
+      row("HTTP / error", esc(e.last_status || e.http_error || "—")) +
+      row("Last OK check", esc(e.last_successful_check || "—"))
+    );
+    if(e.remedial_note){
+      card.appendChild(el("div","remedial", "<strong>Remedial note:</strong> " + esc(e.remedial_note)));
+    }
+  }
+
+  // collapsible raw evidence
+  const det = el("details","");
+  det.innerHTML = '<summary>fails-if criterion &amp; key substring</summary>' +
+    row("Fails if", esc(e.fails_if||"—")) +
+    row("Key substring checked", '<code>'+esc(e.key_substring||"—")+'</code>');
+  card.appendChild(det);
+  return card;
+}
+
+function renderGroup(name, tag, entries, filter, groupFilter){
+  const items = entries.filter(e =>
+    (filter==="all"||e.status===filter) &&
+    (groupFilter==="all"||e.jurisdiction===groupFilter));
+  if(!items.length) return null;
+  const g = el("div","group");
+  g.appendChild(el("h2","", name+' <span class="tag '+tag+'">'+name+'</span> <span style="color:var(--muted);font-weight:400;font-size:12px">'+items.length+' '+(items.length===1?'item':'items')+'</span>'));
+  for(const e of items) g.appendChild(renderCard(e));
+  return g;
+}
+
+var REG = null, FILTER="all", GFILTER="all";
+
+function paint(){
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+  if(!REG || !REG.entries){ content.innerHTML = '<p class="err-box">register.json could not be loaded.</p>'; return; }
+  const entries = REG.entries;
+  const vic = entries.filter(e=>e.jurisdiction==="VIC");
+  const fed = entries.filter(e=>e.jurisdiction==="Federal");
+
+  const g1 = renderGroup("VIC","vic",vic,FILTER,GFILTER);
+  const g2 = renderGroup("Federal","fed",fed,FILTER,GFILTER);
+  if(!g1 && !g2){
+    content.innerHTML = '<p style="color:var(--muted)">No entries match the current filter.</p>';
+    return;
+  }
+  if(g1) content.appendChild(g1);
+  if(g2) content.appendChild(g2);
+}
+
+function paintStats(){
+  const entries = (REG&&REG.entries)||[];
+  const c = (s)=>entries.filter(e=>e.status===s).length;
+  const box = (n,l,cls)=>'<div class="stat '+cls+'"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';
+  document.getElementById("stats").innerHTML =
+    box(entries.length, "Total", "") +
+    box(c("verified"), "Verified", "ok") +
+    box(c("unverified"), "Needs recheck", "warn") +
+    box(c("unreachable"), "Unreachable", "bad");
+  document.getElementById("regver").textContent = REG && REG.register_version ? "· "+REG.register_version : "";
+  const lastRun = REG && (REG.last_agent_run || REG.generated_on);
+  document.getElementById("last").textContent = lastRun
+    ? "register version "+(REG.register_version||"?")+" · last agent run "+lastRun
+    : "";
+}
+
+function wireFilters(){
+  document.querySelectorAll(".filters button[data-f]").forEach(function(b){
+    b.onclick=function(){FILTER=b.dataset.f;
+      document.querySelectorAll(".filters button[data-f]").forEach(function(x){x.classList.toggle("active",x===b);});
+      paint();};
+  });
+  document.querySelectorAll(".filters button[data-g]").forEach(function(b){
+    b.onclick=function(){GFILTER=b.dataset.g;
+      document.querySelectorAll(".filters button[data-g]").forEach(function(x){x.classList.toggle("active",x===b);});
+      paint();};
+  });
+}
+</script>
+</body>
+</html>

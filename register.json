@@ -29,6 +29,21 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "AS/NZS 3500.3:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
+      },
+      "ui": {
+        "title": "Stormwater drainage — current standard edition",
+        "ref": "AS/NZS 3500.3:2025",
+        "doc": "BPC Updated Standards",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "stormwater",
+          "standard",
+          "3500.3",
+          "roofing"
+        ]
       }
     },
     {
@@ -45,6 +60,22 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Clause 3.6.1 Limitations (Update to clause) ... In the 2025 edition, the limit has increased from 20 m² to 40 m²."
+      },
+      "ui": {
+        "title": "Valley-gutter catchment limit increased to 40 m²",
+        "ref": "Clause 3.6.1",
+        "doc": "AS/NZS 3500.3:2025",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "stormwater",
+          "valley gutter",
+          "catchment",
+          "clause 3.6.1",
+          "roofing"
+        ]
       }
     },
     {
@@ -61,6 +92,22 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Appendix F has become normative in the 2025 edition, meaning it is now a mandatory requirement. ... Appendix F specifies requirements for design of eaves gutter overflow measures for on roof catchments up to 400 m²."
+      },
+      "ui": {
+        "title": "Eaves-gutter overflow now mandatory (Appendix F)",
+        "ref": "Appendix F",
+        "doc": "AS/NZS 3500.3:2025",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "stormwater",
+          "eaves gutter",
+          "overflow",
+          "appendix f",
+          "roofing"
+        ]
       }
     },
     {
@@ -77,6 +124,20 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "S/NZS 3500 series Updated plumbing and drainage standards - Part 1: Water services AS/NZS 3500.1:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+      },
+      "ui": {
+        "title": "Water services — current standard edition",
+        "ref": "AS/NZS 3500.1:2025",
+        "doc": "BPC Updated Standards",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "water supply",
+          "standard",
+          "3500.1"
+        ]
       }
     },
     {
@@ -93,6 +154,21 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "s Updated plumbing and drainage standards - Part 2: Sanitary plumbing and drainage AS/NZS 3500.2:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+      },
+      "ui": {
+        "title": "Sanitary plumbing & drainage — current standard edition",
+        "ref": "AS/NZS 3500.2:2025",
+        "doc": "BPC Updated Standards",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "sanitary",
+          "drainage",
+          "standard",
+          "3500.2"
+        ]
       }
     },
     {
@@ -109,6 +185,21 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "500 series Updated plumbing and drainage standards - Part 4: Heated water services AS/NZS 3500.4:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+      },
+      "ui": {
+        "title": "Heated water services — current standard edition",
+        "ref": "AS/NZS 3500.4:2025",
+        "doc": "BPC Updated Standards",
+        "obligation": "technical",
+        "tradeTasks": [
+          "heated-water"
+        ],
+        "tags": [
+          "hot water",
+          "heated water",
+          "standard",
+          "3500.4"
+        ]
       }
     },
     {
@@ -125,6 +216,26 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "where the total value of work (including materials, appliances, labour and GST) exceeds $750"
+      },
+      "ui": {
+        "title": "Compliance certificate required over $750",
+        "ref": "$750 threshold",
+        "doc": "BPC Compliance Certificates",
+        "obligation": "documentation",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water",
+          "backflow"
+        ],
+        "tags": [
+          "compliance certificate",
+          "threshold",
+          "$750",
+          "documentation"
+        ]
       }
     },
     {
@@ -141,6 +252,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Plumbing Regulations 2018 | legislation.vic.gov.au"
+      },
+      "ui": {
+        "title": "Plumbing Regulations 2018 — governing instrument",
+        "ref": "SR No. 18/2018",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water",
+          "backflow"
+        ],
+        "tags": [
+          "regulations",
+          "plumbing regs 2018",
+          "legislation"
+        ]
       }
     },
     {
@@ -157,6 +287,26 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "The Building and Plumbing Commission (BPC) - a single, integrated regulator for the building system established on 1 July 2025."
+      },
+      "ui": {
+        "title": "Victorian regulator is the BPC (est. 1 July 2025)",
+        "ref": "BPC",
+        "doc": "Planning Victoria — Building Reform",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water",
+          "backflow"
+        ],
+        "tags": [
+          "regulator",
+          "BPC",
+          "licensing",
+          "building commission"
+        ]
       }
     },
     {
@@ -173,6 +323,22 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 5 of the Plumbing Regulations 2018, Backflow Prevention work is the repair, alteration, maintenance, testing or commissioning of a backflow prevention device"
+      },
+      "ui": {
+        "title": "Backflow prevention — registration & testing",
+        "ref": "Part 5",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "backflow"
+        ],
+        "tags": [
+          "backflow",
+          "prevention",
+          "testing",
+          "registration",
+          "part 5"
+        ]
       }
     },
     {
@@ -189,6 +355,21 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 4 of the Plumbing Regulations 2018, gasfitting work is defined as the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning"
+      },
+      "ui": {
+        "title": "Gasfitting work — definition & classes",
+        "ref": "Part 4",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "gasfitting"
+        ],
+        "tags": [
+          "gasfitting",
+          "type a",
+          "type b",
+          "part 4"
+        ]
       }
     },
     {
@@ -205,6 +386,22 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 4 of the Plumbing Regulations 2018, drainage work is the construction, installation, replacement, repair, alteration, maintenance, relining, testing or commissioning"
+      },
+      "ui": {
+        "title": "Drainage work — definition (sanitary + stormwater)",
+        "ref": "Part 4",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "sanitary-drainage",
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "drainage",
+          "sanitary",
+          "stormwater",
+          "part 4"
+        ]
       }
     },
     {
@@ -221,6 +418,20 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 4 of the Plumbing Regulations 2018, sanitary work is: the construction, installation, replacement, repair, alteration, maintenance, relining, testing or commissioning"
+      },
+      "ui": {
+        "title": "Sanitary work — definition",
+        "ref": "Part 4",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "sanitary",
+          "plumbing",
+          "part 4"
+        ]
       }
     },
     {
@@ -237,6 +448,20 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 4 of the Plumbing Regulations 2018, roofing stormwater work is the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning of any roof covering"
+      },
+      "ui": {
+        "title": "Roofing (stormwater) work — definition",
+        "ref": "Part 4",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "roofing",
+          "stormwater",
+          "part 4"
+        ]
       }
     },
     {
@@ -253,6 +478,20 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 4 of the Plumbing Regulations 2018, water supply work is: a. the construction, installation, replacement, repair, alteration, relining, maintenance, testing or commissioning"
+      },
+      "ui": {
+        "title": "Water supply work — definition",
+        "ref": "Part 4",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "water supply",
+          "drinking water",
+          "part 4"
+        ]
       }
     },
     {
@@ -269,6 +508,21 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Under Part 4 of the Plumbing Regulations 2018, mechanical services work is: a. the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning of a mechanical"
+      },
+      "ui": {
+        "title": "Mechanical services work (HVAC) — definition",
+        "ref": "Part 4",
+        "doc": "Plumbing Regulations 2018",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "water-supply",
+          "heated-water"
+        ],
+        "tags": [
+          "mechanical services",
+          "HVAC",
+          "part 4"
+        ]
       }
     },
     {
@@ -285,6 +539,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Plumbing registration and licensing | Building and Plumbing Commission --> --> --> Skip to main content Go to BPC Homepage Search BPC Login Menu Log in Log in to BPC Onlin"
+      },
+      "ui": {
+        "title": "Plumber registration & licensing required",
+        "ref": "BPC Registration",
+        "doc": "Building and Plumbing Commission",
+        "obligation": "licensing",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water",
+          "backflow"
+        ],
+        "tags": [
+          "registration",
+          "licensing",
+          "BPC"
+        ]
       }
     },
     {
@@ -301,6 +574,23 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Hot water needs to be stored above 60°C in hot water systems to prevent bacteria growth (such as Legionella), but a tempering valve ensures that the water comes out of the tap at a lower temperature."
+      },
+      "ui": {
+        "title": "Hot water storage >60°C, tempering valve at outlet",
+        "ref": "Tempering valve",
+        "doc": "BPC Safety Guide — Hot Water",
+        "obligation": "technical",
+        "tradeTasks": [
+          "heated-water",
+          "water-supply"
+        ],
+        "tags": [
+          "hot water",
+          "tempering valve",
+          "legionella",
+          "scalding",
+          "60°C"
+        ]
       }
     },
     {
@@ -317,6 +607,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "how to control risks associated with falls from more than 2 metres"
+      },
+      "ui": {
+        "title": "Falls prevention — housing construction >2 m",
+        "ref": ">2 m trigger",
+        "doc": "WorkSafe Compliance Code — Falls (Housing)",
+        "obligation": "whs",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "falls",
+          "height",
+          "2 metres",
+          "housing",
+          "WHS",
+          "safety"
+        ]
       }
     },
     {
@@ -333,6 +642,28 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "how to control risks associated with falls from more than 2 metres"
+      },
+      "ui": {
+        "title": "Falls prevention — general construction >2 m",
+        "ref": ">2 m trigger",
+        "doc": "WorkSafe Compliance Code — Falls (General)",
+        "obligation": "whs",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water",
+          "backflow"
+        ],
+        "tags": [
+          "falls",
+          "height",
+          "2 metres",
+          "general",
+          "WHS",
+          "safety"
+        ]
       }
     },
     {
@@ -349,6 +680,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "the area of asbestos-containing material to be removed does not exceed 10 square metres in total; and the total time taken to perform the asbestos removal work in any seven day period does not exceed one hour."
+      },
+      "ui": {
+        "title": "Asbestos removal — unlicensed cap 10 m² / 1 hr",
+        "ref": "OHS Regs Part 4.4",
+        "doc": "WorkSafe Victoria",
+        "obligation": "whs",
+        "tradeTasks": [
+          "sanitary-drainage",
+          "water-supply",
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "asbestos",
+          "removal",
+          "10 m²",
+          "unlicensed",
+          "WHS",
+          "safety"
+        ]
       }
     },
     {
@@ -365,6 +715,24 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Notification of asbestos installed on or after 1 January 2004 ... The person must enter into an agreement with WorkSafe within 60 days"
+      },
+      "ui": {
+        "title": "Asbestos notification — 60-day agreement",
+        "ref": "Part VIA, DGA 1985",
+        "doc": "WorkSafe Victoria",
+        "obligation": "whs",
+        "tradeTasks": [
+          "sanitary-drainage",
+          "water-supply",
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "asbestos",
+          "notification",
+          "60 days",
+          "WHS",
+          "safety"
+        ]
       }
     },
     {
@@ -381,6 +749,23 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "this compliance code provides practical guidance on how to comply with your obligations under Victoria’s occupational health and safety legislation when your work involves confined spaces"
+      },
+      "ui": {
+        "title": "Confined spaces — compliance code",
+        "ref": "Compliance Code",
+        "doc": "WorkSafe Victoria",
+        "obligation": "whs",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "gasfitting"
+        ],
+        "tags": [
+          "confined space",
+          "WHS",
+          "safety",
+          "compliance code"
+        ]
       }
     },
     {
@@ -397,6 +782,24 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Work within 3.0m from an overhead power line, permit ... Work between 3.0m and 6.4m from an overhead power line, a registered Spotter is required."
+      },
+      "ui": {
+        "title": "Powerline approach distances — 3.0 m / 6.4 m",
+        "ref": "3.0 m No Go / 6.4 m Spotter",
+        "doc": "Energy Safe Victoria",
+        "obligation": "whs",
+        "tradeTasks": [
+          "roofing-stormwater",
+          "water-supply"
+        ],
+        "tags": [
+          "powerline",
+          "no go zone",
+          "spotter",
+          "3.0m",
+          "6.4m",
+          "safety"
+        ]
       }
     },
     {
@@ -413,6 +816,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "The Building Act 1993 allows action to be brought against a builder for up to 10 years from the date the work was completed."
+      },
+      "ui": {
+        "title": "Implied warranties — up to 10 years",
+        "ref": "10 years",
+        "doc": "Building Act 1993 / DBCA 1995",
+        "obligation": "documentation",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water"
+        ],
+        "tags": [
+          "warranty",
+          "10 years",
+          "building act",
+          "consumer"
+        ]
       }
     },
     {
@@ -429,6 +851,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "This is insurance that you take out for your client on works over $16,000. It was previously known as 'builders warranty insurance'."
+      },
+      "ui": {
+        "title": "Domestic building insurance over $16,000",
+        "ref": "$16,000 threshold",
+        "doc": "Domestic Building Insurance Act",
+        "obligation": "documentation",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water"
+        ],
+        "tags": [
+          "DBI",
+          "insurance",
+          "$16,000",
+          "documentation"
+        ]
       }
     },
     {
@@ -445,6 +886,22 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "Part 7.4 Gutters and downpipes"
+      },
+      "ui": {
+        "title": "Gutters & downpipes — NCC Housing Provisions",
+        "ref": "Part 7.4",
+        "doc": "NCC 2022 (Housing Provisions)",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "gutters",
+          "downpipes",
+          "NCC",
+          "part 7.4",
+          "roofing"
+        ]
       }
     },
     {
@@ -461,6 +918,22 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "An important change is set out in clause H2D6(3). It excludes box gutters from Part 7.4."
+      },
+      "ui": {
+        "title": "Box gutters carved out of deemed-to-satisfy",
+        "ref": "H2D6(3)",
+        "doc": "NCC 2022 Vol 2",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "box gutter",
+          "carve out",
+          "H2D6",
+          "NCC",
+          "roofing"
+        ]
       }
     },
     {
@@ -477,6 +950,25 @@
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "These are called ‘warranties’ in the Domestic Building Contracts Act 1995, and ‘consumer guarantees’ in the Australian Consumer Law."
+      },
+      "ui": {
+        "title": "Consumer guarantees — Australian Consumer Law",
+        "ref": "ACL (Sch 2, CCA 2010)",
+        "doc": "Australian Consumer Law",
+        "obligation": "documentation",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water"
+        ],
+        "tags": [
+          "consumer guarantees",
+          "ACL",
+          "warranty",
+          "consumer law"
+        ]
       }
     }
   ]

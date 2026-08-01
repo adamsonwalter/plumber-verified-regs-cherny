@@ -23,13 +23,59 @@ button{font:inherit;cursor:pointer}
 
 /* ---- layout ---- */
 .app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg)}
-@media(min-width:600px){
-  .app{border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 40px rgba(0,0,0,.06)}
-}
 .screen{display:none;padding:16px 16px calc(80px + env(safe-area-inset-bottom,0px)) 16px;min-height:100vh}
 .screen.active{display:block}
+/* sidebar hidden on phone, shown on desktop (base rules before media query) */
+.sidebar{display:none}
+.sidebar-browse{display:none}
 
-/* ---- top bar ---- */
+/* ---- DESKTOP: two-pane workspace (>900px) ---- */
+@media(min-width:900px){
+  .app{max-width:none;margin:0;display:grid;grid-template-columns:248px 1fr;grid-template-rows:100vh}
+  .sidebar{grid-column:1;display:flex;flex-direction:column;background:#fff;border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow-y:auto;padding:20px 16px}
+  .main{grid-column:2;overflow-y:auto;height:100vh}
+  .screen{padding:24px 32px 48px;max-width:1400px;min-height:auto}
+  /* phone-only chrome hidden on desktop */
+  .topbar,.tabbar{display:none !important}
+  .screen{padding-bottom:48px !important}
+  /* home screen: hide the Jobs section + browse button (sidebar has them) */
+  #screen-home h3,#screen-home .tiles,#home-search .search button{display:none}
+  #home-search .search input{width:100%}
+  /* job tiles become compact sidebar list */
+  .tiles{grid-template-columns:1fr;gap:6px;margin-bottom:14px}
+  .tile{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;box-shadow:none;border:1px solid transparent}
+  .tile:active{transform:none}
+  .tile:hover{background:#f5f5f7}
+  .tile .icon{width:30px;height:30px;border-radius:8px;font-size:11px;margin:0}
+  .tile .name{font-size:13px}
+  .tile .pin{top:50%;right:8px;transform:translateY(-50%);width:16px;height:16px}
+  /* results grid: 2 cols default, 3 cols wide */
+  #results-list,#search-results,#saved-list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-items:start}
+  @media(min-width:1400px){#results-list,#search-results,#saved-list{grid-template-columns:repeat(3,1fr)}}
+  .reg-card{margin-bottom:0}
+  /* resume card tighter on desktop */
+  .resume{margin-bottom:14px}
+  /* browse-all becomes a sidebar link, not a big dashed button */
+  .browse-all{display:none}
+  .sidebar-browse{display:block}
+}
+/* ---- sidebar (desktop) ---- */
+.sidebar-brand{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;letter-spacing:-.3px}
+.sidebar-sub{font-size:11px;color:var(--muted);margin-bottom:20px}
+.sidebar-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.sidebar-nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;color:#3c3c43;transition:background .12s}
+.sidebar-nav-item:hover{background:#f5f5f7}
+.sidebar-nav-item.on{background:var(--blue-bg);color:var(--blue)}
+.sidebar-nav-item .ico{width:22px;height:22px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.sidebar-section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 8px;padding:0 10px}
+.sidebar-section{margin-bottom:18px}
+.sidebar-data{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.sidebar-data button{display:block;width:100%;text-align:left;padding:8px 10px;border-radius:8px;border:none;background:transparent;font-size:13px;font-weight:600;color:#3c3c43;cursor:pointer}
+.sidebar-data button:hover{background:#f5f5f7}
+.sidebar-browse{font-size:13px;font-weight:600;color:var(--blue);padding:8px 10px;border-radius:8px;cursor:pointer;background:none;border:none;width:100%;text-align:left}
+.sidebar-browse:hover{background:#f5f5f7}
+
+/* ---- top bar (phone only) ---- */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:calc(var(--safe-top) + 10px) 16px 12px}
 .pill{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);padding:5px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:700}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
@@ -112,6 +158,11 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40;align-items:flex-end;justify-content:center}
 .sheet-overlay.open{display:flex}
 .sheet{width:100%;max-width:480px;max-height:80vh;background:var(--card);border-radius:22px 22px 0 0;padding:12px 20px calc(26px + var(--safe-bottom)) 20px;overflow-y:auto;animation:slideUp .25s ease-out}
+@media(min-width:900px){
+  .sheet-overlay{align-items:center;padding:40px}
+  .sheet{border-radius:18px;max-height:85vh;max-width:560px;padding:20px 24px 24px}
+  .sheet .handle{display:none}
+}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .sheet .handle{width:36px;height:5px;border-radius:3px;background:#d1d1d6;margin:0 auto 16px}
 .sheet .close{border:none;background:#f2f2f7;width:28px;height:28px;border-radius:50%;font-size:15px;color:#3c3c43;cursor:pointer}
@@ -182,6 +233,16 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .filter-chip{flex-shrink:0;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;transition:all .15s}
 .filter-chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 
+/* multi-select hint (unobtrusive, fades for repeat users) */
+.filter-hint{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap;opacity:1;transition:opacity .6s}
+.filter-hint.dim{opacity:0}
+
+/* results count header */
+.count-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.count-total{font-size:11px;color:var(--muted);font-weight:600}
+.clear-filters{font-size:12px;font-weight:700;color:var(--blue);background:none;border:none;cursor:pointer;display:none}
+.clear-filters.show{display:inline}
+
 /* ---- what's-new banner ---- */
 .new-banner{background:var(--green-bg);border:1px solid #c3ddd2;border-radius:14px;padding:13px 15px;margin-bottom:16px;display:none;cursor:pointer;transition:transform .1s}
 .new-banner.show{display:flex;align-items:flex-start;gap:10px}
@@ -225,7 +286,31 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 <body>
 <div class="app" id="app">
 
-  <!-- top bar -->
+  <!-- ===== SIDEBAR (desktop ≥900px) ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">VIC PlumberRegs</div>
+    <div class="sidebar-sub">Verified · 29 regulations</div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-item on" data-tab="home" onclick="switchTab('home')"><div class="ico">⌂</div>Home</div>
+      <div class="sidebar-nav-item" data-tab="search" onclick="switchTab('search')"><div class="ico">🔍</div>Search</div>
+      <div class="sidebar-nav-item" data-tab="saved" onclick="switchTab('saved')"><div class="ico">★</div>Saved</div>
+      <div class="sidebar-nav-item" data-tab="settings" onclick="switchTab('settings')"><div class="ico">⚙</div>Settings</div>
+    </nav>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Jobs</div>
+      <div class="tiles" id="sidebar-tiles"></div>
+      <button class="sidebar-browse" onclick="browseAll()">Browse all 29 regs ›</button>
+    </div>
+    <div class="sidebar-data">
+      <button onclick="toggleClassic()">◐ Classic mode</button>
+      <button onclick="exportData()">⬇ Export my data</button>
+    </div>
+  </aside>
+
+  <!-- main content -->
+  <div class="main" id="main">
+
+  <!-- top bar (phone only) -->
   <div class="topbar">
     <div class="pill">Live data</div>
     <div class="offline pill" style="background:oklch(.92 .03 25);color:oklch(.45 .12 25)">Offline</div>
@@ -277,8 +362,14 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
     <div class="search-standalone">
       <input type="text" placeholder="Filter these results…" id="results-query" autocomplete="off">
     </div>
-    <div class="filter-bar" id="ob-filter-bar"></div>
-    <div class="count" id="results-count"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <div class="filter-bar" id="ob-filter-bar"></div>
+      <span class="filter-hint" id="filter-hint">tap to combine</span>
+    </div>
+    <div class="count-row">
+      <div class="count" id="results-count"></div>
+      <button class="clear-filters" id="clear-filters" onclick="clearAllFilters()">Clear filters</button>
+    </div>
     <div id="results-list"></div>
   </div>
 
@@ -338,6 +429,8 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
     </div>
     <p style="font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5">All preferences, bookmarks, notes, and reviewed markers are stored on this device. Export to keep them safe or move to another device.</p>
   </div>
+
+  </div><!-- /.main -->
 
   <!-- ===== CLASSIC overlay ===== -->
   <div class="classic" id="classic-overlay">
@@ -425,7 +518,7 @@ const ALL_OBLIGATIONS = Object.keys(OBLIGATION_META);
 let REG = null;
 let entries = [];
 let changedEntries = []; // entries new/changed since last visit
-const STORAGE_KEYS = ["bookmarks","recentSearches","pinnedJobs","lastViewed","reviewed","notes","lastSeenVersion","lastVisit","visitStreak","cache"];
+const STORAGE_KEYS = ["bookmarks","recentSearches","pinnedJobs","lastViewed","reviewed","notes","lastSeenVersion","lastVisit","visitStreak","filterHintUses","cache"];
 
 function lsGet(key, fallback) { try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch { return false; } }
@@ -447,7 +540,8 @@ let state = {
   sheetId: null,
   lastSeenVersion: lsGet("lastSeenVersion", null),
   lastVisit: lsGet("lastVisit", null),
-  visitStreak: lsGet("visitStreak", 0)
+  visitStreak: lsGet("visitStreak", 0),
+  filterHintUses: lsGet("filterHintUses", 0)
 };
 
 /* ======== HELPERS ======== */
@@ -645,6 +739,7 @@ function wipeData() {
   state.lastSeenVersion = null;
   state.lastVisit = null;
   state.visitStreak = 0;
+  state.filterHintUses = 0;
   renderAll();
 }
 
@@ -658,6 +753,7 @@ function reloadStateFromStorage() {
   state.lastSeenVersion = lsGet("lastSeenVersion", null);
   state.lastVisit = lsGet("lastVisit", null);
   state.visitStreak = lsGet("visitStreak", 0);
+  state.filterHintUses = lsGet("filterHintUses", 0);
 }
 
 /* ======== MULTI-TAB SYNC ======== */
@@ -730,10 +826,13 @@ function switchTab(tab) {
   state.tab = tab;
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  document.querySelectorAll(".sidebar-nav-item").forEach(t => t.classList.remove("on"));
   const screen = $("screen-" + tab);
   if (screen) screen.classList.add("active");
   const tabEl = document.querySelector('.tab[data-tab="' + tab + '"]');
   if (tabEl) tabEl.classList.add("on");
+  const navEl = document.querySelector('.sidebar-nav-item[data-tab="' + tab + '"]');
+  if (navEl) navEl.classList.add("on");
 
   if (tab === "search") { $("search-query").focus(); paintSearchScreen(); }
   if (tab === "saved") paintSavedScreen();
@@ -791,13 +890,16 @@ function paintHome() {
     const bP = state.pinnedJobs.includes(b.id) ? 0 : 1;
     return aP - bP;
   });
-  $("job-tiles").innerHTML = ordered.map(function(j) {
+  const tileHtml = ordered.map(function(j) {
     const pinned = state.pinnedJobs.includes(j.id);
     return '<div class="tile" onclick="selectJob(\'' + j.id + '\')">' +
       '<div class="pin ' + (pinned ? 'on' : '') + '" onclick="event.stopPropagation();toggleJobPin(\'' + j.id + '\')"></div>' +
       '<div class="icon" style="background:' + j.color + '">' + j.mono + '</div>' +
       '<div class="name">' + esc(j.label) + '</div></div>';
   }).join("");
+  $("job-tiles").innerHTML = tileHtml;
+  const sidebarTiles = $("sidebar-tiles");
+  if (sidebarTiles) sidebarTiles.innerHTML = tileHtml;
 
   // recent searches
   $("recent-searches").innerHTML = state.recentSearches.length
@@ -810,7 +912,11 @@ function goHome() {
   showScreen("screen-home");
   state.tab = "home";
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
-  document.querySelector('.tab[data-tab="home"]').classList.add("on");
+  document.querySelectorAll(".sidebar-nav-item").forEach(t => t.classList.remove("on"));
+  const homeTab = document.querySelector('.tab[data-tab="home"]');
+  if (homeTab) homeTab.classList.add("on");
+  const homeNav = document.querySelector('.sidebar-nav-item[data-tab="home"]');
+  if (homeNav) homeNav.classList.add("on");
   paintHome();
 }
 
@@ -901,6 +1007,7 @@ function toggleJobPin(jobId) {
 function showResults() {
   showScreen("screen-results");
   paintObFilters();
+  updateFilterHint();
 }
 
 function paintObFilters() {
@@ -915,18 +1022,45 @@ function toggleObFilter(ob) {
   const idx = state.activeObligations.indexOf(ob);
   if (idx >= 0) state.activeObligations.splice(idx, 1);
   else state.activeObligations.push(ob);
+  // track hint dismissal after 2 uses
+  state.filterHintUses = (state.filterHintUses || 0) + 1;
+  lsSet("filterHintUses", state.filterHintUses);
+  paintObFilters();
   paintResults();
+}
+
+function clearAllFilters() {
+  state.activeObligations = [];
+  state.activeTasks = [];
+  state.query = "";
+  state.jobId = null;
+  if ($("results-query")) $("results-query").value = "";
+  paintObFilters();
+  paintResults();
+}
+
+function updateFilterHint() {
+  const hint = $("filter-hint");
+  if (!hint) return;
+  if ((state.filterHintUses || 0) >= 2) hint.classList.add("dim");
+  else hint.classList.remove("dim");
 }
 
 function paintResults() {
   const q = $("results-query") ? $("results-query").value.trim() : state.query;
   state.query = q;
   const results = filterEntries(q, state.activeTasks, state.activeObligations);
-  $("results-count").textContent = results.length + " result" + (results.length === 1 ? "" : "s") +
-    (state.jobId ? " for " + (JOB_PRESETS.find(function(j) { return j.id === state.jobId; }) || {}).label : "");
+  const total = entries.length;
+  const filtered = (q || state.activeTasks.length || state.activeObligations.length);
+  $("results-count").innerHTML = results.length + " result" + (results.length === 1 ? "" : "s") +
+    (state.jobId ? " for " + (JOB_PRESETS.find(function(j) { return j.id === state.jobId; }) || {}).label : "") +
+    (filtered ? ' <span class="count-total">of ' + total + '</span>' : "");
   $("results-list").innerHTML = results.length
     ? results.map(e => renderRegCard(e)).join("")
-    : '<p class="empty">No regulations match your filters.</p>';
+    : '<div class="empty"><p>No regulations match your filters.</p><button class="chip" onclick="clearAllFilters()" style="margin-top:12px">Show all ' + total + ' regulations</button></div>';
+  // show clear button only when filtering
+  const clr = $("clear-filters");
+  if (clr) { if (filtered) clr.classList.add("show"); else clr.classList.remove("show"); }
 }
 
 /* ======== SEARCH SCREEN ======== */

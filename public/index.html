@@ -185,12 +185,12 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .sheet .source-btn{background:var(--amber);color:#fff;border:none;text-decoration:none;display:block}
 
 /* ---- tab bar ---- */
-.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(0,0,0,.08);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom,0px)}
-.tab{flex:1;text-align:center;cursor:pointer;padding:8px 0 var(--safe-bottom,0px);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;-webkit-tap-highlight-color:transparent}
-.tab .dot{width:5px;height:5px;border-radius:50%;background:transparent;transition:background .15s}
-.tab.on .dot{background:var(--amber)}
-.tab .label{font-size:11px;font-weight:500;color:var(--muted);transition:color .15s}
-.tab.on .label{font-weight:800;color:var(--ink)}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid rgba(0,0,0,.08);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{flex:1;text-align:center;cursor:pointer;padding:8px 0 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;-webkit-tap-highlight-color:transparent;min-height:49px}
+.tab svg{width:25px;height:25px;stroke:rgba(60,60,67,.5);fill:none;stroke-width:1.8;transition:stroke .15s,fill .15s}
+.tab.on svg{stroke:var(--amber);fill:none}
+.tab .label{font-size:10px;font-weight:500;color:rgba(60,60,67,.5);letter-spacing:.1px;transition:color .15s}
+.tab.on .label{font-weight:600;color:var(--amber)}
 
 /* ---- saved empty ---- */
 .empty{text-align:center;color:rgba(60,60,67,.4);font-size:13px;margin-top:40px}
@@ -478,10 +478,22 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 
   <!-- ===== tab bar ===== -->
   <div class="tabbar" id="tabbar">
-    <div class="tab on" data-tab="home" onclick="switchTab('home')"><div class="dot"></div><div class="label">Home</div></div>
-    <div class="tab" data-tab="search" onclick="switchTab('search')"><div class="dot"></div><div class="label">Search</div></div>
-    <div class="tab" data-tab="saved" onclick="switchTab('saved')"><div class="dot"></div><div class="label">Saved</div></div>
-    <div class="tab" data-tab="settings" onclick="switchTab('settings')"><div class="dot"></div><div class="label">Settings</div></div>
+    <div class="tab on" data-tab="home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z" stroke-linejoin="round"/></svg>
+      <div class="label">Home</div>
+    </div>
+    <div class="tab" data-tab="search" onclick="switchTab('search')">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21" stroke-linecap="round"/></svg>
+      <div class="label">Search</div>
+    </div>
+    <div class="tab" data-tab="saved" onclick="switchTab('saved')">
+      <svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z" stroke-linejoin="round"/></svg>
+      <div class="label">Saved</div>
+    </div>
+    <div class="tab" data-tab="settings" onclick="switchTab('settings')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1M18.7 18.7l-2.1-2.1M7.4 7.4L5.3 5.3" stroke-linecap="round"/></svg>
+      <div class="label">Settings</div>
+    </div>
   </div>
 </div>
 

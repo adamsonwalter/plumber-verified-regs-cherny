@@ -181,6 +181,45 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .filter-bar::-webkit-scrollbar{display:none}
 .filter-chip{flex-shrink:0;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;transition:all .15s}
 .filter-chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ---- what's-new banner ---- */
+.new-banner{background:var(--green-bg);border:1px solid #c3ddd2;border-radius:14px;padding:13px 15px;margin-bottom:16px;display:none;cursor:pointer;transition:transform .1s}
+.new-banner.show{display:flex;align-items:flex-start;gap:10px}
+.new-banner:active{transform:scale(.98)}
+.new-banner .badge-new{display:inline-flex;font-size:11px;font-weight:800;background:var(--green);color:#fff;padding:2px 8px;border-radius:var(--radius-pill);white-space:nowrap;flex-shrink:0}
+.new-banner .new-text{font-size:13.5px;color:#123f34;line-height:1.4}
+
+/* ---- cadence nudge ---- */
+.nudge{font-size:12px;color:var(--muted);margin-bottom:16px;display:none}
+.nudge.show{display:block}
+.nudge strong{color:var(--ink)}
+
+/* ---- reviewed reg card ---- */
+.reg-card.reviewed{opacity:.55}
+.reg-card.reviewed .snippet{position:relative}
+.reg-card .reviewed-pill{font-size:10px;font-weight:700;background:var(--green-bg);color:var(--green);padding:2px 7px;border-radius:var(--radius-pill);margin-left:8px}
+
+/* ---- note indicator ---- */
+.reg-card .note-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);position:absolute;top:8px;right:8px}
+.reg-card{position:relative}
+
+/* ---- sheet: reviewed + notes ---- */
+.sheet .reviewed-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.sheet .reviewed-btn{flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:var(--card);color:#3c3c43;cursor:pointer}
+.sheet .reviewed-btn.on{border-color:var(--green);background:var(--green-bg);color:#123f34}
+.sheet .reviewed-date{font-size:11px;color:var(--muted)}
+.sheet .notes-section{margin-top:16px;border-top:1px solid #ededed;padding-top:14px}
+.sheet .notes-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--blue);margin-bottom:6px}
+.sheet .notes-area{width:100%;font:inherit;font-size:13.5px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);background:#f9f9f9;resize:vertical;min-height:60px;outline:none;line-height:1.5}
+.sheet .notes-area:focus{border-color:var(--blue);background:#fff}
+.sheet .notes-saved{font-size:11px;color:var(--green);margin-top:4px}
+
+/* ---- settings: data section ---- */
+.settings-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.settings-actions button{font-size:13px;font-weight:600;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.settings-actions button:hover{border-color:var(--blue);background:var(--blue-bg)}
+.settings-actions button.danger{color:var(--red)}
+.settings-actions button.danger:hover{border-color:var(--red);background:oklch(.94 .03 25)}
 </style>
 </head>
 <body>
@@ -196,6 +235,11 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
   <div class="screen active" id="screen-home">
     <h1>Find a reg</h1>
 
+    <div class="new-banner" id="new-banner" onclick="showWhatsNew()">
+      <span class="badge-new">NEW</span>
+      <div class="new-text" id="new-text">—</div>
+    </div>
+
     <div class="resume" id="resume-card">
       <div class="label">Continue where you left off</div>
       <div class="title" id="resume-title">—</div>
@@ -206,6 +250,8 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
       <input type="text" placeholder="Search clauses, keywords, refs…" id="home-query" autocomplete="off">
       <button onclick="runHomeSearch()">Go</button>
     </div>
+
+    <div class="nudge" id="nudge"></div>
 
     <h3>Jobs</h3>
     <div class="tiles" id="job-tiles"></div>
@@ -274,7 +320,23 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
         <div class="left"><div class="title">Entries</div></div>
         <div class="right" id="entry-count">—</div>
       </div>
+      <div class="settings-row">
+        <div class="left"><div class="title">Last visit</div></div>
+        <div class="right" id="settings-lastvisit">—</div>
+      </div>
+      <div class="settings-row">
+        <div class="left"><div class="title">Visits</div></div>
+        <div class="right" id="settings-visits">—</div>
+      </div>
     </div>
+    <h3 style="margin-top:24px">Your data</h3>
+    <div class="settings-actions">
+      <button onclick="exportData()">⬇ Export my data</button>
+      <button onclick="document.getElementById('import-file').click()">⬆ Import</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importData(event)">
+      <button class="danger" onclick="wipeData()">Reset device memory</button>
+    </div>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5">All preferences, bookmarks, notes, and reviewed markers are stored on this device. Export to keep them safe or move to another device.</p>
   </div>
 
   <!-- ===== CLASSIC overlay ===== -->
@@ -306,6 +368,17 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
       <div class="actions">
         <button class="bookmark-btn" id="sheet-bm" onclick="toggleBookmarkSheet()"></button>
         <a class="source-btn" id="sheet-source" href="#" target="_blank" rel="noopener">Open source</a>
+      </div>
+
+      <div class="reviewed-row">
+        <button class="reviewed-btn" id="sheet-reviewed" onclick="toggleReviewed()">✓ Mark reviewed</button>
+        <span class="reviewed-date" id="sheet-reviewed-date"></span>
+      </div>
+
+      <div class="notes-section">
+        <div class="notes-label">Your notes (this device only)</div>
+        <textarea class="notes-area" id="sheet-notes" placeholder="Jot down anything — your trade, the job, what to check…" oninput="debouncedNote()"></textarea>
+        <div class="notes-saved" id="sheet-notes-saved"></div>
       </div>
     </div>
   </div>
@@ -349,37 +422,42 @@ const ALL_TASKS = Object.keys(TRADE_TASK_LABELS);
 const ALL_OBLIGATIONS = Object.keys(OBLIGATION_META);
 
 /* ======== STATE ======== */
-let REG = null; // raw register.json
-let entries = []; // enriched entries with ui blocks
+let REG = null;
+let entries = [];
+let changedEntries = []; // entries new/changed since last visit
+const STORAGE_KEYS = ["bookmarks","recentSearches","pinnedJobs","lastViewed","reviewed","notes","lastSeenVersion","lastVisit","visitStreak","cache"];
+
+function lsGet(key, fallback) { try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; } catch { return fallback; } }
+function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch { return false; } }
+
 let state = {
   tab: "home",
-  // results state
   activeTasks: [],
   activeObligations: [],
   query: "",
-  // job builder
   jobId: null,
   jobTasks: [],
-  // bookmarks
-  bookmarks: JSON.parse(localStorage.getItem("bookmarks") || "[]"),
-  // recent searches
-  recentSearches: JSON.parse(localStorage.getItem("recentSearches") || "[]"),
-  // pinned jobs
-  pinnedJobs: JSON.parse(localStorage.getItem("pinnedJobs") || "[]"),
-  // last viewed
-  lastViewed: localStorage.getItem("lastViewed") || null,
-  // classic mode
+  bookmarks: lsGet("bookmarks", []),
+  recentSearches: lsGet("recentSearches", []),
+  pinnedJobs: lsGet("pinnedJobs", []),
+  lastViewed: lsGet("lastViewed", null),
+  reviewed: lsGet("reviewed", {}),
+  notes: lsGet("notes", {}),
   classic: false,
-  // open sheet
-  sheetId: null
+  sheetId: null,
+  lastSeenVersion: lsGet("lastSeenVersion", null),
+  lastVisit: lsGet("lastVisit", null),
+  visitStreak: lsGet("visitStreak", 0)
 };
 
 /* ======== HELPERS ======== */
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function $(id) { return document.getElementById(id); }
-function saveBookmarks() { localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks)); }
-function saveRecent() { localStorage.setItem("recentSearches", JSON.stringify(state.recentSearches.slice(0, 10))); }
-function savePinned() { localStorage.setItem("pinnedJobs", JSON.stringify(state.pinnedJobs)); }
+function saveBookmarks() { lsSet("bookmarks", state.bookmarks); }
+function saveRecent() { lsSet("recentSearches", state.recentSearches.slice(0, 10)); }
+function savePinned() { lsSet("pinnedJobs", state.pinnedJobs); }
+function saveReviewed() { lsSet("reviewed", state.reviewed); }
+function saveNotes() { lsSet("notes", state.notes); }
 
 function sourceDomain(url) {
   try { return new URL(url).hostname.replace(/^www\./, ""); } catch(e) { return ""; }
@@ -390,12 +468,209 @@ function whereToFind(e) {
   return ui.ref + " · " + ui.doc;
 }
 
+function timeAgo(iso) {
+  if (!iso) return "never";
+  const d = (Date.now() - new Date(iso)) / 1000;
+  if (d < 60) return "just now";
+  if (d < 3600) return Math.floor(d / 60) + " min ago";
+  if (d < 86400) return Math.floor(d / 3600) + " h ago";
+  return Math.floor(d / 86400) + " day" + (Math.floor(d / 86400) === 1 ? "" : "s") + " ago";
+}
+
+function daysBetween(isoA, isoB) {
+  if (!isoA || !isoB) return 999;
+  return Math.floor(Math.abs(new Date(isoA) - new Date(isoB)) / 864e5);
+}
+
 function isBookmarked(id) { return state.bookmarks.includes(id); }
+function isReviewed(id) { return !!state.reviewed[id]; }
+function hasNote(id) { return !!state.notes[id]; }
+
 function toggleBookmark(id) {
   if (isBookmarked(id)) state.bookmarks = state.bookmarks.filter(x => x !== id);
   else state.bookmarks.push(id);
   saveBookmarks();
 }
+
+/* ======== PATTERN #9: LOCAL DIFF CACHE ======== */
+function loadCache() {
+  try {
+    const raw = localStorage.getItem("cache");
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function saveCache(entries, version) {
+  try { localStorage.setItem("cache", JSON.stringify({ v: version, entries: entries })); } catch {}
+}
+
+/* ======== PATTERN #1: WHAT CHANGED ======== */
+function computeChanges(freshEntries, freshVersion) {
+  if (!state.lastSeenVersion || state.lastSeenVersion === freshVersion) return [];
+  const oldIds = new Set((loadCache() || {}).entries.map(e => e.id));
+  return freshEntries.filter(e => !oldIds.has(e.id));
+}
+
+function dismissWhatsNew() {
+  if (REG) state.lastSeenVersion = REG.register_version;
+  lsSet("lastSeenVersion", state.lastSeenVersion);
+  $("new-banner").classList.remove("show");
+}
+
+function showWhatsNew() {
+  // show results filtered to changed entries
+  state.activeTasks = [];
+  state.activeObligations = [];
+  state.jobId = null;
+  showScreen("screen-results");
+  $("results-query").value = "";
+  $("results-count").textContent = changedEntries.length + " updated regulation" + (changedEntries.length === 1 ? "" : "s");
+  $("results-list").innerHTML = changedEntries.map(e => renderRegCard(e)).join("");
+  paintObFilters();
+}
+
+/* ======== PATTERN #3: REVIEWED ======== */
+function toggleReviewed() {
+  if (!state.sheetId) return;
+  if (state.reviewed[state.sheetId]) {
+    delete state.reviewed[state.sheetId];
+  } else {
+    state.reviewed[state.sheetId] = new Date().toISOString();
+  }
+  saveReviewed();
+  updateSheetReviewed();
+  // repaint visible list
+  repaintVisible();
+}
+
+function updateSheetReviewed() {
+  const btn = $("sheet-reviewed");
+  const dateEl = $("sheet-reviewed-date");
+  if (!state.sheetId) return;
+  const ts = state.reviewed[state.sheetId];
+  if (ts) {
+    btn.className = "reviewed-btn on";
+    btn.textContent = "✓ Reviewed";
+    dateEl.textContent = timeAgo(ts);
+  } else {
+    btn.className = "reviewed-btn";
+    btn.textContent = "✓ Mark reviewed";
+    dateEl.textContent = "";
+  }
+}
+
+/* ======== PATTERN #5: ANNOTATIONS ======== */
+let noteTimer = null;
+function debouncedNote() {
+  clearTimeout(noteTimer);
+  noteTimer = setTimeout(saveCurrentNote, 300);
+}
+
+function saveCurrentNote() {
+  if (!state.sheetId) return;
+  const v = $("sheet-notes").value.trim();
+  if (v) state.notes[state.sheetId] = v;
+  else delete state.notes[state.sheetId];
+  saveNotes();
+  $("sheet-notes-saved").textContent = "✓ Saved on this device";
+  setTimeout(function() { $("sheet-notes-saved").textContent = ""; }, 2000);
+  // repaint visible to update note dots
+  repaintVisible();
+}
+
+/* ======== PATTERN #8: CADENCE NUDGE ======== */
+function updateVisitTracking() {
+  const now = new Date();
+  const prev = state.lastVisit ? new Date(state.lastVisit) : null;
+  // streak: consecutive days
+  if (!prev || daysBetween(prev.toISOString(), now.toISOString()) > 1) {
+    state.visitStreak = 1;
+  } else if (daysBetween(prev.toISOString(), now.toISOString()) <= 1) {
+    state.visitStreak = (state.visitStreak || 0) + 1;
+  }
+  state.lastVisit = now.toISOString();
+  lsSet("lastVisit", state.lastVisit);
+  lsSet("visitStreak", state.visitStreak);
+}
+
+/* ======== PATTERN #11: EXPORT / IMPORT ======== */
+function exportData() {
+  const data = {};
+  STORAGE_KEYS.forEach(function(k) {
+    try { const v = localStorage.getItem(k); if (v !== null) data[k] = JSON.parse(v); } catch {}
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "plumber-regs-data.json";
+  a.click();
+}
+
+function importData(ev) {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      const data = JSON.parse(reader.result);
+      STORAGE_KEYS.forEach(function(k) {
+        if (data[k] !== undefined) localStorage.setItem(k, JSON.stringify(data[k]));
+      });
+      // reload state from localStorage
+      reloadStateFromStorage();
+      if (REG) { entries = REG.entries || []; }
+      else {
+        const cache = loadCache();
+        if (cache && cache.entries) { entries = cache.entries; }
+      }
+      renderAll();
+      alert("Data imported — bookmarks, notes, and reviewed markers restored.");
+    } catch { alert("Not a valid data file."); }
+  };
+  reader.readAsText(f);
+  ev.target.value = ""; // reset file input
+}
+
+function wipeData() {
+  if (!confirm("Clear all saved data on this device?\n\nBookmarks, notes, reviewed markers, and preferences will be removed.")) return;
+  STORAGE_KEYS.forEach(function(k) { localStorage.removeItem(k); });
+  reloadStateFromStorage();
+  state.bookmarks = [];
+  state.recentSearches = [];
+  state.pinnedJobs = [];
+  state.lastViewed = null;
+  state.reviewed = {};
+  state.notes = {};
+  state.lastSeenVersion = null;
+  state.lastVisit = null;
+  state.visitStreak = 0;
+  renderAll();
+}
+
+function reloadStateFromStorage() {
+  state.bookmarks = lsGet("bookmarks", []);
+  state.recentSearches = lsGet("recentSearches", []);
+  state.pinnedJobs = lsGet("pinnedJobs", []);
+  state.lastViewed = lsGet("lastViewed", null);
+  state.reviewed = lsGet("reviewed", {});
+  state.notes = lsGet("notes", {});
+  state.lastSeenVersion = lsGet("lastSeenVersion", null);
+  state.lastVisit = lsGet("lastVisit", null);
+  state.visitStreak = lsGet("visitStreak", 0);
+}
+
+/* ======== MULTI-TAB SYNC ======== */
+window.addEventListener("storage", function(ev) {
+  if (STORAGE_KEYS.indexOf(ev.key) === -1) return;
+  reloadStateFromStorage();
+  // if cache was updated by another tab, refresh entries
+  if (ev.key === "cache") {
+    const cache = loadCache();
+    if (cache && cache.entries) entries = cache.entries;
+  }
+  renderAll();
+});
 
 /* ======== SEARCH ======== */
 function matchesQuery(e, q) {
@@ -433,6 +708,23 @@ function filterEntries(query, tasks, obligations) {
   );
 }
 
+/* ======== REPAINT HELPER ======== */
+function repaintVisible() {
+  if ($("screen-home").classList.contains("active")) paintHome();
+  else if ($("screen-results").classList.contains("active")) paintResults();
+  else if ($("screen-saved").classList.contains("active")) paintSaved();
+  else if ($("screen-search").classList.contains("active")) runSearchQuery();
+}
+
+function renderAll() {
+  paintHome();
+  paintSettings();
+  if ($("screen-saved").classList.contains("active")) paintSaved();
+  if ($("screen-results").classList.contains("active")) paintResults();
+  if ($("screen-search").classList.contains("active")) runSearchQuery();
+  if (state.classic) paintClassic();
+}
+
 /* ======== NAVIGATION ======== */
 function switchTab(tab) {
   state.tab = tab;
@@ -455,6 +747,14 @@ function showScreen(id) {
 
 /* ======== HOME SCREEN ======== */
 function paintHome() {
+  // what's new banner
+  if (changedEntries.length) {
+    $("new-banner").classList.add("show");
+    $("new-text").innerHTML = "<strong>" + changedEntries.length + " regulation" + (changedEntries.length === 1 ? "" : "s") + " updated</strong> since you last checked — tap to see what's new.";
+  } else {
+    $("new-banner").classList.remove("show");
+  }
+
   // resume card
   if (state.lastViewed) {
     const e = entries.find(x => x.id === state.lastViewed);
@@ -468,13 +768,30 @@ function paintHome() {
     $("resume-card").classList.add("hide");
   }
 
+  // cadence nudge
+  const nudge = $("nudge");
+  if (state.lastVisit) {
+    const days = daysBetween(state.lastVisit, new Date().toISOString());
+    if (days >= 7) {
+      nudge.className = "nudge show";
+      nudge.innerHTML = "Last checked <strong>" + days + " day" + (days === 1 ? "" : "s") + " ago</strong>. Regulations change — worth a quick check.";
+    } else if (state.visitStreak >= 4) {
+      nudge.className = "nudge show";
+      nudge.innerHTML = "Checking streak: <strong>" + state.visitStreak + " visits</strong>. Stay on top of it.";
+    } else {
+      nudge.className = "nudge";
+    }
+  } else {
+    nudge.className = "nudge";
+  }
+
   // job tiles
-  const ordered = [...JOB_PRESETS].sort((a, b) => {
+  const ordered = [...JOB_PRESETS].sort(function(a, b) {
     const aP = state.pinnedJobs.includes(a.id) ? 0 : 1;
     const bP = state.pinnedJobs.includes(b.id) ? 0 : 1;
     return aP - bP;
   });
-  $("job-tiles").innerHTML = ordered.map(j => {
+  $("job-tiles").innerHTML = ordered.map(function(j) {
     const pinned = state.pinnedJobs.includes(j.id);
     return '<div class="tile" onclick="selectJob(\'' + j.id + '\')">' +
       '<div class="pin ' + (pinned ? 'on' : '') + '" onclick="event.stopPropagation();toggleJobPin(\'' + j.id + '\')"></div>' +
@@ -484,11 +801,12 @@ function paintHome() {
 
   // recent searches
   $("recent-searches").innerHTML = state.recentSearches.length
-    ? state.recentSearches.map(q => '<button class="chip" onclick="quickSearch(\'' + esc(q).replace(/'/g, "\\'") + '\')">' + esc(q) + '</button>').join("")
+    ? state.recentSearches.map(function(q) { return '<button class="chip" onclick="quickSearch(\'' + esc(q).replace(/'/g, "\\'") + '\')">' + esc(q) + '</button>'; }).join("")
     : '<span style="color:var(--muted);font-size:13px">No recent searches yet</span>';
 }
 
 function goHome() {
+  dismissWhatsNew();
   showScreen("screen-home");
   state.tab = "home";
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
@@ -535,14 +853,14 @@ function browseAll() {
 }
 
 function addRecent(q) {
-  state.recentSearches = state.recentSearches.filter(x => x.toLowerCase() !== q.toLowerCase());
+  state.recentSearches = state.recentSearches.filter(function(x) { return x.toLowerCase() !== q.toLowerCase(); });
   state.recentSearches.unshift(q);
   saveRecent();
 }
 
 /* ======== JOB BUILDER ======== */
 function selectJob(jobId) {
-  const job = JOB_PRESETS.find(j => j.id === jobId);
+  const job = JOB_PRESETS.find(function(j) { return j.id === jobId; });
   if (!job) return;
   state.jobId = jobId;
   state.jobTasks = [...job.tasks];
@@ -550,13 +868,8 @@ function selectJob(jobId) {
   state.activeTasks = [...job.tasks];
   state.activeObligations = [];
 
-  // track usage
-  if (!state.pinnedJobs.includes(jobId)) {
-    // just for ordering, not pinning
-  }
-
   $("job-title").textContent = job.label;
-  $("job-tasks").innerHTML = state.jobTasks.map(t => {
+  $("job-tasks").innerHTML = state.jobTasks.map(function(t) {
     const label = TRADE_TASK_LABELS[t] || t;
     return '<div class="task-chip on" data-task="' + t + '" onclick="toggleJobTask(this,\'' + t + '\')">' +
       '<div class="box"></div><div class="label">' + esc(label) + '</div></div>';
@@ -591,7 +904,7 @@ function showResults() {
 }
 
 function paintObFilters() {
-  $("ob-filter-bar").innerHTML = ALL_OBLIGATIONS.map(o => {
+  $("ob-filter-bar").innerHTML = ALL_OBLIGATIONS.map(function(o) {
     const on = state.activeObligations.includes(o);
     return '<button class="filter-chip ' + (on ? 'on' : '') + '" onclick="toggleObFilter(\'' + o + '\')">' +
       OBLIGATION_META[o].label + '</button>';
@@ -610,7 +923,7 @@ function paintResults() {
   state.query = q;
   const results = filterEntries(q, state.activeTasks, state.activeObligations);
   $("results-count").textContent = results.length + " result" + (results.length === 1 ? "" : "s") +
-    (state.jobId ? " for " + (JOB_PRESETS.find(j => j.id === state.jobId) || {}).label : "");
+    (state.jobId ? " for " + (JOB_PRESETS.find(function(j) { return j.id === state.jobId; }) || {}).label : "");
   $("results-list").innerHTML = results.length
     ? results.map(e => renderRegCard(e)).join("")
     : '<p class="empty">No regulations match your filters.</p>';
@@ -619,7 +932,7 @@ function paintResults() {
 /* ======== SEARCH SCREEN ======== */
 function paintSearchScreen() {
   $("search-recent").innerHTML = state.recentSearches.length
-    ? state.recentSearches.map(q => '<button class="chip" onclick="runSearchFromTab(\'' + esc(q).replace(/'/g, "\\'") + '\')">' + esc(q) + '</button>').join("")
+    ? state.recentSearches.map(function(q) { return '<button class="chip" onclick="runSearchFromTab(\'' + esc(q).replace(/'/g, "\\'") + '\')">' + esc(q) + '</button>'; }).join("")
     : '<span style="color:var(--muted);font-size:13px">No recent searches yet</span>';
   runSearchQuery();
 }
@@ -647,6 +960,8 @@ function runSearchQuery() {
 }
 
 /* ======== SAVED SCREEN ======== */
+function paintSavedScreen() { paintSaved(); }
+
 function paintSaved() {
   const saved = entries.filter(e => isBookmarked(e.id));
   if (saved.length) {
@@ -666,6 +981,8 @@ function paintSettings() {
     $("reg-version").textContent = REG.register_version || "—";
     $("entry-count").textContent = entries.length + " verified";
   }
+  $("settings-lastvisit").textContent = state.lastVisit ? timeAgo(state.lastVisit) : "—";
+  $("settings-visits").textContent = state.visitStreak > 0 ? state.visitStreak + (state.visitStreak === 1 ? " visit" : " visits") : "—";
 }
 
 function toggleClassic() {
@@ -694,12 +1011,16 @@ function renderRegCard(e) {
   const ui = e.ui || {};
   const ob = OBLIGATION_META[ui.obligation] || { label: "Regulation", cls: "ob-technical" };
   const bm = isBookmarked(e.id);
+  const reviewed = isReviewed(e.id);
+  const noted = hasNote(e.id);
   const title = ui.title || e.claim;
   const where = whereToFind(e);
   const snippet = e.claim;
 
-  return '<div class="reg-card" onclick="openSheet(\'' + e.id + '\')">' +
+  return '<div class="reg-card' + (reviewed ? ' reviewed' : '') + '" onclick="openSheet(\'' + e.id + '\')">' +
+    (noted ? '<div class="note-dot"></div>' : '') +
     '<div class="top"><span class="ob-badge ' + ob.cls + '">' + esc(ob.label) + '</span>' +
+    (reviewed ? '<span class="reviewed-pill">✓ Reviewed</span>' : '') +
     '<div class="bm ' + (bm ? 'on' : '') + '" onclick="event.stopPropagation();toggleBookmarkAndRepaint(\'' + e.id + '\')"></div></div>' +
     '<div class="title">' + esc(title) + '</div>' +
     '<div class="ref-bar"><code>' + esc(where) + '</code></div>' +
@@ -708,21 +1029,17 @@ function renderRegCard(e) {
 
 function toggleBookmarkAndRepaint(id) {
   toggleBookmark(id);
-  // repaint whatever's visible
-  if (state.tab === "saved") paintSaved();
-  else if ($("screen-results").classList.contains("active")) paintResults();
-  else if ($("screen-search").classList.contains("active")) runSearchQuery();
-  // update sheet if open
+  repaintVisible();
   if (state.sheetId === id) updateSheetBookmark();
 }
 
 /* ======== BOTTOM SHEET ======== */
 function openSheet(id) {
-  const e = entries.find(x => x.id === id);
+  const e = entries.find(function(x) { return x.id === id; });
   if (!e) return;
   state.sheetId = id;
   state.lastViewed = id;
-  localStorage.setItem("lastViewed", id);
+  lsSet("lastViewed", id);
 
   const ui = e.ui || {};
   const ob = OBLIGATION_META[ui.obligation] || { label: "Regulation", cls: "ob-technical" };
@@ -738,6 +1055,11 @@ function openSheet(id) {
   $("sheet-source").href = e.source_url;
 
   updateSheetBookmark();
+  updateSheetReviewed();
+
+  // notes
+  $("sheet-notes").value = state.notes[id] || "";
+  $("sheet-notes-saved").textContent = "";
 
   $("sheet-overlay").classList.add("open");
 }
@@ -762,19 +1084,48 @@ function closeSheetFromOverlay(ev) {
   if (ev.target === $("sheet-overlay")) closeSheet();
 }
 
-/* ======== INIT ======== */
-fetch("register.json?" + Date.now())
-  .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-  .then(function(reg) {
-    REG = reg;
-    entries = reg.entries || [];
+/* ======== INIT: CACHE-FIRST BOOT ======== */
+(function boot() {
+  // 1. Instant render from cache
+  const cache = loadCache();
+  if (cache && cache.entries && cache.entries.length) {
+    entries = cache.entries;
     paintHome();
     paintSettings();
-  })
-  .catch(function(err) {
-    document.getElementById("screen-home").innerHTML =
-      '<p class="empty" style="margin-top:60px">Failed to load register: ' + esc(err.message) + '</p>';
-  });
+  }
+
+  // 2. Visit tracking
+  updateVisitTracking();
+
+  // 3. Fetch fresh data in background
+  fetch("register.json?" + Date.now())
+    .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(reg) {
+      REG = reg;
+      entries = reg.entries || [];
+
+      // cache for next visit
+      saveCache(entries, reg.register_version);
+
+      // compute what changed (#1)
+      changedEntries = computeChanges(entries, reg.register_version);
+
+      // paint everything
+      renderAll();
+    })
+    .catch(function(err) {
+      if (!cache || !cache.entries) {
+        // no cache, no network — nothing to show
+        $("screen-home").innerHTML =
+          '<p class="empty" style="margin-top:60px">Failed to load register: ' + esc(err.message) + '</p>';
+      }
+      // show offline pill if cached data is being used
+      if (cache) {
+        $("offline").style.display = "inline-flex";
+        $("offline-status").textContent = "Using cached data";
+      }
+    });
+})();
 
 // event listeners
 $("home-query").addEventListener("keydown", function(ev) { if (ev.key === "Enter") runHomeSearch(); });

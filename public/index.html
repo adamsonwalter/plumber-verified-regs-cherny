@@ -2,235 +2,786 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Verified Plumbing & Roofing Regulations Register — Victoria</title>
-<meta name="description" content="A live, verified register of the Victorian and federal regulations, standards and statutory thresholds that govern plumbing and roofing work in Victoria. Every value is a quotable fact from an authoritative government source.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VIC PlumberRegs — Verified Regulations for Licensed Plumbers &amp; Roofers</title>
+<meta name="description" content="A live, verified register of Victorian and Commonwealth regulations that govern licensed plumbing and roofing work in Victoria. Search by keyword, job type, or trade task.">
 <style>
-  :root{
-    --bg:#0f1419; --panel:#161d26; --panel2:#1d2632; --ink:#e6edf3; --muted:#9aa7b4;
-    --line:#2a3441; --vic:#3b82f6; --fed:#a855f7;
-    --ok:#22c55e; --okbg:#0f2418; --warn:#f59e0b; --warnbg:#2a2008; --bad:#ef4444; --badbg:#2a1212;
-    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  header{padding:28px 20px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#121821,#0f1419)}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-  h1{margin:0;font-size:22px;letter-spacing:-.01em}
-  h1 .v{color:var(--muted);font-weight:400;font-size:13px;font-family:var(--mono)}
-  p.lede{margin:8px 0 0;color:var(--muted);font-size:14px;max-width:80ch}
-  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-  .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:96px}
-  .stat .n{font-size:20px;font-weight:600}
-  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-  .stat.ok .n{color:var(--ok)} .stat.warn .n{color:var(--warn)} .stat.bad .n{color:var(--bad)}
-  .last{margin-top:12px;font-size:12px;color:var(--muted);font-family:var(--mono)}
-  main{padding:24px 0 60px}
-  .group{margin-bottom:30px}
-  .group h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;display:flex;align-items:center;gap:8px}
-  .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
-  .tag.vic{color:var(--vic);border-color:#2a4a7a} .tag.fed{color:var(--fed);border-color:#4a2a6a}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--line)}
-  .card.verified{border-left-color:var(--ok);background:var(--okbg)}
-  .card.unverified{border-left-color:var(--warn);background:var(--warnbg)}
-  .card.unreachable{border-left-color:var(--bad);background:var(--badbg)}
-  .card.head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
-  .card .id{font-family:var(--mono);font-size:11px;color:var(--muted)}
-  .card .claim{font-weight:600;font-size:15px}
-  .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
-  .badge.verified{background:#13321d;color:var(--ok)}
-  .badge.unverified{background:#3a2a08;color:var(--warn)}
-  .badge.unreachable{background:#3a1212;color:var(--bad)}
-  .row{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;margin-top:10px;font-size:13px}
-  .row .k{color:var(--muted)}
-  .row .v{word-break:break-word}
-  .row .v a{color:#7cc7ff;text-decoration:none} .row .v a:hover{text-decoration:underline}
-  .quote{background:#00000040;border-left:2px solid var(--line);padding:8px 10px;margin-top:8px;font-size:13px;color:#cdd6e0;border-radius:4px}
-  .quote::before{content:"\201C";color:var(--muted);margin-right:2px}.quote::after{content:"\201D";color:var(--muted);margin-left:2px}
-  .remedial{background:#00000055;border:1px dashed #5a2a2a;padding:8px 10px;margin-top:8px;font-size:13px;border-radius:4px}
-  .changed{font-family:var(--mono);font-size:12px;color:var(--warn);margin-top:6px}
-  .changed .from{text-decoration:line-through;color:var(--bad)} .changed .to{color:var(--warn)}
-  details{margin-top:8px} summary{cursor:pointer;font-size:12px;color:var(--muted)}
-  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
-  .filters button{background:var(--panel);color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer}
-  .filters button.active{color:var(--ink);border-color:#3a4a5a}
-  footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font-size:12px}
-  .err{padding:30px;text-align:center;color:var(--bad)}
-  @media(max-width:560px){.row{grid-template-columns:1fr}.row .k{font-size:11px;text-transform:uppercase}}
+:root{
+  --bg:#f2f2f7; --card:#fff; --ink:#1c1c1e; --muted:rgba(60,60,67,.55);
+  --line:#e5e5ea; --blue:oklch(.55 .13 230); --blue-bg:oklch(.93 .03 230);
+  --amber:oklch(.68 .19 45); --amber-dark:oklch(.45 .14 45);
+  --brown:oklch(.60 .15 25); --brown-dark:oklch(.42 .13 25);
+  --green:oklch(.55 .14 150); --green-bg:oklch(.92 .05 150);
+  --red:oklch(.55 .15 25);
+  --radius:14px; --radius-sm:10px; --radius-pill:999px;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+button{font:inherit;cursor:pointer}
+
+/* ---- layout ---- */
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg)}
+@media(min-width:600px){
+  .app{border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 40px rgba(0,0,0,.06)}
+}
+.screen{display:none;padding:16px 16px calc(80px + env(safe-area-inset-bottom,0px)) 16px;min-height:100vh}
+.screen.active{display:block}
+
+/* ---- top bar ---- */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:calc(var(--safe-top) + 10px) 16px 12px}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);padding:5px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:700}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.offline{display:none}
+
+/* ---- headings ---- */
+h1{font-size:26px;font-weight:800;letter-spacing:-.4px;margin:0 0 16px}
+h2{font-size:22px;font-weight:800;margin:0 0 12px}
+h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:0 0 10px}
+
+/* ---- search ---- */
+.search{display:flex;gap:8px;margin-bottom:16px}
+.search input{flex:1;font-size:15px;padding:11px 13px;border-radius:12px;border:none;background:#e9e9eb;color:var(--ink);outline:none}
+.search input:focus{background:#e2e2e5}
+.search input::placeholder{color:rgba(60,60,67,.5)}
+.search button{background:var(--brown);color:#fff;border:none;padding:0 16px;border-radius:12px;font-size:14px;font-weight:700;white-space:nowrap}
+.search-standalone{margin-bottom:16px}
+.search-standalone input{width:100%;font-size:16px;padding:12px 14px;border-radius:12px;border:none;background:#e9e9eb;color:var(--ink);outline:none}
+.search-standalone input:focus{background:#e2e2e5}
+.search-standalone input::placeholder{color:rgba(60,60,67,.5)}
+
+/* ---- resume card ---- */
+.resume{background:var(--card);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.05)}
+.resume .label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--blue);margin-bottom:4px}
+.resume .title{font-size:15px;font-weight:700;margin-bottom:10px}
+.resume button{background:var(--amber);color:#fff;border:none;padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:700}
+.resume .hide{display:none}
+
+/* ---- job tiles ---- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.tile{position:relative;background:var(--card);border-radius:18px;padding:16px 14px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04),0 3px 10px rgba(0,0,0,.05);transition:transform .1s}
+.tile:active{transform:scale(.97)}
+.tile .icon{width:44px;height:44px;border-radius:13px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;margin-bottom:10px}
+.tile .name{font-size:14px;font-weight:700;line-height:1.3}
+.tile .pin{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(60,60,67,.2);background:rgba(255,255,255,.85);cursor:pointer;transition:all .15s}
+.tile .pin.on{background:var(--brown);border-color:var(--brown)}
+
+/* ---- chips ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:var(--radius-pill);cursor:pointer;transition:all .15s}
+.chip:hover{background:#f0f0f2}
+.chip.on{background:var(--brown);color:#fff;border-color:var(--brown)}
+
+/* ---- trade task chips ---- */
+.task-chips{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.task-chip{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:12px;padding:13px 14px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.task-chip .box{width:20px;height:20px;border-radius:6px;border:2px solid #c7c7cc;flex-shrink:0;transition:all .15s}
+.task-chip.on .box{background:var(--brown);border-color:var(--brown)}
+.task-chip .label{font-size:14.5px;font-weight:600}
+
+/* ---- show me the regs button ---- */
+.go{width:100%;padding:14px;border-radius:14px;border:none;background:var(--brown);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px}
+.go:active{opacity:.85}
+
+/* ---- results ---- */
+.count{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px}
+
+/* ---- reg card ---- */
+.reg-card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 3px 10px rgba(0,0,0,.04);cursor:pointer;transition:transform .1s}
+.reg-card:active{transform:scale(.98)}
+.reg-card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ob-badge{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:3px 8px;border-radius:var(--radius-pill)}
+.ob-technical{background:oklch(.93 .03 230);color:oklch(.40 .12 230)}
+.ob-licensing{background:oklch(.93 .03 300);color:oklch(.40 .12 300)}
+.ob-documentation{background:oklch(.93 .05 80);color:oklch(.42 .13 80)}
+.ob-whs{background:oklch(.93 .04 25);color:oklch(.45 .16 25)}
+.ob-product{background:oklch(.93 .04 150);color:oklch(.40 .12 150)}
+.reg-card .title{font-size:15.5px;font-weight:700;line-height:1.3;margin-bottom:6px}
+.reg-card .ref-bar{display:flex;align-items:center;gap:6px;background:#f2f2f7;border-radius:8px;padding:7px 9px;margin-bottom:8px}
+.reg-card .ref-bar::before{content:"";width:6px;height:6px;border-radius:1px;background:var(--blue);flex-shrink:0}
+.reg-card .ref-bar code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:oklch(.40 .10 230);line-height:1.4}
+.reg-card .snippet{font-size:13px;color:#3c3c43;line-height:1.5}
+.reg-card .snippet strong{color:var(--ink)}
+
+/* ---- bookmark icon ---- */
+.bm{width:16px;height:16px;border-radius:4px;border:2px solid #d1d1d6;background:transparent;flex-shrink:0;cursor:pointer;transition:all .15s}
+.bm.on{border-color:var(--amber);background:var(--amber)}
+
+/* ---- bottom sheet ---- */
+.sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40;align-items:flex-end;justify-content:center}
+.sheet-overlay.open{display:flex}
+.sheet{width:100%;max-width:480px;max-height:80vh;background:var(--card);border-radius:22px 22px 0 0;padding:12px 20px calc(26px + var(--safe-bottom)) 20px;overflow-y:auto;animation:slideUp .25s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet .handle{width:36px;height:5px;border-radius:3px;background:#d1d1d6;margin:0 auto 16px}
+.sheet .close{border:none;background:#f2f2f7;width:28px;height:28px;border-radius:50%;font-size:15px;color:#3c3c43;cursor:pointer}
+.sheet h2{font-size:19px;font-weight:800;line-height:1.3;margin:0 0 6px}
+.sheet .subtitle{font-size:13px;color:var(--muted);margin-bottom:14px}
+.sheet .where-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--blue);margin-bottom:6px}
+.sheet .where-box{display:flex;align-items:center;gap:8px;background:#f2f2f7;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px}
+.sheet .where-box::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--blue);flex-shrink:0}
+.sheet .where-box code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;color:oklch(.35 .10 230);line-height:1.4}
+.sheet .preview-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:6px}
+.sheet .preview{font-size:14.5px;line-height:1.6;margin-bottom:20px}
+.sheet .quote{background:#f2f2f7;border-left:3px solid var(--amber);padding:10px 12px;margin-bottom:20px;border-radius:4px;font-size:13.5px;color:#3c3c43;line-height:1.6}
+.sheet .quote::before{content:"\201C";color:var(--amber);font-weight:700;margin-right:2px}
+.sheet .quote::after{content:"\201D";color:var(--amber);font-weight:700;margin-left:2px}
+.sheet .verified-on{font-size:12px;color:var(--muted);margin-bottom:20px}
+.sheet .actions{display:flex;gap:10px}
+.sheet .actions button,.sheet .actions a{flex:1;text-align:center;padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+.sheet .bookmark-btn{border:1.5px solid var(--line);background:var(--card);color:#3c3c43}
+.sheet .bookmark-btn.on{border-color:var(--amber);background:oklch(.97 .03 45);color:var(--amber-dark)}
+.sheet .source-btn{background:var(--amber);color:#fff;border:none;text-decoration:none;display:block}
+
+/* ---- tab bar ---- */
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(0,0,0,.08);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{flex:1;text-align:center;cursor:pointer;padding:8px 0 var(--safe-bottom,0px);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;-webkit-tap-highlight-color:transparent}
+.tab .dot{width:5px;height:5px;border-radius:50%;background:transparent;transition:background .15s}
+.tab.on .dot{background:var(--amber)}
+.tab .label{font-size:11px;font-weight:500;color:var(--muted);transition:color .15s}
+.tab.on .label{font-weight:800;color:var(--ink)}
+
+/* ---- saved empty ---- */
+.empty{text-align:center;color:rgba(60,60,67,.4);font-size:13px;margin-top:40px}
+
+/* ---- settings ---- */
+.settings-group{background:var(--card);border-radius:14px;overflow:hidden}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #ededed}
+.settings-row:last-child{border-bottom:none}
+.settings-row .left .title{font-size:15px;font-weight:700}
+.settings-row .left .desc{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle{width:46px;height:27px;border-radius:var(--radius-pill);background:#e9e9eb;position:relative;cursor:pointer;transition:background .15s;border:none;padding:0}
+.toggle.on{background:var(--amber)}
+.toggle .knob{width:23px;height:23px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}
+.toggle.on .knob{left:21px}
+.settings-row .right{font-size:12px;color:rgba(60,60,67,.4);font-weight:700}
+.settings-row .right.green{color:var(--green)}
+
+/* ---- classic overlay ---- */
+.classic{display:none;position:fixed;inset:0;max-width:480px;left:50%;transform:translateX(-50%);background:oklch(.16 .01 240);padding:calc(var(--safe-top) + 10px) 16px 20px;overflow-y:auto;z-index:35}
+.classic.active{display:block}
+.classic h2{font-size:14px;font-weight:800;color:#fff;font-family:"Space Grotesk",sans-serif;margin-bottom:4px}
+.classic .sub{font-size:10px;color:oklch(.65 .02 240);font-family:ui-monospace,monospace;margin-bottom:12px}
+.classic .search-c{background:oklch(.21 .012 240);border:1px solid oklch(.32 .015 240);border-radius:4px;padding:10px 12px;margin-bottom:14px;color:oklch(.6 .01 240);font-size:13px;width:100%;outline:none;font-family:inherit}
+.classic .search-c::placeholder{color:oklch(.55 .01 240)}
+.classic .switch-btn{background:oklch(.72 .18 65);color:oklch(.10 .01 240);border:none;font-size:11px;font-weight:800;padding:7px 11px;border-radius:4px;cursor:pointer;margin-left:12px}
+.classic .c-card{border-left:4px solid oklch(.60 .15 200);background:oklch(.21 .012 240);border-radius:4px;padding:12px;margin-bottom:10px;cursor:pointer}
+.classic .c-card .ref{font-family:ui-monospace,monospace;font-size:11px;color:oklch(.65 .02 240);font-weight:700;margin-bottom:6px}
+.classic .c-card .title{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
+.classic .c-card .snippet{font-size:12px;color:oklch(.68 .01 240);line-height:1.5}
+
+/* ---- back link ---- */
+.back{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-size:14px;font-weight:700;margin-bottom:14px;cursor:pointer;background:none;border:none}
+
+/* ---- browse all ---- */
+.browse-all{width:100%;text-align:center;padding:12px;border-radius:12px;border:1px dashed #c7c7cc;background:transparent;color:#3c3c43;font-size:13.5px;font-weight:600;cursor:pointer;margin-bottom:16px}
+
+/* ---- filter bar (results screen) ---- */
+.filter-bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;transition:all .15s}
+.filter-chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1>Verified Plumbing &amp; Roofing Regulations Register <span class="v" id="regver"></span></h1>
-    <p class="lede">A live, trustworthy register of the Victorian and Commonwealth regulations, standards and statutory thresholds that govern licensed plumbing and roofing work in Victoria. Every value shown is a verbatim or directly-quotable fact from the cited authoritative government or standards-body page — confirmed by an automated agent that re-opens each source and reasons over the current text. This register makes no compliance determination.</p>
-    <div class="stats" id="stats"></div>
-    <div class="last" id="last"></div>
+<div class="app" id="app">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <div class="pill">Live data</div>
+    <div class="offline pill" style="background:oklch(.92 .03 25);color:oklch(.45 .12 25)">Offline</div>
   </div>
-</header>
-<main>
-  <div class="wrap">
-    <div class="filters">
-      <button data-f="all" class="active">All</button>
-      <button data-f="verified">Verified</button>
-      <button data-f="unverified">Needs recheck</button>
-      <button data-f="unreachable">Source unreachable</button>
-      <span style="flex:1"></span>
-      <button data-g="all" class="active">VIC + Federal</button>
-      <button data-g="VIC">VIC only</button>
-      <button data-g="Federal">Federal only</button>
+
+  <!-- ===== HOME screen ===== -->
+  <div class="screen active" id="screen-home">
+    <h1>Find a reg</h1>
+
+    <div class="resume" id="resume-card">
+      <div class="label">Continue where you left off</div>
+      <div class="title" id="resume-title">—</div>
+      <button onclick="resumeLast()">Resume</button>
     </div>
-    <div id="content"><p style="color:var(--muted)">Loading register…</p></div>
+
+    <div class="search" id="home-search">
+      <input type="text" placeholder="Search clauses, keywords, refs…" id="home-query" autocomplete="off">
+      <button onclick="runHomeSearch()">Go</button>
+    </div>
+
+    <h3>Jobs</h3>
+    <div class="tiles" id="job-tiles"></div>
+
+    <button class="browse-all" onclick="browseAll()">Browse all regs ›</button>
+
+    <h3>Recent searches</h3>
+    <div class="chips" id="recent-searches"></div>
   </div>
-</main>
-<footer>
-  <div class="wrap">
-    Single source of truth: <code>register.json</code>. Re-verified on a weekly schedule by an automated agent that opens every source URL and reasons about whether each recorded claim still matches. No user accounts, no uploads, no free-text intake — every asserted value is a quotable fact from the cited page.
+
+  <!-- ===== JOB CATEGORY screen ===== -->
+  <div class="screen" id="screen-job">
+    <button class="back" onclick="goHome()">‹ Jobs</button>
+    <h2 id="job-title">—</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">These tasks are included — untick anything that doesn't apply</p>
+    <div class="task-chips" id="job-tasks"></div>
+    <button class="go" onclick="showJobResults()">Show me the regs</button>
   </div>
-</footer>
+
+  <!-- ===== RESULTS screen ===== -->
+  <div class="screen" id="screen-results">
+    <button class="back" onclick="goHome()">‹ Back</button>
+    <div class="search-standalone">
+      <input type="text" placeholder="Filter these results…" id="results-query" autocomplete="off">
+    </div>
+    <div class="filter-bar" id="ob-filter-bar"></div>
+    <div class="count" id="results-count"></div>
+    <div id="results-list"></div>
+  </div>
+
+  <!-- ===== SEARCH screen ===== -->
+  <div class="screen" id="screen-search">
+    <div class="search-standalone">
+      <input type="text" placeholder="Search clauses, keywords, refs…" id="search-query" autocomplete="off">
+    </div>
+    <h3 id="search-section-label">Recent searches</h3>
+    <div class="chips" id="search-recent"></div>
+    <div class="count" id="search-count" style="display:none"></div>
+    <div id="search-results"></div>
+  </div>
+
+  <!-- ===== SAVED screen ===== -->
+  <div class="screen" id="screen-saved">
+    <h2>Saved</h2>
+    <div id="saved-list"></div>
+    <p class="empty" id="saved-empty" style="display:none">Nothing saved yet. Tap the square on any result to save it.</p>
+  </div>
+
+  <!-- ===== SETTINGS screen ===== -->
+  <div class="screen" id="screen-settings">
+    <h2>Settings</h2>
+    <div class="settings-group">
+      <div class="settings-row" style="cursor:pointer" onclick="toggleClassic()">
+        <div class="left"><div class="title">Classic mode</div><div class="desc">Today's dark, dense layout</div></div>
+        <button class="toggle" id="classic-toggle"><div class="knob"></div></button>
+      </div>
+      <div class="settings-row">
+        <div class="left"><div class="title">Offline data</div></div>
+        <div class="right green" id="offline-status">Up to date</div>
+      </div>
+      <div class="settings-row">
+        <div class="left"><div class="title">Register version</div></div>
+        <div class="right" id="reg-version">—</div>
+      </div>
+      <div class="settings-row">
+        <div class="left"><div class="title">Entries</div></div>
+        <div class="right" id="entry-count">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CLASSIC overlay ===== -->
+  <div class="classic" id="classic-overlay">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div><h2>VIC Plumbing Code DB</h2><div class="sub">Classic mode</div></div>
+      <button class="switch-btn" onclick="toggleClassic()">Switch to New</button>
+    </div>
+    <input class="search-c" placeholder="Search: 'Reg 26', 'backflow'…" id="classic-query">
+    <div id="classic-list"></div>
+  </div>
+
+  <!-- ===== bottom sheet ===== -->
+  <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheetFromOverlay(event)">
+    <div class="sheet" id="sheet">
+      <div class="handle"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span class="ob-badge" id="sheet-ob"></span>
+        <button class="close" onclick="closeSheet()">✕</button>
+      </div>
+      <h2 id="sheet-title"></h2>
+      <div class="subtitle" id="sheet-subtitle"></div>
+      <div class="where-label">Where to find it</div>
+      <div class="where-box"><code id="sheet-where"></code></div>
+      <div class="preview-label">Verified value</div>
+      <div class="preview" id="sheet-value"></div>
+      <div class="quote" id="sheet-quote"></div>
+      <div class="verified-on" id="sheet-verified"></div>
+      <div class="actions">
+        <button class="bookmark-btn" id="sheet-bm" onclick="toggleBookmarkSheet()"></button>
+        <a class="source-btn" id="sheet-source" href="#" target="_blank" rel="noopener">Open source</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== tab bar ===== -->
+  <div class="tabbar" id="tabbar">
+    <div class="tab on" data-tab="home" onclick="switchTab('home')"><div class="dot"></div><div class="label">Home</div></div>
+    <div class="tab" data-tab="search" onclick="switchTab('search')"><div class="dot"></div><div class="label">Search</div></div>
+    <div class="tab" data-tab="saved" onclick="switchTab('saved')"><div class="dot"></div><div class="label">Saved</div></div>
+    <div class="tab" data-tab="settings" onclick="switchTab('settings')"><div class="dot"></div><div class="label">Settings</div></div>
+  </div>
+</div>
 
 <script>
-const STATUS_LABEL = {verified:"Verified", unverified:"Needs recheck", unreachable:"Source unreachable"};
+/* ======== DATA ======== */
+const OBLIGATION_META = {
+  technical:     { label: "Technical",     cls: "ob-technical" },
+  licensing:     { label: "Licensing",     cls: "ob-licensing" },
+  documentation: { label: "Documentation", cls: "ob-documentation" },
+  whs:           { label: "WHS / Safety",  cls: "ob-whs" },
+  product:       { label: "Product",       cls: "ob-product" }
+};
 
-function el(tag, cls, html){
-  const e = document.createElement(tag);
-  if(cls) e.className = cls;
-  if(html!=null) e.innerHTML = html;
-  return e;
+const TRADE_TASK_LABELS = {
+  "water-supply": "Water Supply",
+  "sanitary-drainage": "Sanitary Drainage",
+  "roofing-stormwater": "Stormwater",
+  "gasfitting": "Gasfitting",
+  "heated-water": "Hot Water",
+  "backflow": "Backflow"
+};
+
+const JOB_PRESETS = [
+  { id:"reno",     label:"Residential Reno", mono:"RR", tasks:["water-supply","sanitary-drainage","heated-water"],         color:"var(--amber)" },
+  { id:"newbuild", label:"New Build",        mono:"NB", tasks:["water-supply","sanitary-drainage","roofing-stormwater","heated-water","backflow"], color:"var(--blue)" },
+  { id:"gashw",    label:"Gas + Hot Water",  mono:"GH", tasks:["gasfitting","heated-water"],                               color:"var(--brown)" },
+  { id:"storm",    label:"Stormwater",       mono:"SW", tasks:["roofing-stormwater"],                                      color:"oklch(.55 .10 200)" }
+];
+
+const ALL_TASKS = Object.keys(TRADE_TASK_LABELS);
+const ALL_OBLIGATIONS = Object.keys(OBLIGATION_META);
+
+/* ======== STATE ======== */
+let REG = null; // raw register.json
+let entries = []; // enriched entries with ui blocks
+let state = {
+  tab: "home",
+  // results state
+  activeTasks: [],
+  activeObligations: [],
+  query: "",
+  // job builder
+  jobId: null,
+  jobTasks: [],
+  // bookmarks
+  bookmarks: JSON.parse(localStorage.getItem("bookmarks") || "[]"),
+  // recent searches
+  recentSearches: JSON.parse(localStorage.getItem("recentSearches") || "[]"),
+  // pinned jobs
+  pinnedJobs: JSON.parse(localStorage.getItem("pinnedJobs") || "[]"),
+  // last viewed
+  lastViewed: localStorage.getItem("lastViewed") || null,
+  // classic mode
+  classic: false,
+  // open sheet
+  sheetId: null
+};
+
+/* ======== HELPERS ======== */
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function $(id) { return document.getElementById(id); }
+function saveBookmarks() { localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks)); }
+function saveRecent() { localStorage.setItem("recentSearches", JSON.stringify(state.recentSearches.slice(0, 10))); }
+function savePinned() { localStorage.setItem("pinnedJobs", JSON.stringify(state.pinnedJobs)); }
+
+function sourceDomain(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ""); } catch(e) { return ""; }
 }
-function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
-function row(k, vHtml){
-  return `<div class="row"><div class="k">${esc(k)}</div><div class="v">${vHtml}</div></div>`;
+function whereToFind(e) {
+  const ui = e.ui || {};
+  return ui.ref + " · " + ui.doc;
 }
-function link(u){return `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(u).replace(/^https?:\/\//,'')}</a>`;}
 
-function renderCard(e){
-  const card = el("div", "card " + e.status);
-  const v = e.verified || {};
+function isBookmarked(id) { return state.bookmarks.includes(id); }
+function toggleBookmark(id) {
+  if (isBookmarked(id)) state.bookmarks = state.bookmarks.filter(x => x !== id);
+  else state.bookmarks.push(id);
+  saveBookmarks();
+}
 
-  // header
-  const head = el("div","head");
-  head.appendChild(el("div","", `<div class="id">${esc(e.id)}</div><div class="claim">${esc(e.claim)}</div>`));
-  head.appendChild(el("div","badge "+e.status, STATUS_LABEL[e.status]||e.status));
-  card.appendChild(head);
+/* ======== SEARCH ======== */
+function matchesQuery(e, q) {
+  if (!q) return true;
+  const hay = [
+    e.ui ? e.ui.title : e.claim,
+    e.ui ? e.ui.ref : e.value,
+    e.ui ? e.ui.doc : "",
+    e.ui ? (e.ui.tags || []).join(" ") : "",
+    e.claim,
+    e.value,
+    e.verified ? e.verified.quote : "",
+    sourceDomain(e.source_url)
+  ].join(" ").toLowerCase();
+  const terms = q.toLowerCase().split(/\s+/);
+  return terms.every(t => hay.includes(t));
+}
 
-  // asserted value + key substring
-  card.insertAdjacentHTML("beforeend",
-    row("Asserts", `<strong>${esc(e.value)}</strong>`) +
-    row("Jurisdiction", `<span class="tag ${e.jurisdiction.toLowerCase()==='vic'?'vic':'fed'}">${esc(e.jurisdiction)}</span>`)
+function matchesTasks(e, tasks) {
+  if (!tasks.length) return true;
+  const et = (e.ui && e.ui.tradeTasks) || [];
+  return et.some(t => tasks.includes(t));
+}
+
+function matchesObligations(e, obs) {
+  if (!obs.length) return true;
+  return obs.includes(e.ui ? e.ui.obligation : "");
+}
+
+function filterEntries(query, tasks, obligations) {
+  return entries.filter(e =>
+    matchesQuery(e, query) &&
+    matchesTasks(e, tasks) &&
+    matchesObligations(e, obligations)
   );
+}
 
-  // status-specific blocks
-  if(e.status === "verified"){
-    card.insertAdjacentHTML("beforeend",
-      row("Source", link(e.source_url)) +
-      row("Last confirmed", esc(v.on || "—")) +
-      row("Checked by", esc(v.by_agent || "—"))
-    );
-    if(v.quote){
-      card.appendChild(el("div","quote", esc(v.quote)));
+/* ======== NAVIGATION ======== */
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  const screen = $("screen-" + tab);
+  if (screen) screen.classList.add("active");
+  const tabEl = document.querySelector('.tab[data-tab="' + tab + '"]');
+  if (tabEl) tabEl.classList.add("on");
+
+  if (tab === "search") { $("search-query").focus(); paintSearchScreen(); }
+  if (tab === "saved") paintSavedScreen();
+  if (tab === "settings") paintSettings();
+}
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+/* ======== HOME SCREEN ======== */
+function paintHome() {
+  // resume card
+  if (state.lastViewed) {
+    const e = entries.find(x => x.id === state.lastViewed);
+    if (e) {
+      $("resume-title").textContent = e.ui ? e.ui.title : e.claim;
+      $("resume-card").classList.remove("hide");
+    } else {
+      $("resume-card").classList.add("hide");
     }
-  } else if(e.status === "unverified"){
-    // needs recheck — show what changed
-    card.insertAdjacentHTML("beforeend", row("Source", link(e.source_url)));
-    if(e.changed_from || e.changed_to){
-      card.insertAdjacentHTML("beforeend",
-        `<div class="changed">value moved: <span class="from">${esc(e.changed_from||"?")}</span> &rarr; <span class="to">${esc(e.changed_to||"?")}</span></div>`);
-    }
-    if(v.quote){
-      card.appendChild(el("div","quote", esc(v.quote)));
-    }
-    if(e.fails_if){
-      card.insertAdjacentHTML("beforeend", row("Fails-if test", esc(e.fails_if)));
-    }
-  } else if(e.status === "unreachable"){
-    card.insertAdjacentHTML("beforeend",
-      row("Source", link(e.source_url)) +
-      row("HTTP / error", esc(e.last_status || e.http_error || "—")) +
-      row("Last OK check", esc(e.last_successful_check || "—"))
-    );
-    if(e.remedial_note){
-      card.appendChild(el("div","remedial", "<strong>Remedial note:</strong> " + esc(e.remedial_note)));
-    }
+  } else {
+    $("resume-card").classList.add("hide");
   }
 
-  // collapsible raw evidence
-  const det = el("details","");
-  det.innerHTML = `<summary>fails-if criterion &amp; key substring</summary>` +
-    row("Fails if", esc(e.fails_if||"—")) +
-    row("Key substring checked", `<code>${esc(e.key_substring||"—")}</code>`);
-  card.appendChild(det);
-  return card;
+  // job tiles
+  const ordered = [...JOB_PRESETS].sort((a, b) => {
+    const aP = state.pinnedJobs.includes(a.id) ? 0 : 1;
+    const bP = state.pinnedJobs.includes(b.id) ? 0 : 1;
+    return aP - bP;
+  });
+  $("job-tiles").innerHTML = ordered.map(j => {
+    const pinned = state.pinnedJobs.includes(j.id);
+    return '<div class="tile" onclick="selectJob(\'' + j.id + '\')">' +
+      '<div class="pin ' + (pinned ? 'on' : '') + '" onclick="event.stopPropagation();toggleJobPin(\'' + j.id + '\')"></div>' +
+      '<div class="icon" style="background:' + j.color + '">' + j.mono + '</div>' +
+      '<div class="name">' + esc(j.label) + '</div></div>';
+  }).join("");
+
+  // recent searches
+  $("recent-searches").innerHTML = state.recentSearches.length
+    ? state.recentSearches.map(q => '<button class="chip" onclick="quickSearch(\'' + esc(q).replace(/'/g, "\\'") + '\')">' + esc(q) + '</button>').join("")
+    : '<span style="color:var(--muted);font-size:13px">No recent searches yet</span>';
 }
 
-function renderGroup(name, tag, entries, filter, groupFilter){
-  const items = entries.filter(e =>
-    (filter==="all"||e.status===filter) &&
-    (groupFilter==="all"||e.jurisdiction===groupFilter));
-  if(!items.length) return null;
-  const g = el("div","group");
-  g.appendChild(el("h2","", `${name} <span class="tag ${tag}">${name}</span> <span style="color:var(--muted);font-weight:400;font-size:12px">${items.length} ${items.length===1?'item':'items'}</span>`));
-  for(const e of items) g.appendChild(renderCard(e));
-  return g;
+function goHome() {
+  showScreen("screen-home");
+  state.tab = "home";
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  document.querySelector('.tab[data-tab="home"]').classList.add("on");
+  paintHome();
 }
 
-let REG = null, FILTER="all", GFILTER="all";
+function resumeLast() {
+  if (state.lastViewed) openSheet(state.lastViewed);
+}
 
-function paint(){
-  const content = document.getElementById("content");
-  content.innerHTML = "";
-  if(!REG || !REG.entries){ content.innerHTML = '<p class="err">register.json could not be loaded.</p>'; return; }
-  const entries = REG.entries;
-  const vic = entries.filter(e=>e.jurisdiction==="VIC");
-  const fed = entries.filter(e=>e.jurisdiction==="Federal");
+function runHomeSearch() {
+  const q = $("home-query").value.trim();
+  if (!q) return;
+  addRecent(q);
+  state.query = q;
+  state.activeTasks = [];
+  state.activeObligations = [];
+  state.jobId = null;
+  showResults();
+  $("results-query").value = q;
+  paintResults();
+}
 
-  const g1 = renderGroup("VIC","vic",vic,FILTER,GFILTER);
-  const g2 = renderGroup("Federal","fed",fed,FILTER,GFILTER);
-  if(!g1 && !g2){
-    content.innerHTML = '<p style="color:var(--muted)">No entries match the current filter.</p>';
-    return;
+function quickSearch(q) {
+  addRecent(q);
+  state.query = q;
+  state.activeTasks = [];
+  state.activeObligations = [];
+  state.jobId = null;
+  showResults();
+  $("results-query").value = q;
+  paintResults();
+}
+
+function browseAll() {
+  state.query = "";
+  state.activeTasks = [];
+  state.activeObligations = [];
+  state.jobId = null;
+  showResults();
+  $("results-query").value = "";
+  paintResults();
+}
+
+function addRecent(q) {
+  state.recentSearches = state.recentSearches.filter(x => x.toLowerCase() !== q.toLowerCase());
+  state.recentSearches.unshift(q);
+  saveRecent();
+}
+
+/* ======== JOB BUILDER ======== */
+function selectJob(jobId) {
+  const job = JOB_PRESETS.find(j => j.id === jobId);
+  if (!job) return;
+  state.jobId = jobId;
+  state.jobTasks = [...job.tasks];
+  state.query = "";
+  state.activeTasks = [...job.tasks];
+  state.activeObligations = [];
+
+  // track usage
+  if (!state.pinnedJobs.includes(jobId)) {
+    // just for ordering, not pinning
   }
-  if(g1) content.appendChild(g1);
-  if(g2) content.appendChild(g2);
+
+  $("job-title").textContent = job.label;
+  $("job-tasks").innerHTML = state.jobTasks.map(t => {
+    const label = TRADE_TASK_LABELS[t] || t;
+    return '<div class="task-chip on" data-task="' + t + '" onclick="toggleJobTask(this,\'' + t + '\')">' +
+      '<div class="box"></div><div class="label">' + esc(label) + '</div></div>';
+  }).join("");
+  showScreen("screen-job");
 }
 
-function paintStats(){
-  const entries = (REG&&REG.entries)||[];
-  const c = (s)=>entries.filter(e=>e.status===s).length;
-  const box = (n,l,cls)=>`<div class="stat ${cls}"><div class="n">${n}</div><div class="l">${l}</div></div>`;
-  document.getElementById("stats").innerHTML =
-    box(entries.length, "Total", "") +
-    box(c("verified"), "Verified", "ok") +
-    box(c("unverified"), "Needs recheck", "warn") +
-    box(c("unreachable"), "Unreachable", "bad");
-  document.getElementById("regver").textContent = REG && REG.register_version ? "· "+REG.register_version : "";
-  const lastRun = REG && (REG.last_agent_run || REG.generated_on);
-  document.getElementById("last").textContent = lastRun
-    ? "register version "+(REG.register_version||"?")+" · last agent run "+lastRun
-    : "";
+function toggleJobTask(el, task) {
+  const idx = state.jobTasks.indexOf(task);
+  if (idx >= 0) { state.jobTasks.splice(idx, 1); el.classList.remove("on"); }
+  else { state.jobTasks.push(task); el.classList.add("on"); }
 }
 
-function wireFilters(){
-  document.querySelectorAll(".filters button[data-f]").forEach(b=>{
-    b.onclick=()=>{FILTER=b.dataset.f;
-      document.querySelectorAll(".filters button[data-f]").forEach(x=>x.classList.toggle("active",x===b));
-      paint();};
-  });
-  document.querySelectorAll(".filters button[data-g]").forEach(b=>{
-    b.onclick=()=>{GFILTER=b.dataset.g;
-      document.querySelectorAll(".filters button[data-g]").forEach(x=>x.classList.toggle("active",x===b));
-      paint();};
-  });
+function showJobResults() {
+  state.activeTasks = [...state.jobTasks];
+  showResults();
+  paintResults();
 }
 
-fetch("register.json?"+Date.now())
-  .then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
-  .then(reg=>{REG=reg;paintStats();wireFilters();paint();})
-  .catch(err=>{
-    document.getElementById("content").innerHTML =
-      '<p class="err">Failed to load register.json: '+esc(err.message)+'. The page cannot show verified claims without its source of truth.</p>';
+function toggleJobPin(jobId) {
+  const idx = state.pinnedJobs.indexOf(jobId);
+  if (idx >= 0) state.pinnedJobs.splice(idx, 1);
+  else state.pinnedJobs.push(jobId);
+  savePinned();
+  paintHome();
+}
+
+/* ======== RESULTS SCREEN ======== */
+function showResults() {
+  showScreen("screen-results");
+  paintObFilters();
+}
+
+function paintObFilters() {
+  $("ob-filter-bar").innerHTML = ALL_OBLIGATIONS.map(o => {
+    const on = state.activeObligations.includes(o);
+    return '<button class="filter-chip ' + (on ? 'on' : '') + '" onclick="toggleObFilter(\'' + o + '\')">' +
+      OBLIGATION_META[o].label + '</button>';
+  }).join("");
+}
+
+function toggleObFilter(ob) {
+  const idx = state.activeObligations.indexOf(ob);
+  if (idx >= 0) state.activeObligations.splice(idx, 1);
+  else state.activeObligations.push(ob);
+  paintResults();
+}
+
+function paintResults() {
+  const q = $("results-query") ? $("results-query").value.trim() : state.query;
+  state.query = q;
+  const results = filterEntries(q, state.activeTasks, state.activeObligations);
+  $("results-count").textContent = results.length + " result" + (results.length === 1 ? "" : "s") +
+    (state.jobId ? " for " + (JOB_PRESETS.find(j => j.id === state.jobId) || {}).label : "");
+  $("results-list").innerHTML = results.length
+    ? results.map(e => renderRegCard(e)).join("")
+    : '<p class="empty">No regulations match your filters.</p>';
+}
+
+/* ======== SEARCH SCREEN ======== */
+function paintSearchScreen() {
+  $("search-recent").innerHTML = state.recentSearches.length
+    ? state.recentSearches.map(q => '<button class="chip" onclick="runSearchFromTab(\'' + esc(q).replace(/'/g, "\\'") + '\')">' + esc(q) + '</button>').join("")
+    : '<span style="color:var(--muted);font-size:13px">No recent searches yet</span>';
+  runSearchQuery();
+}
+
+function runSearchFromTab(q) {
+  $("search-query").value = q;
+  addRecent(q);
+  runSearchQuery();
+}
+
+function runSearchQuery() {
+  const q = $("search-query").value.trim();
+  if (q) {
+    addRecent(q);
+    $("search-section-label").textContent = "Results";
+    $("search-count").style.display = "block";
+    const results = filterEntries(q, [], []);
+    $("search-count").textContent = results.length + " result" + (results.length === 1 ? "" : "s");
+    $("search-results").innerHTML = results.map(e => renderRegCard(e)).join("");
+  } else {
+    $("search-section-label").textContent = "Recent searches";
+    $("search-count").style.display = "none";
+    $("search-results").innerHTML = "";
+  }
+}
+
+/* ======== SAVED SCREEN ======== */
+function paintSaved() {
+  const saved = entries.filter(e => isBookmarked(e.id));
+  if (saved.length) {
+    $("saved-empty").style.display = "none";
+    $("saved-list").innerHTML = saved.map(e => renderRegCard(e)).join("");
+  } else {
+    $("saved-empty").style.display = "block";
+    $("saved-list").innerHTML = "";
+  }
+}
+
+/* ======== SETTINGS ======== */
+function paintSettings() {
+  const toggle = $("classic-toggle");
+  if (state.classic) toggle.classList.add("on"); else toggle.classList.remove("on");
+  if (REG) {
+    $("reg-version").textContent = REG.register_version || "—";
+    $("entry-count").textContent = entries.length + " verified";
+  }
+}
+
+function toggleClassic() {
+  state.classic = !state.classic;
+  const overlay = $("classic-overlay");
+  if (state.classic) { overlay.classList.add("active"); paintClassic(); }
+  else overlay.classList.remove("active");
+  paintSettings();
+}
+
+/* ======== CLASSIC MODE ======== */
+function paintClassic() {
+  const q = $("classic-query").value.trim();
+  const results = q ? filterEntries(q, [], []) : entries.slice(0, 10);
+  $("classic-list").innerHTML = results.map(e => {
+    const ui = e.ui || {};
+    return '<div class="c-card" onclick="openSheet(\'' + e.id + '\')">' +
+      '<div class="ref">' + esc(ui.ref || e.value) + ' · ' + esc(ui.doc || "") + '</div>' +
+      '<div class="title">' + esc(ui.title || e.claim) + '</div>' +
+      '<div class="snippet">' + esc(e.claim) + '</div></div>';
+  }).join("");
+}
+
+/* ======== REG CARD RENDERER ======== */
+function renderRegCard(e) {
+  const ui = e.ui || {};
+  const ob = OBLIGATION_META[ui.obligation] || { label: "Regulation", cls: "ob-technical" };
+  const bm = isBookmarked(e.id);
+  const title = ui.title || e.claim;
+  const where = whereToFind(e);
+  const snippet = e.claim;
+
+  return '<div class="reg-card" onclick="openSheet(\'' + e.id + '\')">' +
+    '<div class="top"><span class="ob-badge ' + ob.cls + '">' + esc(ob.label) + '</span>' +
+    '<div class="bm ' + (bm ? 'on' : '') + '" onclick="event.stopPropagation();toggleBookmarkAndRepaint(\'' + e.id + '\')"></div></div>' +
+    '<div class="title">' + esc(title) + '</div>' +
+    '<div class="ref-bar"><code>' + esc(where) + '</code></div>' +
+    '<div class="snippet">' + esc(snippet) + '</div></div>';
+}
+
+function toggleBookmarkAndRepaint(id) {
+  toggleBookmark(id);
+  // repaint whatever's visible
+  if (state.tab === "saved") paintSaved();
+  else if ($("screen-results").classList.contains("active")) paintResults();
+  else if ($("screen-search").classList.contains("active")) runSearchQuery();
+  // update sheet if open
+  if (state.sheetId === id) updateSheetBookmark();
+}
+
+/* ======== BOTTOM SHEET ======== */
+function openSheet(id) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  state.sheetId = id;
+  state.lastViewed = id;
+  localStorage.setItem("lastViewed", id);
+
+  const ui = e.ui || {};
+  const ob = OBLIGATION_META[ui.obligation] || { label: "Regulation", cls: "ob-technical" };
+
+  $("sheet-ob").className = "ob-badge " + ob.cls;
+  $("sheet-ob").textContent = ob.label;
+  $("sheet-title").textContent = ui.title || e.claim;
+  $("sheet-subtitle").textContent = (ui.doc || "") + " · " + (ui.ref || e.value);
+  $("sheet-where").textContent = whereToFind(e);
+  $("sheet-value").textContent = e.value;
+  $("sheet-quote").textContent = e.verified ? e.verified.quote : "";
+  $("sheet-verified").textContent = e.verified ? "Verified on " + e.verified.on + " by " + e.verified.by_agent : "";
+  $("sheet-source").href = e.source_url;
+
+  updateSheetBookmark();
+
+  $("sheet-overlay").classList.add("open");
+}
+
+function updateSheetBookmark() {
+  const btn = $("sheet-bm");
+  const bm = isBookmarked(state.sheetId);
+  btn.className = "bookmark-btn" + (bm ? " on" : "");
+  btn.textContent = bm ? "Saved ✓" : "Save";
+}
+
+function toggleBookmarkSheet() {
+  if (state.sheetId) toggleBookmarkAndRepaint(state.sheetId);
+}
+
+function closeSheet() {
+  $("sheet-overlay").classList.remove("open");
+  state.sheetId = null;
+}
+
+function closeSheetFromOverlay(ev) {
+  if (ev.target === $("sheet-overlay")) closeSheet();
+}
+
+/* ======== INIT ======== */
+fetch("register.json?" + Date.now())
+  .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(function(reg) {
+    REG = reg;
+    entries = reg.entries || [];
+    paintHome();
+    paintSettings();
+  })
+  .catch(function(err) {
+    document.getElementById("screen-home").innerHTML =
+      '<p class="empty" style="margin-top:60px">Failed to load register: ' + esc(err.message) + '</p>';
   });
+
+// event listeners
+$("home-query").addEventListener("keydown", function(ev) { if (ev.key === "Enter") runHomeSearch(); });
+$("results-query").addEventListener("input", function() { paintResults(); });
+$("search-query").addEventListener("input", function() { runSearchQuery(); });
+$("classic-query").addEventListener("input", function() { paintClassic(); });
+document.addEventListener("keydown", function(ev) { if (ev.key === "Escape") closeSheet(); });
 </script>
 </body>
 </html>

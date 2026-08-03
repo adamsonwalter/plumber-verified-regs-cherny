@@ -185,6 +185,19 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .sheet .bookmark-btn.on{border-color:var(--amber);background:oklch(.97 .03 45);color:var(--amber-dark)}
 .sheet .source-btn{background:var(--amber);color:#fff;border:none;text-decoration:none;display:block}
 
+/* ---- in-app source viewer ---- */
+.source-viewer{display:none;position:fixed;inset:0;z-index:50;background:var(--card);flex-direction:column}
+.source-viewer.active{display:flex}
+.source-viewer-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card);flex-shrink:0}
+.source-viewer-close{border:none;background:#f2f2f7;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;color:#3c3c43;cursor:pointer}
+.source-viewer-url{flex:1;font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.source-viewer-ext{font-size:12px;color:var(--blue);font-weight:600;text-decoration:none;flex-shrink:0}
+.source-viewer-loading{text-align:center;padding:40px 0;color:var(--muted);font-size:14px}
+.source-viewer-frame{flex:1;border:none;width:100%;background:#fff}
+@media(min-width:900px){
+  .source-viewer{left:auto;top:0;right:0;width:50%;min-width:480px;box-shadow:-4px 0 24px rgba(0,0,0,.1)}
+}
+
 /* ---- tab bar ---- */
 .tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid rgba(0,0,0,.08);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom,0px)}
 .tab{flex:1;text-align:center;cursor:pointer;padding:8px 0 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;-webkit-tap-highlight-color:transparent;min-height:49px}
@@ -456,6 +469,17 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
     </div>
   </div>
 
+  <!-- ===== in-app source viewer ===== -->
+  <div class="source-viewer" id="source-viewer">
+    <div class="source-viewer-bar">
+      <button class="source-viewer-close" onclick="closeSourceViewer()">✕ Close</button>
+      <span class="source-viewer-url" id="source-viewer-url"></span>
+      <a class="source-viewer-ext" id="source-viewer-ext" href="#" target="_blank" rel="noopener">Open in browser ↗</a>
+    </div>
+    <div class="source-viewer-loading" id="source-viewer-loading">Loading…</div>
+    <iframe class="source-viewer-frame" id="source-viewer-frame" sandbox="allow-scripts allow-same-origin allow-popups" title="Source document"></iframe>
+  </div>
+
   <!-- ===== bottom sheet ===== -->
   <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheetFromOverlay(event)">
     <div class="sheet" id="sheet">
@@ -474,7 +498,7 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
       <div class="verified-on" id="sheet-verified"></div>
       <div class="actions">
         <button class="bookmark-btn" id="sheet-bm" onclick="toggleBookmarkSheet()"></button>
-        <a class="source-btn" id="sheet-source" href="#" target="_blank" rel="noopener">Open source</a>
+        <a class="source-btn" id="sheet-source" href="#" onclick="openSourceViewer(event);return false">Open source</a>
       </div>
 
       <div class="reviewed-row">
@@ -1281,6 +1305,31 @@ function closeSheet() {
 
 function closeSheetFromOverlay(ev) {
   if (ev.target === $("sheet-overlay")) closeSheet();
+}
+
+/* ======== IN-APP SOURCE VIEWER ======== */
+function openSourceViewer(ev) {
+  const url = $("sheet-source").href;
+  if (!url || url === "#") return;
+  const viewer = $("source-viewer");
+  const frame = $("source-viewer-frame");
+  const urlLabel = $("source-viewer-url");
+  const extLink = $("source-viewer-ext");
+  const loading = $("source-viewer-loading");
+  urlLabel.textContent = sourceDomain(url);
+  extLink.href = url;
+  loading.style.display = "block";
+  frame.style.display = "none";
+  viewer.classList.add("active");
+  frame.onload = function() { loading.style.display = "none"; frame.style.display = "block"; };
+  frame.src = url;
+}
+
+function closeSourceViewer() {
+  const viewer = $("source-viewer");
+  const frame = $("source-viewer-frame");
+  viewer.classList.remove("active");
+  frame.src = "about:blank";
 }
 
 /* ======== INIT: CACHE-FIRST BOOT ======== */

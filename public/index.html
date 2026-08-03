@@ -211,16 +211,22 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 
 /* ---- classic overlay ---- */
 .classic{display:none;position:fixed;inset:0;max-width:480px;left:50%;transform:translateX(-50%);background:oklch(.16 .01 240);padding:calc(var(--safe-top) + 10px) 16px 20px;overflow-y:auto;z-index:35}
+.classic-inner{max-width:100%}
 @media(min-width:900px){
-  .classic{max-width:none;left:0;transform:none;padding:24px 32px}
-  .classic .c-card{max-width:780px}
+  .classic{max-width:none;left:0;transform:none;padding:32px 32px 48px}
+  .classic-inner{max-width:860px;margin:0 auto}
+  .classic .c-card{max-width:none}
 }
 .classic.active{display:block}
 .classic h2{font-size:14px;font-weight:800;color:#fff;font-family:"Space Grotesk",sans-serif;margin-bottom:4px}
 .classic .sub{font-size:10px;color:oklch(.65 .02 240);font-family:ui-monospace,monospace;margin-bottom:12px}
-.classic .search-c{background:oklch(.21 .012 240);border:1px solid oklch(.32 .015 240);border-radius:4px;padding:10px 12px;margin-bottom:14px;color:oklch(.6 .01 240);font-size:13px;width:100%;outline:none;font-family:inherit}
+.classic .search-c{background:oklch(.21 .012 240);border:1px solid oklch(.32 .015 240);border-radius:4px;padding:10px 12px;margin-bottom:12px;color:oklch(.6 .01 240);font-size:13px;width:100%;outline:none;font-family:inherit}
 .classic .search-c::placeholder{color:oklch(.55 .01 240)}
 .classic .switch-btn{background:oklch(.72 .18 65);color:oklch(.10 .01 240);border:none;font-size:11px;font-weight:800;padding:7px 11px;border-radius:4px;cursor:pointer;margin-left:12px}
+.classic .cat-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.classic .cat-bar::-webkit-scrollbar{display:none}
+.classic .cat-chip{flex-shrink:0;font-size:11px;font-weight:700;padding:5px 10px;border-radius:3px;border:1px solid oklch(.32 .015 240);background:oklch(.21 .012 240);color:oklch(.68 .01 240);cursor:pointer;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px}
+.classic .cat-chip.on{background:oklch(.72 .18 65);color:oklch(.10 .01 240);border-color:oklch(.72 .18 65)}
 .classic .c-card{border-left:4px solid oklch(.60 .15 200);background:oklch(.21 .012 240);border-radius:4px;padding:12px;margin-bottom:10px;cursor:pointer}
 .classic .c-card .ref{font-family:ui-monospace,monospace;font-size:11px;color:oklch(.65 .02 240);font-weight:700;margin-bottom:6px}
 .classic .c-card .title{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
@@ -439,12 +445,15 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 
   <!-- ===== CLASSIC overlay ===== -->
   <div class="classic" id="classic-overlay">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div><h2>VIC Plumbing Code DB</h2><div class="sub">Classic mode</div></div>
-      <button class="switch-btn" onclick="toggleClassic()">Switch to New</button>
+    <div class="classic-inner">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div><h2>VIC Plumbing Code DB</h2><div class="sub">Classic mode · <span id="classic-count">—</span></div></div>
+        <button class="switch-btn" onclick="toggleClassic()">Switch to New</button>
+      </div>
+      <input class="search-c" placeholder="Search: 'Reg 26', 'backflow'…" id="classic-query">
+      <div class="cat-bar" id="classic-cats"></div>
+      <div id="classic-list"></div>
     </div>
-    <input class="search-c" placeholder="Search: 'Reg 26', 'backflow'…" id="classic-query">
-    <div id="classic-list"></div>
   </div>
 
   <!-- ===== bottom sheet ===== -->
@@ -554,6 +563,7 @@ let state = {
   reviewed: lsGet("reviewed", {}),
   notes: lsGet("notes", {}),
   classic: false,
+  classicCat: "",
   sheetId: null,
   lastSeenVersion: lsGet("lastSeenVersion", null),
   lastVisit: lsGet("lastVisit", null),
@@ -1037,10 +1047,15 @@ function showResults() {
 }
 
 function paintObFilters() {
-  $("ob-filter-bar").innerHTML = ALL_OBLIGATIONS.map(function(o) {
+  // Derive categories from actual data — only show obligations that have ≥1 entry
+  const available = ALL_OBLIGATIONS.filter(function(o) {
+    return entries.some(function(e) { return (e.ui || {}).obligation === o; });
+  });
+  $("ob-filter-bar").innerHTML = available.map(function(o) {
     const on = state.activeObligations.includes(o);
+    const count = entries.filter(function(e) { return (e.ui || {}).obligation === o; }).length;
     return '<button class="filter-chip ' + (on ? 'on' : '') + '" onclick="toggleObFilter(\'' + o + '\')">' +
-      OBLIGATION_META[o].label + '</button>';
+      OBLIGATION_META[o].label + ' <span style="opacity:.6">' + count + '</span></button>';
   }).join("");
 }
 
@@ -1148,22 +1163,46 @@ function paintSettings() {
 function toggleClassic() {
   state.classic = !state.classic;
   const overlay = $("classic-overlay");
-  if (state.classic) { overlay.classList.add("active"); paintClassic(); }
+  if (state.classic) { overlay.classList.add("active"); paintClassicCats(); paintClassic(); }
   else overlay.classList.remove("active");
   paintSettings();
 }
 
 /* ======== CLASSIC MODE ======== */
+function paintClassicCats() {
+  const catBar = $("classic-cats");
+  if (!catBar) return;
+  const cats = [{ id: "", label: "All" }];
+  ALL_TASKS.forEach(function(t) {
+    const count = entries.filter(function(e) { return ((e.ui || {}).tradeTasks || []).indexOf(t) >= 0; }).length;
+    if (count) cats.push({ id: t, label: TRADE_TASK_LABELS[t] + " (" + count + ")" });
+  });
+  const active = state.classicCat || "";
+  catBar.innerHTML = cats.map(function(c) {
+    return '<button class="cat-chip ' + (active === c.id ? "on" : "") + '" onclick="setClassicCat(\'' + c.id + '\')">' + esc(c.label) + "</button>";
+  }).join("");
+}
+
+function setClassicCat(cat) {
+  state.classicCat = (state.classicCat === cat) ? "" : cat;
+  paintClassicCats();
+  paintClassic();
+}
+
 function paintClassic() {
   const q = $("classic-query").value.trim();
-  const results = q ? filterEntries(q, [], []) : entries.slice(0, 10);
-  $("classic-list").innerHTML = results.map(e => {
+  const cat = state.classicCat || "";
+  const tasks = cat ? [cat] : [];
+  const results = filterEntries(q, tasks, []);
+  const cnt = $("classic-count");
+  if (cnt) cnt.textContent = results.length + " of " + entries.length;
+  $("classic-list").innerHTML = results.length ? results.map(function(e) {
     const ui = e.ui || {};
     return '<div class="c-card" onclick="openSheet(\'' + e.id + '\')">' +
-      '<div class="ref">' + esc(ui.ref || e.value) + ' · ' + esc(ui.doc || "") + '</div>' +
-      '<div class="title">' + esc(ui.title || e.claim) + '</div>' +
-      '<div class="snippet">' + esc(e.claim) + '</div></div>';
-  }).join("");
+      '<div class="ref">' + esc(ui.ref || e.value) + " · " + esc(ui.doc || "") + "</div>" +
+      '<div class="title">' + esc(ui.title || e.claim) + "</div>" +
+      '<div class="snippet">' + esc(e.claim) + "</div></div>";
+  }).join("") : '<div style="color:oklch(.6 .01 240);font-size:13px;padding:20px 0">No regulations match.</div>';
 }
 
 /* ======== REG CARD RENDERER ======== */

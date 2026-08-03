@@ -210,7 +210,7 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .settings-row .right.green{color:var(--green)}
 
 /* ---- classic overlay ---- */
-.classic{display:none;position:fixed;inset:0;max-width:480px;left:50%;transform:translateX(-50%);background:oklch(.16 .01 240);padding:calc(var(--safe-top) + 10px) 16px 20px;overflow-y:auto;z-index:35}
+.classic{display:none;position:fixed;inset:0;max-width:480px;left:50%;transform:translateX(-50%);background:#1a1a2e;padding:calc(var(--safe-top) + 10px) 16px 20px;overflow-y:auto;z-index:35}
 .classic-inner{max-width:100%}
 @media(min-width:900px){
   .classic{max-width:none;left:0;transform:none;padding:32px 32px 48px}
@@ -218,19 +218,19 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
   .classic .c-card{max-width:none}
 }
 .classic.active{display:block}
-.classic h2{font-size:14px;font-weight:800;color:#fff;font-family:"Space Grotesk",sans-serif;margin-bottom:4px}
-.classic .sub{font-size:10px;color:oklch(.65 .02 240);font-family:ui-monospace,monospace;margin-bottom:12px}
-.classic .search-c{background:oklch(.21 .012 240);border:1px solid oklch(.32 .015 240);border-radius:4px;padding:10px 12px;margin-bottom:12px;color:oklch(.6 .01 240);font-size:13px;width:100%;outline:none;font-family:inherit}
-.classic .search-c::placeholder{color:oklch(.55 .01 240)}
-.classic .switch-btn{background:oklch(.72 .18 65);color:oklch(.10 .01 240);border:none;font-size:11px;font-weight:800;padding:7px 11px;border-radius:4px;cursor:pointer;margin-left:12px}
+.classic h2{font-size:14px;font-weight:800;color:#e8e8ed;font-family:"Space Grotesk",sans-serif;margin-bottom:4px}
+.classic .sub{font-size:10px;color:#a0a0b8;font-family:ui-monospace,monospace;margin-bottom:12px}
+.classic .search-c{background:#252540;border:1px solid #3a3a58;border-radius:4px;padding:10px 12px;margin-bottom:12px;color:#e8e8ed;font-size:13px;width:100%;outline:none;font-family:inherit}
+.classic .search-c::placeholder{color:#9898b0}
+.classic .switch-btn{background:oklch(.72 .18 65);color:#1a1a2e;border:none;font-size:11px;font-weight:800;padding:7px 11px;border-radius:4px;cursor:pointer;margin-left:12px}
 .classic .cat-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
 .classic .cat-bar::-webkit-scrollbar{display:none}
-.classic .cat-chip{flex-shrink:0;font-size:11px;font-weight:700;padding:5px 10px;border-radius:3px;border:1px solid oklch(.32 .015 240);background:oklch(.21 .012 240);color:oklch(.68 .01 240);cursor:pointer;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px}
-.classic .cat-chip.on{background:oklch(.72 .18 65);color:oklch(.10 .01 240);border-color:oklch(.72 .18 65)}
-.classic .c-card{border-left:4px solid oklch(.60 .15 200);background:oklch(.21 .012 240);border-radius:4px;padding:12px;margin-bottom:10px;cursor:pointer}
-.classic .c-card .ref{font-family:ui-monospace,monospace;font-size:11px;color:oklch(.65 .02 240);font-weight:700;margin-bottom:6px}
-.classic .c-card .title{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
-.classic .c-card .snippet{font-size:12px;color:oklch(.68 .01 240);line-height:1.5}
+.classic .cat-chip{flex-shrink:0;font-size:11px;font-weight:700;padding:5px 10px;border-radius:3px;border:1px solid #3a3a58;background:#252540;color:#d0d0e0;cursor:pointer;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px}
+.classic .cat-chip.on{background:oklch(.72 .18 65);color:#1a1a2e;border-color:oklch(.72 .18 65)}
+.classic .c-card{border-left:4px solid #5b9bd5;background:#252540;border-radius:4px;padding:12px;margin-bottom:10px;cursor:pointer}
+.classic .c-card .ref{font-family:ui-monospace,monospace;font-size:11px;color:#a0a0b8;font-weight:700;margin-bottom:6px}
+.classic .c-card .title{font-size:14px;font-weight:700;color:#f0f0f5;margin-bottom:6px}
+.classic .c-card .snippet{font-size:12px;color:#c8c8d8;line-height:1.5}
 
 /* ---- back link ---- */
 .back{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-size:14px;font-weight:700;margin-bottom:14px;cursor:pointer;background:none;border:none}
@@ -1202,7 +1202,7 @@ function paintClassic() {
       '<div class="ref">' + esc(ui.ref || e.value) + " · " + esc(ui.doc || "") + "</div>" +
       '<div class="title">' + esc(ui.title || e.claim) + "</div>" +
       '<div class="snippet">' + esc(e.claim) + "</div></div>";
-  }).join("") : '<div style="color:oklch(.6 .01 240);font-size:13px;padding:20px 0">No regulations match.</div>';
+  }).join("") : '<div style="color:#a0a0b8;font-size:13px;padding:20px 0">No regulations match.</div>';
 }
 
 /* ======== REG CARD RENDERER ======== */

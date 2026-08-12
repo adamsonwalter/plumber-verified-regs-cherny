@@ -101,14 +101,16 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 
 /* ---- search ---- */
 .search{display:flex;gap:8px;margin-bottom:16px}
-.search input{flex:1;font-size:15px;padding:11px 13px;border-radius:12px;border:none;background:#e9e9eb;color:var(--ink);outline:none}
-.search input:focus{background:#e2e2e5}
-.search input::placeholder{color:rgba(60,60,67,.5)}
+/* The old #e9e9eb field sat on the #f2f2f7 page at ~1.1:1 and read as absent.
+   White ground + a real edge separates it from the page; focus adds a ring. */
+.search input{flex:1;font-size:15px;padding:11px 13px;border-radius:12px;border:1.5px solid rgba(60,60,67,.30);background:var(--card);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
+.search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px oklch(.55 .13 230/.18)}
+.search input::placeholder{color:rgba(60,60,67,.62)}
 .search button{background:var(--brown);color:#fff;border:none;padding:0 16px;border-radius:12px;font-size:14px;font-weight:700;white-space:nowrap}
 .search-standalone{margin-bottom:16px}
-.search-standalone input{width:100%;font-size:16px;padding:12px 14px;border-radius:12px;border:none;background:#e9e9eb;color:var(--ink);outline:none}
-.search-standalone input:focus{background:#e2e2e5}
-.search-standalone input::placeholder{color:rgba(60,60,67,.5)}
+.search-standalone input{width:100%;font-size:16px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(60,60,67,.30);background:var(--card);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
+.search-standalone input:focus{border-color:var(--blue);box-shadow:0 0 0 3px oklch(.55 .13 230/.18)}
+.search-standalone input::placeholder{color:rgba(60,60,67,.62)}
 
 /* ---- resume card ---- */
 .resume{background:var(--card);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.05)}
@@ -205,12 +207,16 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .sheet .source-btn .src-host{display:block;font-size:11px;font-weight:600;opacity:.85;font-family:ui-monospace,monospace;margin-top:2px}
 
 /* ---- tab bar ---- */
-.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid rgba(0,0,0,.08);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.96);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:1px solid rgba(0,0,0,.16);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom,0px)}
 .tab{flex:1;text-align:center;cursor:pointer;padding:8px 0 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;-webkit-tap-highlight-color:transparent;min-height:49px}
-.tab svg{width:25px;height:25px;stroke:rgba(60,60,67,.5);fill:none;stroke-width:1.8;transition:stroke .15s,fill .15s}
-.tab.on svg{stroke:var(--amber);fill:none}
-.tab .label{font-size:10px;font-weight:500;color:rgba(60,60,67,.5);letter-spacing:.1px;transition:color .15s}
-.tab.on .label{font-weight:600;color:var(--amber)}
+/* Contrast: the inactive .5-alpha grey read at ~2.6:1 on the bar and was hard to
+   see in daylight; plain --amber fares no better on white. Inactive is now a
+   solid grey and active uses --amber-dark, with weight and stroke reinforcing
+   the state so it does not rest on hue alone. */
+.tab svg{width:25px;height:25px;stroke:#5a5a60;fill:none;stroke-width:2;transition:stroke .15s,stroke-width .15s}
+.tab.on svg{stroke:var(--amber-dark);stroke-width:2.4}
+.tab .label{font-size:10px;font-weight:600;color:#5a5a60;letter-spacing:.1px;transition:color .15s}
+.tab.on .label{font-weight:800;color:var(--amber-dark)}
 
 /* ---- saved empty ---- */
 .empty{text-align:center;color:rgba(60,60,67,.4);font-size:13px;margin-top:40px}

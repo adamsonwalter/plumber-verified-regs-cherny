@@ -16,6 +16,9 @@ __pycache__/
 # ZCode / agent session state (tooling, not app)
 .zcode/
 
+# Claude Code local settings + local preview server config (tooling, not app)
+.claude/
+
 # Netlify CLI local cache
 .netlify/
 

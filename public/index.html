@@ -372,8 +372,8 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 
   <!-- top bar (phone only) -->
   <div class="topbar">
-    <div class="pill">Live data</div>
-    <div class="offline pill" style="background:oklch(.92 .03 25);color:oklch(.45 .12 25)">Offline</div>
+    <div class="pill" id="live-pill">Live data</div>
+    <div class="offline pill" id="offline" style="background:oklch(.92 .03 25);color:oklch(.45 .12 25)">Offline</div>
   </div>
 
   <!-- ===== HOME screen ===== -->
@@ -594,6 +594,7 @@ const ALL_OBLIGATIONS = Object.keys(OBLIGATION_META);
 let REG = null;
 let entries = [];
 let changedEntries = []; // entries new/changed since last visit
+let cacheWriteOk = true;  // false once a cache write is rejected (quota)
 const STORAGE_KEYS = ["bookmarks","recentSearches","pinnedJobs","lastViewed","reviewed","notes","lastSeenVersion","lastVisit","visitStreak","filterHintUses","cache"];
 
 function lsGet(key, fallback) { try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; } catch { return fallback; } }
@@ -724,13 +725,49 @@ function loadCache() {
 }
 
 function saveCache(entries, version) {
-  try { localStorage.setItem("cache", JSON.stringify({ v: version, entries: entries })); } catch {}
+  // The whole register goes in here, so this is the write that fails first when
+  // storage is tight — and it grows with the register while every other write
+  // stays tiny. Swallowing the failure silently would leave the app promising
+  // offline data it does not actually hold, so record it and surface it.
+  try {
+    localStorage.setItem("cache", JSON.stringify({ v: version, entries: entries }));
+    cacheWriteOk = true;
+    return true;
+  } catch (err) {
+    cacheWriteOk = false;
+    return false;
+  }
+}
+
+/* Single place that reports data freshness. The pill previously had no id, so
+   the boot catch handler threw on $("offline").style before it could ever say
+   "Using cached data" — the app kept claiming "Up to date" while serving cache. */
+function setDataState(kind) {
+  const pill = $("offline");
+  const row = $("offline-status");
+  const showPill = (kind === "cached");
+  if (pill) pill.style.display = showPill ? "inline-flex" : "none";
+  // "Live data" and "Offline" are contradictory claims; never show both.
+  const live = $("live-pill");
+  if (live) live.style.display = showPill ? "none" : "inline-flex";
+  if (!row) return;
+  if (kind === "cached") { row.textContent = "Using cached data"; row.className = "right"; }
+  else if (kind === "uncached") { row.textContent = "Not saved on this device"; row.className = "right"; }
+  else { row.textContent = "Up to date"; row.className = "right green"; }
 }
 
 /* ======== PATTERN #1: WHAT CHANGED ======== */
 function computeChanges(freshEntries, freshVersion) {
   if (!state.lastSeenVersion || state.lastSeenVersion === freshVersion) return [];
-  const oldIds = new Set((loadCache() || {}).entries.map(e => e.id));
+  const cached = loadCache();
+  const prev = cached && cached.entries ? cached.entries : null;
+  // lastSeenVersion and the cache are written separately and can legitimately
+  // disagree: the tiny version write survives a quota failure that rejects the
+  // whole-register cache write. Absent a baseline we cannot tell what is new,
+  // so report nothing new. (Falling through with an empty id set would instead
+  // flag every entry as new — a false "everything changed" banner.)
+  if (!prev) return [];
+  const oldIds = new Set(prev.map(e => e.id));
   return freshEntries.filter(e => !oldIds.has(e.id));
 }
 
@@ -1255,7 +1292,10 @@ function paintSettings() {
   if (state.classic) toggle.classList.add("on"); else toggle.classList.remove("on");
   if (REG) {
     $("reg-version").textContent = REG.register_version || "—";
-    $("entry-count").textContent = entries.length + " verified";
+    const okCount = entries.filter(function(e) { return entryTrust(e).tier === "ok"; }).length;
+    $("entry-count").textContent = okCount === entries.length
+      ? entries.length + " verified"
+      : okCount + " of " + entries.length + " verified";
   }
   $("settings-lastvisit").textContent = state.lastVisit ? timeAgo(state.lastVisit) : "—";
   $("settings-visits").textContent = state.visitStreak > 0 ? state.visitStreak + (state.visitStreak === 1 ? " visit" : " visits") : "—";
@@ -1422,8 +1462,9 @@ function closeSheetFromOverlay(ev) {
       REG = reg;
       entries = reg.entries || [];
 
-      // cache for next visit
-      saveCache(entries, reg.register_version);
+      // cache for next visit; a rejected write must not be reported as fresh
+      const cached = saveCache(entries, reg.register_version);
+      setDataState(cached ? "fresh" : "uncached");
 
       // compute what changed (#1)
       changedEntries = computeChanges(entries, reg.register_version);
@@ -1438,10 +1479,7 @@ function closeSheetFromOverlay(ev) {
           '<p class="empty" style="margin-top:60px">Failed to load register: ' + esc(err.message) + '</p>';
       }
       // show offline pill if cached data is being used
-      if (cache) {
-        $("offline").style.display = "inline-flex";
-        $("offline-status").textContent = "Using cached data";
-      }
+      if (cache && cache.entries) setDataState("cached");
     });
 })();
 

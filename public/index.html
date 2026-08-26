@@ -193,6 +193,28 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .sheet .quote::before{content:"\201C";color:var(--amber);font-weight:700;margin-right:2px}
 .sheet .quote::after{content:"\201D";color:var(--amber);font-weight:700;margin-left:2px}
 .sheet .verified-on{font-size:12px;color:var(--muted);margin-bottom:20px}
+
+/* ---- trust states ----
+   The register's own status field drives these. The scheduled agent can flip an
+   entry to unverified/unreachable and commit it back, so a degraded entry must
+   never keep rendering as verified. Anything not explicitly "verified" fails
+   closed to a warning; see entryTrust(). */
+.sheet .trust-band{display:none;border-radius:10px;padding:11px 13px;margin-bottom:14px;border-left:4px solid}
+.sheet .trust-band.show{display:block}
+.sheet .trust-band .t-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.sheet .trust-band .t-line{font-size:13.5px;font-weight:600;line-height:1.5}
+.sheet .trust-band .t-note{font-size:12.5px;line-height:1.55;margin-top:7px}
+.sheet .trust-band.stale{background:oklch(.96 .03 25);border-left-color:var(--red)}
+.sheet .trust-band.stale .t-label{color:var(--red)}
+.sheet .trust-band.stale .t-line,.sheet .trust-band.stale .t-note{color:var(--brown-dark)}
+.sheet .trust-band.unknown{background:oklch(.96 .04 65);border-left-color:var(--amber-dark)}
+.sheet .trust-band.unknown .t-label{color:var(--amber-dark)}
+.sheet .trust-band.unknown .t-line,.sheet .trust-band.unknown .t-note{color:var(--amber-dark)}
+.trust-pill{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:3px 8px;border-radius:var(--radius-pill);margin-left:6px}
+.trust-pill.stale{background:oklch(.94 .05 25);color:var(--red)}
+.trust-pill.unknown{background:oklch(.94 .06 65);color:var(--amber-dark)}
+.classic .c-card .trust-pill.stale{background:oklch(.32 .09 25);color:oklch(.86 .10 25)}
+.classic .c-card .trust-pill.unknown{background:oklch(.34 .08 65);color:oklch(.88 .11 65)}
 .sheet .actions{display:flex;gap:10px}
 .sheet .actions button,.sheet .actions a{flex:1;text-align:center;padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
 .sheet .bookmark-btn{border:1.5px solid var(--line);background:var(--card);color:#3c3c43}
@@ -493,9 +515,10 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
       </div>
       <h2 id="sheet-title"></h2>
       <div class="subtitle" id="sheet-subtitle"></div>
+      <div class="trust-band" id="sheet-trust"></div>
       <div class="where-label">Where to find it</div>
       <div class="where-box"><code id="sheet-where"></code></div>
-      <div class="preview-label">Verified value</div>
+      <div class="preview-label" id="sheet-value-label">Verified value</div>
       <div class="preview" id="sheet-value"></div>
       <div class="quote" id="sheet-quote"></div>
       <div class="verified-on" id="sheet-verified"></div>
@@ -609,6 +632,57 @@ function saveNotes() { lsSet("notes", state.notes); }
 
 function sourceDomain(url) {
   try { return new URL(url).hostname.replace(/^www\./, ""); } catch(e) { return ""; }
+}
+
+/* Map a register entry to how its trust should be presented. Single source of
+   truth for every surface (sheet, cards, classic).
+
+   Fails closed: only an explicit status of "verified" earns the verified line.
+   A missing or unrecognised status is treated as not-re-checked, never as ok.
+
+   On "unverified" the scheduled agent overwrites verified.on with the run date
+   and verified.quote with a snippet of the CHANGED page, so for that tier we
+   suppress both — showing a fresh date or the new page's text beside the old
+   value would read as confirmation of a value that has in fact moved. */
+function entryTrust(e) {
+  const v = e.verified || {};
+  const status = e.status;
+  if (status === "verified") {
+    return {
+      tier: "ok",
+      valueLabel: "Verified value",
+      line: v.on ? "Verified on " + v.on + (v.by_agent ? " by " + v.by_agent : "") : "",
+      showQuote: true
+    };
+  }
+  if (status === "unverified") {
+    return {
+      tier: "stale",
+      label: "Source changed — do not rely on this value",
+      valueLabel: "Last confirmed value",
+      line: e.changed_from ? "Last confirmed: " + e.changed_from
+                           : "The recorded value was not found on the current source page.",
+      note: e.remedial_note || "",
+      showQuote: false
+    };
+  }
+  return {
+    tier: "unknown",
+    label: status === "unreachable" ? "Not re-checked — source unreachable"
+                                    : "Not re-checked",
+    valueLabel: "Value (not re-checked)",
+    line: e.last_successful_check ? "Last successful check: " + e.last_successful_check
+                                  : "This entry has not been confirmed against its source.",
+    note: e.remedial_note || "",
+    showQuote: true
+  };
+}
+
+function trustPill(e) {
+  const t = entryTrust(e);
+  if (t.tier === "ok") return "";
+  const txt = t.tier === "stale" ? "Source changed" : "Not re-checked";
+  return '<span class="trust-pill ' + t.tier + '">' + txt + "</span>";
 }
 
 function whereToFind(e) {
@@ -1226,7 +1300,7 @@ function paintClassic() {
   $("classic-list").innerHTML = results.length ? results.map(function(e) {
     const ui = e.ui || {};
     return '<div class="c-card" onclick="openSheet(\'' + e.id + '\')">' +
-      '<div class="ref">' + esc(ui.ref || e.value) + " · " + esc(ui.doc || "") + "</div>" +
+      '<div class="ref">' + esc(ui.ref || e.value) + " · " + esc(ui.doc || "") + trustPill(e) + "</div>" +
       '<div class="title">' + esc(ui.title || e.claim) + "</div>" +
       '<div class="snippet">' + esc(e.claim) + "</div></div>";
   }).join("") : '<div style="color:#a0a0b8;font-size:13px;padding:20px 0">No regulations match.</div>';
@@ -1246,6 +1320,7 @@ function renderRegCard(e) {
   return '<div class="reg-card' + (reviewed ? ' reviewed' : '') + '" onclick="openSheet(\'' + e.id + '\')">' +
     (noted ? '<div class="note-dot"></div>' : '') +
     '<div class="top"><span class="ob-badge ' + ob.cls + '">' + esc(ob.label) + '</span>' +
+    trustPill(e) +
     (reviewed ? '<span class="reviewed-pill">✓ Reviewed</span>' : '') +
     '<div class="bm ' + (bm ? 'on' : '') + '" onclick="event.stopPropagation();toggleBookmarkAndRepaint(\'' + e.id + '\')"></div></div>' +
     '<div class="title">' + esc(title) + '</div>' +
@@ -1276,8 +1351,24 @@ function openSheet(id) {
   $("sheet-subtitle").textContent = (ui.doc || "") + " · " + (ui.ref || e.value);
   $("sheet-where").textContent = whereToFind(e);
   $("sheet-value").textContent = e.value;
-  $("sheet-quote").textContent = e.verified ? e.verified.quote : "";
-  $("sheet-verified").textContent = e.verified ? "Verified on " + e.verified.on + " by " + e.verified.by_agent : "";
+  const trust = entryTrust(e);
+  const band = $("sheet-trust");
+  $("sheet-value-label").textContent = trust.valueLabel;
+  if (trust.tier === "ok") {
+    band.className = "trust-band";
+    band.innerHTML = "";
+    $("sheet-verified").textContent = trust.line;
+  } else {
+    band.className = "trust-band show " + trust.tier;
+    band.innerHTML = '<div class="t-label">' + esc(trust.label) + "</div>" +
+      '<div class="t-line">' + esc(trust.line) + "</div>" +
+      (trust.note ? '<div class="t-note">' + esc(trust.note) + "</div>" : "");
+    // No agent-written date for an entry that is not verified.
+    $("sheet-verified").textContent = "";
+  }
+  const quote = trust.showQuote && e.verified ? (e.verified.quote || "") : "";
+  $("sheet-quote").textContent = quote;
+  $("sheet-quote").style.display = quote ? "" : "none";
   $("sheet-source").href = e.source_url;
   $("sheet-source-host").textContent = sourceDomain(e.source_url);
 

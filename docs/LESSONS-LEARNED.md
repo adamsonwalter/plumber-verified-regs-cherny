@@ -80,6 +80,40 @@ asserted the DBI threshold was "$22,000 (from 1 July 2024)"; the actual
 Consumer Affairs Victoria page said **$16,000** as of the fetch. The page text
 won. Always.
 
+**Second corollary, found later and worse: an upstream knowledge base can
+fabricate an entire clause set.** The sibling `trade-regulations-okf` repo
+carries 34 install-spec records (`ws-1xx` / `san-1xx`) covering pipe sizing,
+trap seal depths, test pressures. They look authoritative. They are not:
+
+- All 34 cite **one** URL — the BPC AS/NZS 3500 landing page — which contains
+  none of their values. It establishes only which edition is current, already
+  covered by `RS-STANDARD` / `WATER-STD` / `SAN-STD` / `HEAT-STD`.
+- Their clause numbers run in a **perfect ascending sequence** — sections
+  3, 4, 5 … 17, exactly one topic per section, with "as-installed drawings"
+  dropped to section 2 in *both* the `ws-` and `san-` series independently.
+  Real standards are not organised one topic per section in topic order. That
+  shape is the tell.
+- Two of them contradict BPC's own words outright: `ws-103` places hot/cold
+  separation at cl 5.4, where BPC states verbatim that **Clause 5.4.2** is
+  *"Isolation valves must be installed immediately before each flexible hose
+  assembly…"*; `ws-106` places isolation valves at cl 8.1.
+- The source repo self-rates all 34 at `confidence: 0.7`, and their
+  `confidence_sources` attest only to *which edition applies* — never to clause
+  content. The honesty was in the metadata; only the values looked confident.
+
+**Do not import them.** Importing would send a licensed plumber to the wrong
+clause under a "Verified" badge. If a clause reference cannot be quoted from a
+page you actually opened, it does not ship — the same rule as URLs, applied to
+clause numbers.
+
+**What *is* safe, and how the 30 `PTR-*` pointers were built:** BPC publishes
+real clause numbers with real topics in its "Summary of key changes" tables for
+each part. Those verify verbatim through the normal gate
+(`key_substring` = `"Clause 5.4.2"`), carry no copyright exposure (clause
+numbers are facts), and BPC's own wording supplies the quote. A clause
+reference is shippable **only when a regulator has published it** — not because
+clause references are inherently free.
+
 ---
 
 ## 4. `key_substring` is the linchpin of the whole system — design it carefully
@@ -177,6 +211,16 @@ catch you (the needle won't match on a real fetch).
   "Under Part 4 of the Plumbing Regulations 2018 …"). The brief claimed
   "Division 7" for roofing — the page says **Part 4**. Record what the page
   says, not what the brief says.
+- **`scripts/build_register.py` is stale and will destroy the register.** It
+  has not been touched since `fed661c`, while `2bb361d` added the `ui` blocks
+  directly to `register.json`. Its `add()` writes no `ui` key and it overwrites
+  both `register.json` and `public/register.json`. Running it — *as the README
+  instructs* — strips the `ui` block from every entry and breaks all cards and
+  sheets (`renderRegCard`, `openSheet`, `whereToFind`, `matchesQuery`,
+  `matchesTasks`, `matchesObligations`, `paintClassic` all read `e.ui.*`). It
+  is also unaware of the 30 `PTR-*` pointers. Until it is fixed, add entries
+  the way `scripts/add_standard_pointers.py` does: **upsert by id into the
+  existing register**, never regenerate.
 
 ---
 
@@ -243,4 +287,10 @@ register **MUST** be wrapped in `fsutil.file_lock`. Don't go back to
    read-modify-write MUST wrap in `fsutil.file_lock` (§9).
 6. Run the three commands in `REPEATABLE-VALIDATION.md` §1–§3 before
    declaring anything done: offline gate, live gate (exit 0), corruption gate
+7. **Never run `scripts/build_register.py`** until it is fixed (§8) — it wipes
+   the `ui` blocks. Add entries by upserting into `register.json`.
+8. Clause numbers follow the same rule as URLs: quote them from a page you
+   opened, or leave them out (§3). Numeric values from inside a paywalled
+   standard need an attestation model the gate does not have yet — do not ship
+   them under `status: "verified"`.
    (exit 1).

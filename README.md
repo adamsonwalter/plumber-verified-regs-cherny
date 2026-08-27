@@ -20,10 +20,6 @@ compliance determination**.
 > dominate this project. For what was tested and what remains, see
 > [`docs/TEST-AND-VERIFICATION-LOG.md`](docs/TEST-AND-VERIFICATION-LOG.md); to
 > re-run every check, follow [`docs/REPEATABLE-VALIDATION.md`](docs/REPEATABLE-VALIDATION.md).
-> Before adding content, read
-> [`docs/CONTENT-DECISIONS-AND-NEXT-STEPS.md`](docs/CONTENT-DECISIONS-AND-NEXT-STEPS.md) —
-> it records what may ship, what is permanently excluded and why, and a
-> destructive hazard in `scripts/build_register.py`.
 
 ## Three capabilities
 

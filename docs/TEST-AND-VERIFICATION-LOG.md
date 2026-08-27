@@ -86,16 +86,15 @@ fixed by pointing at the real authoritative page, never by inventing a URL:
 These were **not** done and should be before considering the deployment fully
 hardened:
 
-- [ ] **Visual/GUI test of `public/index.html` in a real browser.** Only
-      black-box curl checks (HTTP 200, correct JSON shape, `fetch('register.json')`
-      present) were performed. No screenshot-based render verification was done
-      — the `browser-use:web-gui-tester` skill needs a browser-automation
-      runtime that wasn't available in the build session. Run it against a
-      local `python3 -m http.server` in `public/` and confirm: cards render,
-      VIC/Federal grouping, the verified/unverified/unreachable card variants
-      all display their fields, and the filter buttons work. To exercise the
-      unverified/unreachable card variants, temporarily flip 1–2 entries in a
-      copy of `register.json`.
+- [x] **Visual/GUI test of `public/index.html` in a real browser.** Done at
+      375×812 against a local server (`.claude/launch.json`, `static-public`).
+      All three card variants exercised via a fixture reproducing the scheduled
+      agent's exact output. It found four real defects, since fixed:
+      the app never read `status`, so a degraded entry kept its "Verified"
+      badge (`4f479d5`); `computeChanges()` threw on an absent cache and blanked
+      the home screen (`56cc0a1`); the offline pill had never worked because no
+      element carried `id="offline"` (`56cc0a1`); and classic mode collapsed to
+      188 px on a 375 px phone (`a7d21ff`).
 - [ ] **A real Netlify deploy** and confirmation that (a) the static site
       publishes, (b) the build's live gate runs and passes, and (c) the
       scheduled function actually fires on its cron (check Netlify Functions
@@ -117,8 +116,33 @@ hardened:
       `verified.on` dates. The schedule re-verifies weekly; confirm the first
       few weekly runs stay green and that any genuine regulatory change (e.g.
       a new AS/NZS 3500 amendment) correctly flips the entry to `unverified`.
-- [ ] **Accessibility / mobile pass** on the page (currently untested beyond
-      the responsive CSS media query).
+- [x] **Contrast / mobile pass** — measured, not eyeballed. Tab-bar icons were
+      ~2.6:1 (below the 3:1 WCAG floor for UI controls) and the search field sat
+      at 1.12:1 against the page, effectively invisible; now 6.85:1 / 7.9:1 and a
+      9.8:1 edge (`d41af18`). Trust-warning bands measure 4.56–7.85:1.
+- [ ] **Full accessibility pass** — contrast is done; screen-reader labels,
+      focus order, and keyboard navigation remain untested.
 
-The publish gate and the three-verdict agent logic are proven; the gaps above
-are deploy-time and visual, not core-logic.
+- [ ] **Fix `scripts/build_register.py` before anyone runs it.** It predates the
+      `ui` blocks and would strip them from all 59 entries — see
+      `LESSONS-LEARNED.md` §8. Either teach it the `ui` blocks and the 30
+      `PTR-*` pointers so it genuinely reproduces the current register (verify
+      by rebuilding to a temp path and diffing against the committed
+      `register.json`), or make it refuse without an explicit flag and correct
+      the README, which currently presents it as the normal rebuild path.
+- [ ] **Design an evidence model for values from paywalled standards.** The
+      gate can only confirm a `key_substring` against fetched page text. A value
+      attested by a human against a licensed copy of AS/NZS 3500 has no branch,
+      and the publish gate would hard-fail it. Design that *before* collecting
+      values, not after. The `entryTrust()` tiers (`ok` / `stale` / `unknown`)
+      in `public/index.html` are the natural carrier for an attested tier; the
+      open question is what the gate checks in place of a live fetch. Note that
+      purchasing a standard does not grant redistribution rights (separate
+      Standards Australia program), and that figures are not copyrightable while
+      clause prose is.
+- [ ] **Offline settings display.** `paintSettings()` fills Register version and
+      Entries only when `REG` is set, so both show "—" when running from cache,
+      though `cache.v` holds the version.
+
+The publish gate and the three-verdict agent logic are proven; the remaining
+gaps are deploy-time, plus the two content/tooling items above.

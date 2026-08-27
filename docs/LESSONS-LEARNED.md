@@ -152,7 +152,9 @@ isn't a git repo, that would have been unrecoverable without
 - Publishing back to the repo happens only via an explicit, token-gated git
   commit (the `_git_publish` path), which itself goes through Netlify's normal
   build + live gate.
-- `build_register.py` is deterministic — keep it as the recovery primitive.
+- `build_register.py` was the seeder, **not** a recovery primitive — there is
+  no rebuild path. The register accumulates agent-written state that no
+  script can regenerate; recovery is git history, not regeneration (§8).
 - In ESM, `__dirname` is undefined — use `fileURLToPath(import.meta.url)` (the
   Python function doesn't have this issue, but it bit the original Node
   prototype).
@@ -211,16 +213,25 @@ catch you (the needle won't match on a real fetch).
   "Under Part 4 of the Plumbing Regulations 2018 …"). The brief claimed
   "Division 7" for roofing — the page says **Part 4**. Record what the page
   says, not what the brief says.
-- **`scripts/build_register.py` is stale and will destroy the register.** It
-  has not been touched since `fed661c`, while `2bb361d` added the `ui` blocks
-  directly to `register.json`. Its `add()` writes no `ui` key and it overwrites
-  both `register.json` and `public/register.json`. Running it — *as the README
-  instructs* — strips the `ui` block from every entry and breaks all cards and
-  sheets (`renderRegCard`, `openSheet`, `whereToFind`, `matchesQuery`,
-  `matchesTasks`, `matchesObligations`, `paintClassic` all read `e.ui.*`). It
-  is also unaware of the 30 `PTR-*` pointers. Until it is fixed, add entries
-  the way `scripts/add_standard_pointers.py` does: **upsert by id into the
-  existing register**, never regenerate.
+- **There is no "rebuild the register" command, and there should not be.**
+  `scripts/build_register.py` was the one-time seeder. It was left presented as
+  a deterministic rebuild path in the README, which was wrong three ways: it
+  writes no `ui` block (those were added directly to `register.json` in
+  `2bb361d`, and every card and sheet reads `e.ui.*`), it knows nothing of the
+  30 `PTR-*` pointers, and its inputs — `scripts/_extract*.json` — were never
+  tracked and no longer exist, so it crashed on import before it could write
+  anything. It was safe only by accident.
+
+  The deeper point: **`register.json` is stateful, not derived.** The weekly
+  agent writes `status`, `verified`, `changed_from`, `changed_to`,
+  `remedial_note`, `last_successful_check`, `last_status` and `http_error` into
+  it and commits it back. Those are observations of the live world. Regenerating
+  the register erases the verification history the system exists to accumulate,
+  which is why no rebuild path is offered. The seeder now refuses to overwrite
+  an existing register (exit 2) and explains the missing inputs instead of
+  raising (exit 3). Change the register additively: upsert by `id` as
+  `scripts/add_standard_pointers.py` does, or edit `register.json` and re-run
+  the live gate.
 
 ---
 
@@ -287,8 +298,10 @@ register **MUST** be wrapped in `fsutil.file_lock`. Don't go back to
    read-modify-write MUST wrap in `fsutil.file_lock` (§9).
 6. Run the three commands in `REPEATABLE-VALIDATION.md` §1–§3 before
    declaring anything done: offline gate, live gate (exit 0), corruption gate
-7. **Never run `scripts/build_register.py`** until it is fixed (§8) — it wipes
-   the `ui` blocks. Add entries by upserting into `register.json`.
+7. **There is no rebuild command.** `register.json` is stateful — it carries
+   agent-written verification state — so change it additively (upsert by `id`)
+   or edit it directly and re-run the live gate. `build_register.py` is the
+   original seeder and refuses to overwrite an existing register (§8).
 8. Clause numbers follow the same rule as URLs: quote them from a page you
    opened, or leave them out (§3). Numeric values from inside a paywalled
    standard need an attestation model the gate does not have yet — do not ship

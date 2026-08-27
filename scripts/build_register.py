@@ -1,24 +1,43 @@
-#!/usr/bin/env python3
 """
-Build register.json as the sole source of truth.
+build_register.py — the ORIGINAL one-time seeder. Not a rebuild command.
 
-Each entry carries:
-  id            stable id
-  jurisdiction  "VIC" | "Federal"
-  claim         short human claim
-  value         the asserted value/figure
-  key_substring the literal needle the verify script asserts is present in
-                the fetched page text (edition string, dollar figure, clause
-                number, m2 threshold, year). Must be present verbatim.
-  source_url    authoritative gov.au / standards-body URL (never a blog)
-  fails_if      the "how to decide" test the agent reasons over
-  status        "verified" (every entry below is seeded verified; the verify
-                script + scheduled agent flip entries as sources change)
-  verified      { against, on, by_agent, quote }
-  remedial_note present only when status != verified
+    This script seeded register.json once, on 2026-07-31, from extraction files
+    captured during that build session. It is kept for provenance: it records
+    how the 29 baseline claims and their verbatim quotes were first assembled.
 
-Quotes are pulled from scripts/_extract*.json (real fetched text), not typed.
-`on` is the date of the fetch run; `by_agent` identifies the build agent.
+    DO NOT run it to "rebuild" the register. It refuses by default, and the
+    refusal is deliberate — regenerating the register is not a coherent
+    operation any more, for three independent reasons:
+
+    1. THE INPUTS ARE GONE. It reads scripts/_extract*.json, which were never
+       tracked in git and no longer exist. A fresh clone cannot rebuild
+       regardless.
+
+    2. register.json IS STATEFUL, NOT DERIVED. The weekly agent
+       (functions/verify_register_scheduled.py) writes status, verified,
+       changed_from, changed_to, remedial_note, last_successful_check,
+       last_status and http_error into the register, bumps register_version,
+       and commits it back to the repo. Those fields are accumulated
+       OBSERVATION of the live world. No build script can regenerate them, and
+       overwriting them destroys the verification history that is the entire
+       point of the system.
+
+    3. IT IS STRUCTURALLY OUT OF DATE. It writes no `ui` block — those were
+       added directly to register.json in 2bb361d — and it knows nothing of the
+       30 PTR-3500.N-* clause pointers added by scripts/add_standard_pointers.py
+       from live BPC fetches. A regeneration would strip the display data from
+       every entry (breaking every card and sheet, which read e.ui.*) and delete
+       the pointers.
+
+    HOW TO CHANGE THE REGISTER INSTEAD:
+      * add entries  -> write an additive upsert script that merges by `id`,
+                        the way scripts/add_standard_pointers.py does, then
+                        confirm with `python3 scripts/verify_register.py --live`
+      * fix a value  -> edit register.json directly, then re-run the live gate
+      * re-verify    -> let the weekly scheduled agent do it
+
+    --force-regenerate exists only for reconstructing a seed from scratch in a
+    directory with no register present. It is not a maintenance path.
 """
 import json, datetime, os, sys
 
@@ -29,16 +48,65 @@ import fsutil
 TODAY = "2026-07-31"
 AGENT = "build-agent-2026-07-31"
 
+SEED_TARGETS = ("register.json", "public/register.json")
+
+
+def _refuse_to_clobber():
+    """Never overwrite a live register. See the module docstring for why."""
+    existing = [t for t in SEED_TARGETS if os.path.exists(t)]
+    if not existing:
+        return
+    if "--force-regenerate" in sys.argv:
+        sys.stderr.write(
+            "WARNING: --force-regenerate given; overwriting "
+            + ", ".join(existing)
+            + ".\n         Any agent-written verification state, every `ui` block "
+            "and all\n         PTR-* pointer entries in those files will be lost.\n\n")
+        return
+    sys.stderr.write(
+        "REFUSING TO RUN: this is the original one-time seeder, not a rebuild.\n\n"
+        "  Found an existing register: " + ", ".join(existing) + "\n\n"
+        "  Regenerating would destroy data that cannot be rebuilt from source:\n"
+        "    - agent-written verification state (status, verified.on,\n"
+        "      remedial_note, changed_from, last_successful_check, ...)\n"
+        "    - the `ui` block on every entry (added in 2bb361d) -- every card\n"
+        "      and detail sheet in the app reads e.ui.*\n"
+        "    - the 30 PTR-3500.N-* clause pointers added from live BPC fetches\n\n"
+        "  To add entries, write an additive upsert keyed on `id` -- see\n"
+        "  scripts/add_standard_pointers.py. To fix one value, edit\n"
+        "  register.json and re-run: python3 scripts/verify_register.py --live\n\n"
+        "  Pass --force-regenerate only to seed an empty directory.\n")
+    sys.exit(2)
+
+
+_refuse_to_clobber()
+
+
+def _load_extract(path):
+    """Load an extraction file, failing with an explanation rather than a trace."""
+    try:
+        with open(path) as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        sys.stderr.write(
+            f"MISSING BUILD INPUT: {path}\n\n"
+            "  The extraction files this seeder reads were never tracked in git\n"
+            "  and no longer exist, so the original build is not reproducible\n"
+            "  from a clone. This script is kept for provenance only -- see its\n"
+            "  module docstring for how to change the register instead.\n")
+        sys.exit(3)
+
+
 def q(extract, task_id, key):
     """Pull a quote from an extraction file: extract[task_id]["finds"][key]."""
     if extract is None:
         return None
     return extract.get(task_id, {}).get("finds", {}).get(key)
 
-# Load real extracted quotes
-EX1 = json.load(open("scripts/_extract.json"))
-EX2 = json.load(open("scripts/_extract2.json"))
-EX4 = json.load(open("scripts/_extract4.json"))
+# Load real extracted quotes (see _load_extract for why these may be absent)
+EX1 = _load_extract("scripts/_extract.json")
+EX2 = _load_extract("scripts/_extract2.json")
+EX4 = _load_extract("scripts/_extract4.json")
 
 def clean(s):
     if not s:

@@ -81,8 +81,12 @@ plausible-looking guess.
 # Serve the static page:
 cd public && python3 -m http.server 8000   # → http://localhost:8000
 
-# Rebuild the register from the verified-quote extraction (deterministic):
-python3 scripts/build_register.py
+# NOTE: there is no "rebuild the register" command, by design. register.json
+# carries agent-written verification state that cannot be regenerated from
+# source. scripts/build_register.py is the original one-time seeder, kept for
+# provenance; it refuses to overwrite an existing register. To add entries,
+# write an additive upsert keyed on `id` (see scripts/add_standard_pointers.py);
+# to fix one value, edit register.json and re-run the live gate.
 
 # Inspect any source URL live:
 python3 scripts/probe.py <url> [needle]

@@ -123,13 +123,15 @@ hardened:
 - [ ] **Full accessibility pass** — contrast is done; screen-reader labels,
       focus order, and keyboard navigation remain untested.
 
-- [ ] **Fix `scripts/build_register.py` before anyone runs it.** It predates the
-      `ui` blocks and would strip them from all 59 entries — see
-      `LESSONS-LEARNED.md` §8. Either teach it the `ui` blocks and the 30
-      `PTR-*` pointers so it genuinely reproduces the current register (verify
-      by rebuilding to a temp path and diffing against the committed
-      `register.json`), or make it refuse without an explicit flag and correct
-      the README, which currently presents it as the normal rebuild path.
+- [x] **`scripts/build_register.py` neutralised.** Regeneration was rejected as
+      incoherent, not merely stale: `register.json` carries agent-written
+      verification state that no script can rebuild, its `_extract*.json` inputs
+      were never tracked and are gone, and it knew nothing of the `ui` blocks or
+      the 30 `PTR-*` pointers. It now refuses to overwrite an existing register
+      (exit 2) and explains the missing inputs rather than raising (exit 3);
+      README, `LESSONS-LEARNED.md` §8 and `REPEATABLE-VALIDATION.md` no longer
+      present it as a rebuild path. Verified the register is byte-identical after
+      a plain run, a `--force-regenerate` run, and a run in an empty directory.
 - [ ] **Design an evidence model for values from paywalled standards.** The
       gate can only confirm a `key_substring` against fetched page text. A value
       attested by a human against a licensed copy of AS/NZS 3500 has no branch,

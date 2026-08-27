@@ -120,7 +120,20 @@ def is_official(host: str) -> bool:
 
 
 def fetch(url: str, session=None):
-    """Return (status_kind, http_status_or_err, text).
+    """Return (status_kind, http_status_or_err, text). See fetch_ex for the
+    variant that also reports the post-redirect URL."""
+    kind, status, text, _final = fetch_ex(url, session=session)
+    return (kind, status, text)
+
+
+def fetch_ex(url: str, session=None):
+    """Return (status_kind, http_status_or_err, text, final_url).
+
+    `final_url` is where the request actually landed after redirects. A source
+    can 301 to a new home and still verify, because requests follows the hop
+    and the key_substring is still present — so a permanent move is invisible
+    unless the landing URL is compared against the recorded one. Callers use
+    this to record the move rather than silently riding the redirect.
 
     status_kind in {"ok", "cloudflare", "http_error", "network_error"}.
     Retries on Cloudflare challenge and transient network errors.
@@ -132,7 +145,7 @@ def fetch(url: str, session=None):
     per-request pass rate without a session vs ~100% with a reused session
     across retries. This mirrors what a real browser does.
     """
-    last = ("network_error", None, "")
+    last = ("network_error", None, "", url)
     own_session = session is None
     if own_session:
         session = requests.Session()
@@ -140,23 +153,32 @@ def fetch(url: str, session=None):
         try:
             r = session.get(url, headers=BROWSER_HEADERS, timeout=TIMEOUT, allow_redirects=True)
         except requests.exceptions.RequestException as e:
-            last = ("network_error", f"{type(e).__name__}: {e}", "")
+            last = ("network_error", f"{type(e).__name__}: {e}", "", url)
             time.sleep(RETRY_BACKOFF + (attempt % 3))
             continue
         ctype = r.headers.get("Content-Type", "").lower()
         if "html" in ctype or "xml" in ctype or ctype == "":
             if any(m in r.content for m in CLOUDFLARE_CHALLENGE_MARKERS):
-                last = ("cloudflare", f"{r.status_code} (Cloudflare challenge)", "")
+                last = ("cloudflare", f"{r.status_code} (Cloudflare challenge)", "", r.url)
                 time.sleep(RETRY_BACKOFF + (attempt % 3))
                 continue
         if 200 <= r.status_code < 300:
             text = strip_html(r.text) if "html" in ctype or "xml" in ctype else ""
-            return ("ok", r.status_code, text)
-        last = ("http_error", r.status_code, "")
+            return ("ok", r.status_code, text, r.url)
+        last = ("http_error", r.status_code, "", r.url)
         # 4xx/5xx — one retry in case transient, then stop
         if attempt < 1:
             time.sleep(RETRY_BACKOFF)
     return last
+
+
+def same_url(a: str, b: str) -> bool:
+    """True if two URLs differ only cosmetically (scheme case, trailing slash)."""
+    def norm(u):
+        u = (u or "").strip()
+        u = u.split("#", 1)[0]
+        return u.rstrip("/").lower()
+    return norm(a) == norm(b)
 
 
 def now_iso() -> str:
@@ -214,13 +236,15 @@ def run_live_checks(entries):
         host = urlparse(url).hostname or ""
         if host not in sessions:
             sessions[host] = requests.Session()
-        kind, status, text = fetch(url, session=sessions[host])
+        kind, status, text, final_url = fetch_ex(url, session=sessions[host])
         present = bool(text) and (needle.lower() in text.lower())
+        moved = kind == "ok" and not same_url(final_url, url)
         rec = {
             "kind": kind,
             "status": status,
             "text_present": present,
             "changed_to": None,
+            "moved_to": final_url if moved else None,
             "note": "",
         }
         if kind == "ok" and not present:
@@ -231,6 +255,11 @@ def run_live_checks(entries):
             rec["note"] = f"source unreachable: {kind} {status}"
         results[uid] = rec
         log(f"{uid}: kind={kind} status={status} needle_present={present}")
+        # A permanent move still verifies (requests follows the hop), so it is
+        # advisory, not a gate failure — but it must be visible, or the register
+        # silently depends on a redirect the publisher may drop.
+        if moved:
+            log(f"{uid}: SOURCE MOVED -> {final_url}")
     return results
 
 
@@ -352,6 +381,15 @@ def main(argv=None):
         return 1
     for s in soft:
         log(f"note: {s}", "WARN")
+    # Advisory: sources that 301'd. Not a failure — the content still verified —
+    # but the recorded source_url should be repointed at the new home.
+    if args.live:
+        moved = [(uid, r["moved_to"]) for uid, r in (live_results or {}).items()
+                 if r.get("moved_to")]
+        if moved:
+            log(f"{len(moved)} source(s) MOVED — update source_url:", "WARN")
+            for uid, dest in moved:
+                log(f"   - {uid} -> {dest}", "WARN")
     log("PUBLISH GATE PASSED: register is consistent and every verified entry "
         "is backed by a current successful check." if args.live else
         "STRUCTURE/DOMAIN/CONSISTENCY PASSED (run with --live to enforce freshness).")

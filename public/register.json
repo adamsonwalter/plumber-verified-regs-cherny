@@ -123,7 +123,7 @@
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
-        "quote": "S/NZS 3500 series Updated plumbing and drainage standards - Part 1: Water services AS/NZS 3500.1:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+        "quote": "services AS/NZS 3500.1:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
       },
       "ui": {
         "title": "Water services — current standard edition",
@@ -153,7 +153,7 @@
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
-        "quote": "s Updated plumbing and drainage standards - Part 2: Sanitary plumbing and drainage AS/NZS 3500.2:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+        "quote": "drainage AS/NZS 3500.2:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
       },
       "ui": {
         "title": "Sanitary plumbing & drainage — current standard edition",
@@ -208,11 +208,11 @@
       "claim": "A plumbing compliance certificate is required where total work value (materials, appliances, labour, GST) exceeds $750",
       "value": "$750",
       "key_substring": "$750",
-      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/compliance-certificates",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/compliance-certificates",
       "fails_if": "threshold figure changes",
       "status": "verified",
       "verified": {
-        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/compliance-certificates",
+        "against": "https://www.bpc.vic.gov.au/plumbers/compliance-certificates",
         "on": "2026-07-31",
         "by_agent": "build-agent-2026-07-31",
         "quote": "where the total value of work (including materials, appliances, labour and GST) exceeds $750"

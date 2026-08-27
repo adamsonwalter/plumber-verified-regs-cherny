@@ -131,8 +131,12 @@ def reverify_all(run_id):
             results.append({"id": e["id"], "verdict": "rejected_nonofficial", "host": host})
             continue
 
-        kind, status, text = vr.fetch(url, session=_session_for(host))
+        kind, status, text, final_url = vr.fetch_ex(url, session=_session_for(host))
         present = bool(text) and needle.lower() in text.lower()
+        # A source can 301 to a new home and still verify, because the fetch
+        # follows the hop. Left undetected the register silently depends on a
+        # redirect the publisher may one day drop, so record the move.
+        moved_to = final_url if (kind == "ok" and not vr.same_url(final_url, url)) else None
 
         if kind == "ok" and present:
             # CONFIRMED — refresh the verified block.
@@ -147,7 +151,14 @@ def reverify_all(run_id):
             for k in ("changed_from", "changed_to", "last_status",
                       "last_successful_check", "remedial_note", "http_error"):
                 e.pop(k, None)
-            results.append({"id": e["id"], "verdict": "verified", "status": status})
+            if moved_to:
+                e["source_moved_to"] = moved_to
+                e["next_edit"] = f"Update source_url to {moved_to}"
+            else:
+                e.pop("source_moved_to", None)
+                e.pop("next_edit", None)
+            results.append({"id": e["id"], "verdict": "verified", "status": status,
+                            "moved_to": moved_to})
 
         elif kind == "ok" and not present:
             # Source reachable, but the recorded value no longer matches — FLIP.
@@ -191,6 +202,18 @@ def reverify_all(run_id):
     reg["last_agent_run"] = _today()
     reg["last_run_id"] = run_id
     reg["register_version"] = f"{_today()}-agent"
+    # Register-level summary of the most recent pass, so a reader (or the app)
+    # can state when the register was last checked and how it came out without
+    # walking all 59 entries.
+    reg["last_run"] = {
+        "run_id": run_id,
+        "on": _today(),
+        "by_agent": run_id,
+        "counts": _tally(entries),
+        "moved": [r["id"] for r in results if r.get("moved_to")],
+        "note": ("Currency of the published text on official pages this run. "
+                 "Not a compliance determination."),
+    }
     return reg, reg_path, results
 
 

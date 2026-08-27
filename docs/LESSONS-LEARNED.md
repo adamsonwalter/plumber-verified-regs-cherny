@@ -213,6 +213,17 @@ catch you (the needle won't match on a real fetch).
   "Under Part 4 of the Plumbing Regulations 2018 …"). The brief claimed
   "Division 7" for roofing — the page says **Part 4**. Record what the page
   says, not what the brief says.
+- **A followed redirect hides a moved source.** `requests` follows 301s, so a
+  publisher can permanently relocate a page and the entry still verifies — the
+  needle is present at the new home. The register then silently depends on a
+  redirect that may later be dropped, and nobody notices until it 404s. Found
+  when a second agent re-verified our register and flagged `CERT-THRESHOLD` as
+  `source_moved_to`: BPC had restructured
+  `/plumbers/delivering-safe-and-compliant-plumbing/compliance-certificates` to
+  `/plumbers/compliance-certificates`. Fixed by comparing the post-redirect URL
+  against the recorded one (`fetch_ex` + `same_url`); the gate reports moves as
+  advisory (never a failure — the content did verify) and the agent records
+  `source_moved_to` / `next_edit`.
 - **There is no "rebuild the register" command, and there should not be.**
   `scripts/build_register.py` was the one-time seeder. It was left presented as
   a deterministic rebuild path in the README, which was wrong three ways: it

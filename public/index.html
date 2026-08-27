@@ -468,6 +468,10 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
         <div class="right" id="reg-version">—</div>
       </div>
       <div class="settings-row">
+        <div class="left"><div class="title">Last checked</div></div>
+        <div class="right" id="last-run">—</div>
+      </div>
+      <div class="settings-row">
         <div class="left"><div class="title">Entries</div></div>
         <div class="right" id="entry-count">—</div>
       </div>
@@ -1292,6 +1296,20 @@ function paintSettings() {
   if (state.classic) toggle.classList.add("on"); else toggle.classList.remove("on");
   if (REG) {
     $("reg-version").textContent = REG.register_version || "—";
+    // last_run is written by the scheduled agent; absent until one has run.
+    const lr = REG.last_run;
+    const lrEl = $("last-run");
+    if (lrEl) {
+      if (lr && lr.on) {
+        const c = lr.counts || {};
+        const total = (c.verified || 0) + (c.unverified || 0) + (c.unreachable || 0);
+        lrEl.textContent = total
+          ? lr.on + " · " + (c.verified || 0) + " of " + total + " verified"
+          : lr.on;
+      } else {
+        lrEl.textContent = "—";
+      }
+    }
     const okCount = entries.filter(function(e) { return entryTrust(e).tier === "ok"; }).length;
     $("entry-count").textContent = okCount === entries.length
       ? entries.length + " verified"

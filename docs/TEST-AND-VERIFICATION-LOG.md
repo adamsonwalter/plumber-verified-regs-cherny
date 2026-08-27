@@ -140,6 +140,12 @@ hardened:
       purchasing a standard does not grant redistribution rights (separate
       Standards Australia program), and that figures are not copyrightable while
       clause prose is.
+- [ ] **Jurisdiction is never surfaced in the UI.** Every entry carries
+      `jurisdiction` (`VIC` / `Federal`) and the gate enforces it, but
+      `public/index.html` never reads the field — cards and filters expose trade
+      task and obligation type only. This is an unmet acceptance criterion from
+      `SPEC.md`: a viewer cannot see which layer of government a rule sits at.
+      Currently 56 VIC / 3 Federal.
 - [ ] **Offline settings display.** `paintSettings()` fills Register version and
       Entries only when `REG` is set, so both show "—" when running from cache,
       though `cache.v` holds the version.

@@ -15,7 +15,9 @@ authoritative government page**, confirmed by an automated agent that opens
 each source and reasons over the current text. This register makes **no
 compliance determination**.
 
-> **Working in this repo?** Read [`docs/LESSONS-LEARNED.md`](docs/LESSONS-LEARNED.md)
+> **Working in this repo?** [`docs/SPEC.md`](docs/SPEC.md) states what the system
+> must prove and what may enter the register. Read
+> [`docs/LESSONS-LEARNED.md`](docs/LESSONS-LEARNED.md)
 > first — it captures the Cloudflare, fetch, and source-truth pitfalls that
 > dominate this project. For what was tested and what remains, see
 > [`docs/TEST-AND-VERIFICATION-LOG.md`](docs/TEST-AND-VERIFICATION-LOG.md); to

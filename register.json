@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "register_version": "2026-07-31-build1",
-  "generated_on": "2026-07-31",
+  "register_version": "2026-08-27-pointers",
+  "generated_on": "2026-08-27",
   "generated_by_agent": "build-agent-2026-07-31",
   "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
   "allowed_domains": [
@@ -968,6 +968,970 @@
           "ACL",
           "warranty",
           "consumer law"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-1.3",
+      "jurisdiction": "VIC",
+      "claim": "Normative references — standards now called up — AS/NZS 3500.1:2025 Clause 1.3",
+      "value": "AS/NZS 3500.1:2025 Clause 1.3",
+      "key_substring": "Clause 1.3",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 1.3 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 1.3 Normative references (Update to clause) The standards below are now called up in the normative references as referenced by various clauses, and must be complied with."
+      },
+      "ui": {
+        "title": "Normative references — standards now called up",
+        "ref": "Clause 1.3",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "normative",
+          "references"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-2.3.1",
+      "jurisdiction": "VIC",
+      "claim": "Pipes and fittings — 110 mm replaces 100 mm — AS/NZS 3500.1:2025 Clause 2.3.1",
+      "value": "AS/NZS 3500.1:2025 Clause 2.3.1",
+      "key_substring": "Clause 2.3.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 2.3.1 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.3.1 Pipes and fittings (Update to clause) This change accommodates the different pipe description methods – some 100 mm pipes are referred to by internal, nominal, or external diameter. As a result, 110 mm has now been included instead of 100 mm."
+      },
+      "ui": {
+        "title": "Pipes and fittings — 110 mm replaces 100 mm",
+        "ref": "Clause 2.3.1",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "pipe-sizing",
+          "materials"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-2.3.3",
+      "jurisdiction": "VIC",
+      "claim": "Semi-flexible hose assemblies — new restrictions — AS/NZS 3500.1:2025 Clause 2.3.3",
+      "value": "AS/NZS 3500.1:2025 Clause 2.3.3",
+      "key_substring": "Clause 2.3.3",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 2.3.3 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.3.3 Semi-flexible hose assemblies (New clause) Semi-flexible hoses must: only be used in accessible locations not be buried not be used where repeated movement is expected."
+      },
+      "ui": {
+        "title": "Semi-flexible hose assemblies — new restrictions",
+        "ref": "Clause 2.3.3",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "flexible-hose",
+          "semi-rigid"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-4.4.6",
+      "jurisdiction": "VIC",
+      "claim": "Backflow — AVBs now testable, commissioning required — AS/NZS 3500.1:2025 Clause 4.4.6",
+      "value": "AS/NZS 3500.1:2025 Clause 4.4.6",
+      "key_substring": "Clause 4.4.6",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 4.4.6 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 4.4.6 Commissioning (Update to clause) In the 2025 edition, atmospheric vacuum breakers (AVBs) are testable backflow prevention devices that must be commissioned and tested as specified in AS/NZS 2845.3."
+      },
+      "ui": {
+        "title": "Backflow — AVBs now testable, commissioning required",
+        "ref": "Clause 4.4.6",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply",
+          "backflow"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "backflow",
+          "avb",
+          "2845.3"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-4.6.1",
+      "jurisdiction": "VIC",
+      "claim": "Backflow — AVBs must be fitted with line strainers — AS/NZS 3500.1:2025 Clause 4.6.1",
+      "value": "AS/NZS 3500.1:2025 Clause 4.6.1",
+      "key_substring": "Clause 4.6.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 4.6.1 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 4.6.1 General installation requirements (Update to clause) Except for fire services, AVBs must be fitted with line strainers. Explanatory note: AVBs should not be installed with downstream isolating valves."
+      },
+      "ui": {
+        "title": "Backflow — AVBs must be fitted with line strainers",
+        "ref": "Clause 4.6.1",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply",
+          "backflow"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "backflow",
+          "avb",
+          "strainer"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-4.6.2.2",
+      "jurisdiction": "VIC",
+      "claim": "Backflow devices — accessibility for testing — AS/NZS 3500.1:2025 Clause 4.6.2.2",
+      "value": "AS/NZS 3500.1:2025 Clause 4.6.2.2",
+      "key_substring": "Clause 4.6.2.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 4.6.2.2 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 4.6.2.2 Accessibility (Update to clause) If backflow prevention devices are fitted with test taps, or if dismantling of backflow prevention devices is required for testing; the location of the device needs to enable the test procedure or maintenance to be performed."
+      },
+      "ui": {
+        "title": "Backflow devices — accessibility for testing",
+        "ref": "Clause 4.6.2.2",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply",
+          "backflow"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "backflow",
+          "accessibility"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-5.4.2",
+      "jurisdiction": "VIC",
+      "claim": "Isolation valve before each flexible hose assembly — AS/NZS 3500.1:2025 Clause 5.4.2",
+      "value": "AS/NZS 3500.1:2025 Clause 5.4.2",
+      "key_substring": "Clause 5.4.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 5.4.2 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 5.4.2 Location (Update to clause) Isolation valves must be installed immediately before each flexible hose assembly that is connected to a mixer valve, tape outlet or cistern."
+      },
+      "ui": {
+        "title": "Isolation valve before each flexible hose assembly",
+        "ref": "Clause 5.4.2",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "isolation-valve",
+          "flexible-hose"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-5.20",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices and appliances — new section — AS/NZS 3500.1:2025 Clause 5.20",
+      "value": "AS/NZS 3500.1:2025 Clause 5.20",
+      "key_substring": "Clause 5.20",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 5.20 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 5.20) Editorial changes that make the standard easier to read. Summary of key changes since the 2021 edition 1. Scope and general"
+      },
+      "ui": {
+        "title": "Miscellaneous devices and appliances — new section",
+        "ref": "Clause 5.20",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "appliances",
+          "devices"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.1-9.1",
+      "jurisdiction": "VIC",
+      "claim": "Non-drinking water meter — consult network operator — AS/NZS 3500.1:2025 Clause 9.1",
+      "value": "AS/NZS 3500.1:2025 Clause 9.1",
+      "key_substring": "Clause 9.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+      "fails_if": "BPC no longer lists Clause 9.1 among the AS/NZS 3500.1:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 9.1 Scope of section (Update to clause) Explanatory note added: Plumbing practitioners need to consult the network utility operator, because the network utility operator may require the non-drinking water meter assembly to be in a different location to Figure 9.1."
+      },
+      "ui": {
+        "title": "Non-drinking water meter — consult network operator",
+        "ref": "Clause 9.1",
+        "doc": "BPC — 3500.1 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "water-supply"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.1",
+          "water-meter",
+          "non-drinking"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-1.1",
+      "jurisdiction": "VIC",
+      "claim": "Scope — trade waste pre-treatment excluded — AS/NZS 3500.2:2025 Clause 1.1",
+      "value": "AS/NZS 3500.2:2025 Clause 1.1",
+      "key_substring": "Clause 1.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 1.1 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 1.1 Scope (Update to clause) Updated text: AS/NZS 3500.2 does not apply to the pre-treatment of trade wastes. In the 2025 edition, this requirement has been moved from a note to the main clause, confirming that compliance is now mandatory."
+      },
+      "ui": {
+        "title": "Scope — trade waste pre-treatment excluded",
+        "ref": "Clause 1.1",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "scope",
+          "trade-waste"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.21",
+      "jurisdiction": "VIC",
+      "claim": "Connection of tundishes — disconnector gully allowed — AS/NZS 3500.2:2025 Clause 13.21",
+      "value": "AS/NZS 3500.2:2025 Clause 13.21",
+      "key_substring": "Clause 13.21",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.21 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.21 Connection of tundishes (Update to clause) In the 2025 edition, tundishes can be connected to a disconnector gully, as specified in Clause 4.6.6. Any discharge from pipes over a tundish must be visible to building occupants."
+      },
+      "ui": {
+        "title": "Connection of tundishes — disconnector gully allowed",
+        "ref": "Clause 13.21",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "tundish"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.24.3",
+      "jurisdiction": "VIC",
+      "claim": "Conversion to waterless urinals — restricted — AS/NZS 3500.2:2025 Clause 13.24.3",
+      "value": "AS/NZS 3500.2:2025 Clause 13.24.3",
+      "key_substring": "Clause 13.24.3",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.24.3 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.24.3 Conversion to waterless urinals (Update to clause) Urinals must not be converted into waterless urinals. Urinals must not be replaced with waterless urinals, unless the requirements of clause 13.24.2.1 and of clause 13.24.2.3 are met."
+      },
+      "ui": {
+        "title": "Conversion to waterless urinals — restricted",
+        "ref": "Clause 13.24.3",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "waterless-urinal",
+          "struvite"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.28.1",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices — new sanitary section — AS/NZS 3500.2:2025 Clause 13.28.1",
+      "value": "AS/NZS 3500.2:2025 Clause 13.28.1",
+      "key_substring": "Clause 13.28.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.28.1 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.28.1 General (New clause) – There are new requirements for the connection of miscellaneous devices and appliances to a sanitary drainage system."
+      },
+      "ui": {
+        "title": "Miscellaneous devices — new sanitary section",
+        "ref": "Clause 13.28.1",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "appliances",
+          "devices"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.28.2",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices — materials requirement — AS/NZS 3500.2:2025 Clause 13.28.2",
+      "value": "AS/NZS 3500.2:2025 Clause 13.28.2",
+      "key_substring": "Clause 13.28.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.28.2 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.28.2 Materials (New clause) – The below is a new requirement. Pipes and fittings connected to miscellaneous devices and appliances shall meet the requirements of Section 2."
+      },
+      "ui": {
+        "title": "Miscellaneous devices — materials requirement",
+        "ref": "Clause 13.28.2",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "materials",
+          "appliances"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.28.3",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices — connection to sanitary system — AS/NZS 3500.2:2025 Clause 13.28.3",
+      "value": "AS/NZS 3500.2:2025 Clause 13.28.3",
+      "key_substring": "Clause 13.28.3",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.28.3 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.28.3 Connections to the sanitary system (New clause) – The below is a new requirement. Discharge shall enter the sanitary system by either: (a) direct connection to a dedicated trap connection (b) a tundish as specified in clause 13.21."
+      },
+      "ui": {
+        "title": "Miscellaneous devices — connection to sanitary system",
+        "ref": "Clause 13.28.3",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "connection",
+          "tundish"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.28.4",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices — intermittent discharge — AS/NZS 3500.2:2025 Clause 13.28.4",
+      "value": "AS/NZS 3500.2:2025 Clause 13.28.4",
+      "key_substring": "Clause 13.28.4",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.28.4 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.28.4 Intermittent discharge (New clause) – The below is a new requirement. If the frequency of discharge from appliance or device is not sufficient to maintain a trap seal, the wastewater discharge shall drain over a tundish with either a: (a) charge pipe from a tap set (b) drain from a wa…"
+      },
+      "ui": {
+        "title": "Miscellaneous devices — intermittent discharge",
+        "ref": "Clause 13.28.4",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "discharge",
+          "trap-seal"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-13.28.5",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices — large-volume discharge — AS/NZS 3500.2:2025 Clause 13.28.5",
+      "value": "AS/NZS 3500.2:2025 Clause 13.28.5",
+      "key_substring": "Clause 13.28.5",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 13.28.5 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 13.28.5 Large-volume discharge (New clause) – The below is a new requirement. A sanitary system shall: (a) be of a size suitable for the expected discharge volume as specified in clause 6.3 (b) have a trap with: (i) a water seal of not less than 100 mm (ii) an equivalent size to the discharge…"
+      },
+      "ui": {
+        "title": "Miscellaneous devices — large-volume discharge",
+        "ref": "Clause 13.28.5",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "discharge",
+          "sizing"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-14.2.1",
+      "jurisdiction": "VIC",
+      "claim": "Multi-unit sewer infrastructure — coordinate with authority — AS/NZS 3500.2:2025 Clause 14.2.1",
+      "value": "AS/NZS 3500.2:2025 Clause 14.2.1",
+      "key_substring": "Clause 14.2.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 14.2.1 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 14.2.1 General (Update to clause) – A new note has been added. Plumbers must coordinate with water authorities to obtain additional information before installing sewer infrastructure for multi-unit developments: Note: Refer to local government or the network utility operator for additional in…"
+      },
+      "ui": {
+        "title": "Multi-unit sewer infrastructure — coordinate with authority",
+        "ref": "Clause 14.2.1",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "documentation",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "multi-unit",
+          "water-authority"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.2-16.2",
+      "jurisdiction": "VIC",
+      "claim": "Vacuum drainage — PP pipe now permitted — AS/NZS 3500.2:2025 Clause 16.2",
+      "value": "AS/NZS 3500.2:2025 Clause 16.2",
+      "key_substring": "Clause 16.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+      "fails_if": "BPC no longer lists Clause 16.2 among the AS/NZS 3500.2:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 16.2 Materials and products for vacuum drainage systems (Update to clause) In the 2025 edition, plumbing practitioners are able to use polypropylene (PP) pipes and fittings with a minimum wall thickness equivalent to pipe series S16 (SDR 33) to construct vacuum pipelines."
+      },
+      "ui": {
+        "title": "Vacuum drainage — PP pipe now permitted",
+        "ref": "Clause 16.2",
+        "doc": "BPC — 3500.2 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "sanitary-drainage"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.2",
+          "vacuum-drainage",
+          "materials"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.3-2.2.1",
+      "jurisdiction": "VIC",
+      "claim": "Stormwater discharge quality and quantity — new note — AS/NZS 3500.3:2025 Clause 2.2.1",
+      "value": "AS/NZS 3500.3:2025 Clause 2.2.1",
+      "key_substring": "Clause 2.2.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "BPC no longer lists Clause 2.2.1 among the AS/NZS 3500.3:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.2.1 General (Update to clause) Note 3: has been added to Section 2.2.1. It requires plumbers to consider the quality and quantity of stormwater discharge. This is to ensure it does not negatively impact council infrastructure or on-site systems."
+      },
+      "ui": {
+        "title": "Stormwater discharge quality and quantity — new note",
+        "ref": "Clause 2.2.1",
+        "doc": "BPC — 3500.3 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.3",
+          "discharge",
+          "council"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.3-2.2.2",
+      "jurisdiction": "VIC",
+      "claim": "Materials for devices connected to stormwater — AS/NZS 3500.3:2025 Clause 2.2.2",
+      "value": "AS/NZS 3500.3:2025 Clause 2.2.2",
+      "key_substring": "Clause 2.2.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "BPC no longer lists Clause 2.2.2 among the AS/NZS 3500.3:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.2.2 Materials for devices and appliances connected to stormwater drainage (New clause) – The below is a new requirement."
+      },
+      "ui": {
+        "title": "Materials for devices connected to stormwater",
+        "ref": "Clause 2.2.2",
+        "doc": "BPC — 3500.3 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.3",
+          "materials",
+          "appliances"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.3-3.6.2",
+      "jurisdiction": "VIC",
+      "claim": "Valley gutter design procedure — new Figure 3.6.2 — AS/NZS 3500.3:2025 Clause 3.6.2",
+      "value": "AS/NZS 3500.3:2025 Clause 3.6.2",
+      "key_substring": "Clause 3.6.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "BPC no longer lists Clause 3.6.2 among the AS/NZS 3500.3:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 3.6.2 Design procedure (Update to clause) A new Figure 3.6.2 has been included to compare design rainfall intensity (DRI) with catchment area for various valley gutter effective widths, now allowing up to 40 m²."
+      },
+      "ui": {
+        "title": "Valley gutter design procedure — new Figure 3.6.2",
+        "ref": "Clause 3.6.2",
+        "doc": "BPC — 3500.3 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.3",
+          "valley-gutter",
+          "design"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.3-5.3.8.1",
+      "jurisdiction": "VIC",
+      "claim": "Miscellaneous devices — new stormwater section — AS/NZS 3500.3:2025 Clause 5.3.8.1",
+      "value": "AS/NZS 3500.3:2025 Clause 5.3.8.1",
+      "key_substring": "Clause 5.3.8.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "BPC no longer lists Clause 5.3.8.1 among the AS/NZS 3500.3:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 5.3.8.1 General (New clause) – The below is a new requirement. This section specifies stormwater drainage system requirements for miscellaneous devices and appliances that produce discharge water as part of their function."
+      },
+      "ui": {
+        "title": "Miscellaneous devices — new stormwater section",
+        "ref": "Clause 5.3.8.1",
+        "doc": "BPC — 3500.3 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.3",
+          "appliances",
+          "devices"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.3-5.3.8.2",
+      "jurisdiction": "VIC",
+      "claim": "Device discharge to stormwater — via tundish or pit — AS/NZS 3500.3:2025 Clause 5.3.8.2",
+      "value": "AS/NZS 3500.3:2025 Clause 5.3.8.2",
+      "key_substring": "Clause 5.3.8.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "BPC no longer lists Clause 5.3.8.2 among the AS/NZS 3500.3:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 5.3.8.2 Stormwater connection (New clause) – The below is a new requirement. If a device or appliance discharges to a stormwater drainage system: (a) the discharge to the stormwater system shall be via a tundish or pit; and (b) the point of discharge from each drain line shall be located so t…"
+      },
+      "ui": {
+        "title": "Device discharge to stormwater — via tundish or pit",
+        "ref": "Clause 5.3.8.2",
+        "doc": "BPC — 3500.3 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.3",
+          "tundish",
+          "discharge"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.3-5.3.8.3",
+      "jurisdiction": "VIC",
+      "claim": "Stormwater system sized for maximum discharge — AS/NZS 3500.3:2025 Clause 5.3.8.3",
+      "value": "AS/NZS 3500.3:2025 Clause 5.3.8.3",
+      "key_substring": "Clause 5.3.8.3",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+      "fails_if": "BPC no longer lists Clause 5.3.8.3 among the AS/NZS 3500.3:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 5.3.8.3 Stormwater system design (New clause) – The below is a new requirement. The stormwater system shall be sized to allow for the maximum discharge. Note 1: Refer to the manufacturer’s specifications for information relating to anticipated discharge volumes."
+      },
+      "ui": {
+        "title": "Stormwater system sized for maximum discharge",
+        "ref": "Clause 5.3.8.3",
+        "doc": "BPC — 3500.3 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "roofing-stormwater"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.3",
+          "sizing",
+          "discharge"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.4-2.3.1",
+      "jurisdiction": "VIC",
+      "claim": "Pipes and fittings — 110 mm replaces 100 mm — AS/NZS 3500.4:2025 Clause 2.3.1",
+      "value": "AS/NZS 3500.4:2025 Clause 2.3.1",
+      "key_substring": "Clause 2.3.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+      "fails_if": "BPC no longer lists Clause 2.3.1 among the AS/NZS 3500.4:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.3.1 Pipes and fittings (Update to clause) This change accommodates the different pipe description methods – some 100 mm pipes are referred to by internal, nominal, or external diameter. As a result, 110 mm has now been included instead of 100 mm."
+      },
+      "ui": {
+        "title": "Pipes and fittings — 110 mm replaces 100 mm",
+        "ref": "Clause 2.3.1",
+        "doc": "BPC — 3500.4 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "heated-water"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.4",
+          "pipe-sizing",
+          "materials"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.4-2.3.2.1",
+      "jurisdiction": "VIC",
+      "claim": "Flexible hose accessibility — relocated clause — AS/NZS 3500.4:2025 Clause 2.3.2.1",
+      "value": "AS/NZS 3500.4:2025 Clause 2.3.2.1",
+      "key_substring": "Clause 2.3.2.1",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+      "fails_if": "BPC no longer lists Clause 2.3.2.1 among the AS/NZS 3500.4:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.3.2.1 Accessibility (New clause) The requirements regarding flexible hoses have been relocated to this clause (previously in Clause 2.3(c) of the 2021 edition). The requirements have not changed."
+      },
+      "ui": {
+        "title": "Flexible hose accessibility — relocated clause",
+        "ref": "Clause 2.3.2.1",
+        "doc": "BPC — 3500.4 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "heated-water"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.4",
+          "flexible-hose",
+          "accessibility"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.4-2.3.3",
+      "jurisdiction": "VIC",
+      "claim": "Semi-flexible hose assemblies — new restrictions — AS/NZS 3500.4:2025 Clause 2.3.3",
+      "value": "AS/NZS 3500.4:2025 Clause 2.3.3",
+      "key_substring": "Clause 2.3.3",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+      "fails_if": "BPC no longer lists Clause 2.3.3 among the AS/NZS 3500.4:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 2.3.3 Semi-flexible hose assemblies (New clause) Semi-flexible hoses must: only be used in accessible locations not be buried not be used where repeated movement is expected."
+      },
+      "ui": {
+        "title": "Semi-flexible hose assemblies — new restrictions",
+        "ref": "Clause 2.3.3",
+        "doc": "BPC — 3500.4 key changes",
+        "obligation": "product",
+        "tradeTasks": [
+          "heated-water"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.4",
+          "flexible-hose",
+          "semi-rigid"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.4-5.4.2",
+      "jurisdiction": "VIC",
+      "claim": "Unconcealed water storage tanks — safe trays — AS/NZS 3500.4:2025 Clause 5.4.2",
+      "value": "AS/NZS 3500.4:2025 Clause 5.4.2",
+      "key_substring": "Clause 5.4.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+      "fails_if": "BPC no longer lists Clause 5.4.2 among the AS/NZS 3500.4:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 5.4.2 Unconcealed water storage tanks (Update to clause) No change in requirements. The clause has been re-worded to clarify the following: All unconcealed water storage tanks that are installed inside buildings must be installed with safe trays (as specified in Clause 5.4.3) and safe wastes…"
+      },
+      "ui": {
+        "title": "Unconcealed water storage tanks — safe trays",
+        "ref": "Clause 5.4.2",
+        "doc": "BPC — 3500.4 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "heated-water"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.4",
+          "storage-tank",
+          "safe-tray"
+        ]
+      }
+    },
+    {
+      "id": "PTR-3500.4-10.10.2",
+      "jurisdiction": "VIC",
+      "claim": "Isolating valve before flexible hose to mixer/tap — AS/NZS 3500.4:2025 Clause 10.10.2",
+      "value": "AS/NZS 3500.4:2025 Clause 10.10.2",
+      "key_substring": "Clause 10.10.2",
+      "source_url": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+      "fails_if": "BPC no longer lists Clause 10.10.2 among the AS/NZS 3500.4:2025 2025-edition changes, or the clause is renumbered",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
+        "on": "2026-08-27",
+        "by_agent": "pointer-agent-2026-08-27",
+        "quote": "Clause 10.10.2 Location (Update to clause) Isolating valves must be installed immediately before each flexible hose assembly connected to a mixer valve or tap outlet."
+      },
+      "ui": {
+        "title": "Isolating valve before flexible hose to mixer/tap",
+        "ref": "Clause 10.10.2",
+        "doc": "BPC — 3500.4 key changes",
+        "obligation": "technical",
+        "tradeTasks": [
+          "heated-water"
+        ],
+        "tags": [
+          "pointer",
+          "2025-change",
+          "3500.4",
+          "isolation-valve",
+          "flexible-hose"
         ]
       }
     }

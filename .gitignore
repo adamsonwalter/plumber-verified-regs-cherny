@@ -25,3 +25,6 @@ __pycache__/
 # Proposed-register sidecars written by the scheduled agent during local runs.
 # (In production these are committed via the publish token, not left on disk.)
 register.proposed.*.json
+
+# Fetch artefacts from scripts/add_standard_pointers.py (re-fetched on each run)
+scripts/_bpc/

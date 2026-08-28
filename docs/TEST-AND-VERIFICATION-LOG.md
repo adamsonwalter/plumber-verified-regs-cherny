@@ -11,7 +11,8 @@ this file is the detail.
 
 ## 1. Extraction tests (building the register)
 
-The register's 29 entries were not typed from memory. Every claim's `value`,
+The register's original 29 entries were not typed from memory (it now holds 60;
+see `SPEC.md` for the current shape). Every claim's `value`,
 `key_substring`, and `verified.quote` was produced by a live HTTP fetch of the
 cited source, with the relevant needle searched for in the extracted visible
 text. The scratch extraction scripts that produced these quotes were removed
@@ -46,7 +47,11 @@ fixed by pointing at the real authoritative page, never by inventing a URL:
    assets"**, which quotes the 3.0 m / 6.4 m thresholds literally. The claim
    now asserts what that page actually says.
 
-### Final register shape
+### Register shape at initial build
+
+Recorded as built; the register has since grown to 60 entries (57 VIC, 3
+Federal) — see `SPEC.md` for the current shape and `LESSONS-LEARNED.md` §3 for
+what may be added.
 
 - 29 entries (26 VIC, 3 Federal).
 - 16 sources on `bpc.vic.gov.au`, 5 on `worksafe.vic.gov.au`, 3 on
@@ -65,9 +70,11 @@ fixed by pointing at the real authoritative page, never by inventing a URL:
 | Test | Command | Expected | Observed |
 |---|---|---|---|
 | Structure + domain (offline) | `--offline` | exit 0 | ✅ exit 0 |
-| Clean register, live | `--live` | exit 0, all needles present | ✅ exit 0, 29/29 confirmed |
+| Clean register, live | `--live` | exit 0, all needles present | ✅ exit 0, 29/29 at build; 60/60 at 2026-08-28 |
 | Corrupted register, live (GASFITTING → `Part 99`) | `--live --register <corrupt>` | exit 1, blocked | ✅ exit 1 |
 | Corrupted register, live (WATER-STD → `Clause ZZZ-CORRUPT-9999`) | `--live --register <corrupt>` | exit 1, blocked | ✅ exit 1 |
+| Corrupted `also_requires` (BACKFLOW, bogus second substring) | `--live --register <corrupt>` | exit 1, names the missing string | ✅ exit 1, `missing=['H9Z9-…']` |
+| Malformed `also_requires` (string, not list) | `--offline --register <corrupt>` | exit 1, structure gate | ✅ exit 1 |
 | Corrupted register, live (BOXGUTTER → `H9Z9-corrupt`) | `--live --register <corrupt>` | exit 1, blocked | ✅ exit 1 |
 | Netlify build command (exact) | `python3 scripts/verify_register.py --live \|\| exit 1` | exit 0 | ✅ exit 0 |
 

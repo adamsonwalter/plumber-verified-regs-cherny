@@ -39,15 +39,17 @@ python3 scripts/verify_register.py --offline
 
 ## 2. Full live publish gate (the one that matters)
 
-Re-opens all 29 sources, extracts visible text, asserts each entry's
-`key_substring` is literally present, enforces the domain allow-list, and
-refuses to publish any `verified` entry the current run can't confirm.
+Re-opens all 60 sources, extracts visible text (HTML or `.docx`), asserts every
+required substring is literally present — `key_substring` plus each
+`also_requires` entry — enforces the domain allow-list, and refuses to publish
+any `verified` entry the current run can't confirm.
 
 ```bash
 python3 scripts/verify_register.py --live
 ```
 
-**Expected:** exit 0, `29` lines of `<id>: kind=ok status=200 needle_present=True`,
+**Expected:** exit 0, one `(1b) also_requires: N additional substring(s) will be
+enforced` line, `60` lines of `<id>: kind=ok status=200 needle_present=True`,
 and the closing line `PUBLISH GATE PASSED: register is consistent and every
 verified entry is backed by a current successful check.`
 
@@ -151,7 +153,9 @@ Then confirm the canonical register is untouched:
 
 ```bash
 python3 -c 'import json; d=json.load(open("register.json")); print(d["register_version"])'
-# must still print: 2026-07-31-build1
+# must still print whatever version is committed (currently 2026-08-28-act),
+# NOT a fresh "<date>-agent" value — the agent writes a sidecar, never the
+# canonical file, when run locally.
 ```
 
 ---
@@ -182,13 +186,75 @@ python3 scripts/probe.py --batch urls.txt
 
 ---
 
-## 8. Rebuilding the register from scratch (deterministic)
+## 8. Changing the register (there is no rebuild)
 
-`register.json` was originally seeded by `scripts/build_register.py` (which now
-refuses to overwrite an existing register — see `LESSONS-LEARNED.md` §8) and is
-since maintained additively and by the weekly agent. The verbatim
-quotes are read from the extraction JSONs; those were removed after the initial
-build, so **a full from-scratch rebuild requires re-running the extraction**
-(see `docs/LESSONS-LEARNED.md` §"how the quotes were obtained"). For routine
-updates — correcting a value, adding an entry — edit `register.json` directly
-and re-run §1 + §2.
+`register.json` is **stateful, not derived**: the weekly agent writes `status`,
+`verified`, `remedial_note`, `last_successful_check` and friends into it and
+commits it back, so no script can regenerate it. `scripts/build_register.py` is
+the original one-time seeder and refuses to overwrite an existing register — see
+`LESSONS-LEARNED.md` §8.
+
+- **Correct one value** → edit `register.json`, re-run §1 + §2.
+- **Add entries** → write an additive upsert keyed on `id`, following
+  `scripts/add_standard_pointers.py` (bulk, live-fetched) or
+  `scripts/add_dbca_commencement.py` (single claim, refuses to add if the
+  substring is absent). Then re-run §1 + §2.
+- **Never** run `build_register.py` to "refresh" anything.
+
+---
+
+## 9. Monitoring the weekly scheduled run
+
+The agent runs Mondays 07:00 UTC on Netlify's scheduler, and **only on published
+deploys** — it does not fire on previews. What to check after a run:
+
+**a) Did it run?** Netlify → Functions → `verify_register_scheduled` logs. The
+handler prints a JSON summary ending in `finished_at`. It is idempotent and
+keyed on the Netlify invocation id.
+
+**b) What did it conclude?** Look at `last_run` at the top of `register.json`:
+
+```bash
+python3 -c "import json;print(json.dumps(json.load(open('register.json'))['last_run'],indent=2))"
+```
+
+`counts` should read `{verified: 60, unverified: 0, unreachable: 0}`. The app
+shows the same thing in Settings → **Last checked**.
+
+**Before the first scheduled run this prints `null`, and Settings shows "—".**
+That is correct, not a fault: `last_run` is written only by the agent, and the
+committed register was assembled by the additive scripts. The first Monday run
+is what populates it — its appearance is itself the signal that the schedule
+fired.
+
+**c) Did anything degrade?** Any entry not `verified` is the point of the whole
+system — it means a source moved, or a rule changed.
+
+```bash
+python3 -c "
+import json
+for e in json.load(open('register.json'))['entries']:
+    if e.get('status') != 'verified':
+        print(e['id'], '|', e['status'], '|', e.get('remedial_note','')[:120])
+    if e.get('source_moved_to'):
+        print(e['id'], '| MOVED ->', e['source_moved_to'])
+"
+```
+
+Interpreting it:
+
+| Verdict | Means | Do |
+|---|---|---|
+| `unreachable` | source did not open — usually a Cloudflare challenge or a site outage | Nothing on the first occurrence; it normally clears next run. If it persists, re-point at another authoritative page. |
+| `unverified` | page opened but a required substring is gone — **the rule or its wording changed** | Open the source, establish the new position, update `value` / `key_substring` / `also_requires` / `claim`, re-run §2. |
+| `source_moved_to` set | source 301'd to a new home; the entry still verifies | Update `source_url` to the new URL so the register does not depend on a redirect. |
+
+A degraded entry is safe to leave briefly: the app fails closed, showing a
+warning band and the remedial note instead of a verified badge, and flagging the
+card in the list. What it must never do is sit there unread — `unverified` means
+a plumber's rule may have moved.
+
+**d) Did the site republish?** If `GIT_PUBLISH_TOKEN` + `GIT_REPO` are set the
+agent commits the updated register back, which triggers a deploy whose build
+runs §1 as its command. Without a token it writes a `register.proposed.*.json`
+sidecar for manual review instead, and nothing ships until you merge it.

@@ -318,7 +318,7 @@ conditions. All three are now hardened in `scripts/fsutil.py`.
 
 ### Important: the lock is NOT about URL fetching
 
-The agent's fetch phase (opening 29 sources, checking substrings) is pure
+The agent's fetch phase (opening every source, checking substrings) is pure
 read-only — it never touches the register file. The lock only guards the
 **publish** step. The URL fetching resilience (Cloudflare rejections, timeouts)
 comes from a separate mechanism: per-host `requests.Session` for cookie
@@ -341,8 +341,10 @@ register **MUST** be wrapped in `fsutil.file_lock`. Don't go back to
 2. **Verify every source URL yourself** before trusting it; briefs and search
    summaries are frequently wrong. Repoint dead/misattributed sources at the
    real authoritative page; never fabricate.
-3. Make `key_substring` specific and load-bearing — the whole gate is one
-   substring membership test.
+3. Make `key_substring` specific and load-bearing, and put every *other* fact
+   the claim asserts in `also_requires` — otherwise the claim promises what the
+   gate never checks (§3). A weak key is worse than none: `"60"` once matched
+   "VBA360" in a nav bar for a year.
 4. Never mutate the canonical `register.json` mid-run — write a sidecar,
    publish via token-gated commit.
 5. Any write to `register.json` MUST use `fsutil.atomic_write_json`; any
@@ -353,7 +355,12 @@ register **MUST** be wrapped in `fsutil.file_lock`. Don't go back to
    agent-written verification state — so change it additively (upsert by `id`)
    or edit it directly and re-run the live gate. `build_register.py` is the
    original seeder and refuses to overwrite an existing register (§8).
-8. Clause numbers follow the same rule as URLs: quote them from a page you
+8. A source that 301s still verifies — compare the post-redirect URL and record
+   the move, or the register silently depends on a redirect that may vanish.
+9. For an Act, cite the Act. legislation.vic.gov.au landing pages carry no
+   operative text; fetch the `.docx` and join Word runs **within** a paragraph
+   (§3), then use `human_url` so a person is not handed the document.
+10. Clause numbers follow the same rule as URLs: quote them from a page you
    opened, or leave them out (§3). Numeric values from inside a paywalled
    standard need an attestation model the gate does not have yet — do not ship
    them under `status: "verified"`.

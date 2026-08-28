@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "register_version": "2026-08-27-pointers",
-  "generated_on": "2026-08-27",
+  "register_version": "2026-08-28-dbca",
+  "generated_on": "2026-08-28",
   "generated_by_agent": "build-agent-2026-07-31",
   "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
   "allowed_domains": [
@@ -1932,6 +1932,43 @@
           "3500.4",
           "isolation-valve",
           "flexible-hose"
+        ]
+      }
+    },
+    {
+      "id": "DBCA-2025-COMMENCE",
+      "jurisdiction": "VIC",
+      "claim": "Domestic Building Contracts Amendment Act 2025 (passed 11 September 2025) takes effect by 1 December 2026",
+      "value": "by 1 December 2026",
+      "key_substring": "take effect by 1 December 2026",
+      "source_url": "https://www.consumer.vic.gov.au/latest-news/new-domestic-building-contract-laws-passed-in-victoria",
+      "fails_if": "the commencement date is deferred, fixed to a specific date, or the Act commences early; or CAV archives this news item so the date is no longer published here",
+      "status": "verified",
+      "verified": {
+        "against": "https://www.consumer.vic.gov.au/latest-news/new-domestic-building-contract-laws-passed-in-victoria",
+        "on": "2026-08-28",
+        "by_agent": "dbca-add-2026-08-28",
+        "quote": "The Domestic Building Contracts Amendment Act 2025 passed the Victorian Parliament on Thursday 11 September 2025. The new laws will take effect by 1 December 2026."
+      },
+      "ui": {
+        "title": "New domestic building contract laws — by 1 December 2026",
+        "ref": "by 1 December 2026",
+        "doc": "DBC Amendment Act 2025 (CAV)",
+        "obligation": "documentation",
+        "tradeTasks": [
+          "water-supply",
+          "sanitary-drainage",
+          "roofing-stormwater",
+          "gasfitting",
+          "heated-water"
+        ],
+        "tags": [
+          "domestic building",
+          "contracts",
+          "commencement",
+          "forthcoming",
+          "consumer",
+          "DBCA 2025"
         ]
       }
     }

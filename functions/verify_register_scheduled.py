@@ -132,7 +132,13 @@ def reverify_all(run_id):
             continue
 
         kind, status, text, final_url = vr.fetch_ex(url, session=_session_for(host))
-        present = bool(text) and needle.lower() in text.lower()
+        # Enforce every substring the claim depends on, not just the primary
+        # key — otherwise the agent would keep re-verifying an entry the publish
+        # gate would block (see also_requires in verify_register.run_live_checks).
+        extras = e.get("also_requires") or []
+        _low = (text or "").lower()
+        missing = [n for n in ([needle] + list(extras)) if n.lower() not in _low]
+        present = bool(text) and not missing
         # A source can 301 to a new home and still verify, because the fetch
         # follows the hop. Left undetected the register silently depends on a
         # redirect the publisher may one day drop, so record the move.
@@ -166,7 +172,6 @@ def reverify_all(run_id):
             prev = e.get("verified", {})
             e["status"] = "unverified"
             e["changed_from"] = prior_value
-            e["changed_to"] = "(recorded key_substring not present on current page)"
             e["verified"] = {
                 "against": url,
                 "on": _today(),
@@ -174,10 +179,14 @@ def reverify_all(run_id):
                 "quote": _extract_snippet(text, "", 220) or prev.get("quote", ""),
             }
             e["remedial_note"] = (
-                f"Live page returned 2xx but the recorded key_substring "
-                f"{needle!r} was not found in the current text. Open the source, "
+                f"Live page returned 2xx but "
+                + ", ".join(repr(m) for m in missing)
+                + " was not found in the current text. Open the source, "
                 f"confirm the new value, and update register.json. Then re-run "
                 f"scripts/verify_register.py --live to clear the gate."
+            )
+            e["changed_to"] = (
+                "(missing on current page: " + ", ".join(missing) + ")"
             )
             results.append({"id": e["id"], "verdict": "unverified", "status": status})
 

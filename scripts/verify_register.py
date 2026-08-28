@@ -206,6 +206,19 @@ def check_structure(entries):
     return failures
 
 
+def check_also_requires(entries):
+    """also_requires, when present, must be a list of non-empty strings."""
+    failures = []
+    for e in entries:
+        ar = e.get("also_requires")
+        if ar is None:
+            continue
+        if not isinstance(ar, list) or not all(
+                isinstance(x, str) and x.strip() for x in ar):
+            failures.append(e["id"])
+    return failures
+
+
 def check_domains(entries):
     """(4) Every source_url host must be an official domain."""
     failures = []
@@ -237,24 +250,33 @@ def run_live_checks(entries):
         if host not in sessions:
             sessions[host] = requests.Session()
         kind, status, text, final_url = fetch_ex(url, session=sessions[host])
-        present = bool(text) and (needle.lower() in text.lower())
+        # A claim may assert more than one fact. key_substring carries the
+        # primary one; also_requires carries the rest, so a claim cannot promise
+        # what the gate never checks. ALL must be present for the entry to hold.
+        extras = e.get("also_requires") or []
+        low = (text or "").lower()
+        missing = [n for n in ([needle] + list(extras)) if n.lower() not in low]
+        present = bool(text) and not missing
         moved = kind == "ok" and not same_url(final_url, url)
         rec = {
             "kind": kind,
             "status": status,
             "text_present": present,
+            "missing": missing if kind == "ok" else [],
             "changed_to": None,
             "moved_to": final_url if moved else None,
             "note": "",
         }
         if kind == "ok" and not present:
             rec["note"] = (
-                f"key_substring {needle!r} not found in current page text"
+                "substring(s) not found in current page text: "
+                + ", ".join(repr(m) for m in missing)
             )
         elif kind != "ok":
             rec["note"] = f"source unreachable: {kind} {status}"
         results[uid] = rec
-        log(f"{uid}: kind={kind} status={status} needle_present={present}")
+        log(f"{uid}: kind={kind} status={status} needle_present={present}"
+            + (f" MISSING={missing}" if (kind == "ok" and missing) else ""))
         # A permanent move still verifies (requests follows the hop), so it is
         # advisory, not a gate failure — but it must be visible, or the register
         # silently depends on a redirect the publisher may drop.
@@ -308,6 +330,18 @@ def main(argv=None):
     else:
         log("(4) domain: every source URL resolves to an official gov.au/abcb domain")
 
+    # ---- (1b) also_requires shape ----
+    ar_fail = check_also_requires(entries)
+    if ar_fail:
+        log("STRUCTURE: also_requires must be a list of non-empty strings", "FAIL")
+        for uid in ar_fail:
+            log(f"  {uid}: malformed also_requires", "FAIL")
+        hard_failures.append("malformed also_requires")
+    else:
+        n = sum(len(e.get("also_requires") or []) for e in entries)
+        if n:
+            log(f"(1b) also_requires: {n} additional substring(s) will be enforced")
+
     # ---- self-consistency (always): no entry verified AND unreachable/unverified ----
     for e in entries:
         st = e.get("status")
@@ -345,9 +379,11 @@ def main(argv=None):
 
             if file_status == "verified":
                 if res.get("kind") != "ok" or not res.get("text_present"):
+                    miss = res.get("missing") or []
                     hard_failures.append(
                         f"{uid}: marked verified but live check did not confirm "
-                        f"(kind={res.get('kind')}, needle_present={res.get('text_present')})"
+                        f"(kind={res.get('kind')}, needle_present={res.get('text_present')}"
+                        + (f", missing={miss}" if miss else "") + ")"
                     )
                     log(f"PUBLISH GATE: {uid} verified but NOT confirmed live -> BLOCK", "FAIL")
                 else:

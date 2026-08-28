@@ -80,6 +80,26 @@ asserted the DBI threshold was "$22,000 (from 1 July 2024)"; the actual
 Consumer Affairs Victoria page said **$16,000** as of the fetch. The page text
 won. Always.
 
+**Third corollary: a claim can promise more than its key_substring checks.**
+The gate reduces "does this still hold?" to one substring test, so any part of a
+`claim` beyond that substring is asserted but never verified. Six entries were
+overclaiming: `REGULATOR` promised "established 1 July 2025, replacing the VBA"
+while checking only "Building and Plumbing Commission"; `ASBESTOS-CASE` promised
+a 1-hour-per-7-day cap while checking only "10 square metres"; `HOTWATER`
+promised a 50°C delivery figure while its key was the bare string `"60"` —
+which was matching **"VBA360" in the site navigation**, not the temperature at
+all. Fixed with `also_requires`, an optional array of additional substrings that
+must all be present. Two lessons in the fix itself:
+
+- Where the page did not support part of a claim, the **claim was trimmed, not
+  a key invented**. The BPC hot-water page states no 50°C delivery figure (only
+  45°C for special premises, and 50°C as a scald-timing example), so that
+  assertion was removed rather than keyed to a coincidental match.
+- The extra substrings must be taken from the page's own wording, not the
+  claim's. WorkSafe writes "seven day period ... does not exceed one hour", not
+  "1 hour per 7 days"; BPC writes "1% Annual Exceedance Probability", not
+  "1% AEP". Probe first, then key.
+
 **Second corollary, found later and worse: an upstream knowledge base can
 fabricate an entire clause set.** The sibling `trade-regulations-okf` repo
 carries 34 install-spec records (`ws-1xx` / `san-1xx`) covering pipe sizing,

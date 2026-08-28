@@ -142,6 +142,12 @@ hardened:
       purchasing a standard does not grant redistribution rights (separate
       Standards Australia program), and that figures are not copyrightable while
       clause prose is.
+- [x] **Claim/substring mismatch audited.** Six entries asserted more than their
+      `key_substring` verified. Fixed via `also_requires` (12 additional
+      substrings, all confirmed live); two claims trimmed where the page did not
+      support them. Enforcement proven: a bogus extra substring blocks the gate
+      (exit 1) naming the missing string, and a malformed `also_requires` fails
+      the structure gate.
 - [ ] **Jurisdiction is never surfaced in the UI.** Every entry carries
       `jurisdiction` (`VIC` / `Federal`) and the gate enforces it, but
       `public/index.html` never reads the field — cards and filters expose trade

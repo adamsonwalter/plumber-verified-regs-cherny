@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "register_version": "2026-08-28-dbca",
+  "register_version": "2026-08-28-keys",
   "generated_on": "2026-08-28",
   "generated_by_agent": "build-agent-2026-07-31",
   "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
@@ -108,7 +108,11 @@
           "appendix f",
           "roofing"
         ]
-      }
+      },
+      "also_requires": [
+        "Appendix F",
+        "1% Annual Exceedance Probability"
+      ]
     },
     {
       "id": "WATER-STD",
@@ -307,7 +311,11 @@
           "licensing",
           "building commission"
         ]
-      }
+      },
+      "also_requires": [
+        "1 July 2025",
+        "Victorian Building Authority"
+      ]
     },
     {
       "id": "BACKFLOW",
@@ -339,7 +347,10 @@
           "registration",
           "part 5"
         ]
-      }
+      },
+      "also_requires": [
+        "AS/NZS 2845.3"
+      ]
     },
     {
       "id": "GASFITTING",
@@ -563,9 +574,9 @@
     {
       "id": "HOTWATER",
       "jurisdiction": "VIC",
-      "claim": "Hot water must be stored above 60°C (to control Legionella) and delivered via a tempering valve at a lower temperature to prevent scalding (50°C reference)",
+      "claim": "Hot water must be stored above 60°C to control Legionella, and delivered through a tempering valve at a lower temperature to prevent scalding",
       "value": "store >60°C, temper at tap",
-      "key_substring": "60",
+      "key_substring": "stored above 60°C",
       "source_url": "https://www.bpc.vic.gov.au/resource-hub/safety-guides/hot-water-safety",
       "fails_if": "storage/tempering temperature guidance changes",
       "status": "verified",
@@ -591,7 +602,11 @@
           "scalding",
           "60°C"
         ]
-      }
+      },
+      "also_requires": [
+        "tempering valve",
+        "Legionella"
+      ]
     },
     {
       "id": "FALLS-2M",
@@ -699,12 +714,16 @@
           "WHS",
           "safety"
         ]
-      }
+      },
+      "also_requires": [
+        "seven day period",
+        "does not exceed one hour"
+      ]
     },
     {
       "id": "ASBESTOS-NOTIFY",
       "jurisdiction": "VIC",
-      "claim": "Under Part VIA of the Dangerous Goods Act 1985, notify WorkSafe of asbestos installed on/after 1 January 2004 (non-domestic); enter agreement within 60 days",
+      "claim": "Under Part VIA of the Dangerous Goods Act 1985, notify WorkSafe of asbestos installed on/after 1 January 2004; premises used solely for domestic purposes are exempt; enter agreement within 60 days",
       "value": "Part VIA / 1 Jan 2004 / 60 days",
       "key_substring": "60 days",
       "source_url": "https://www.worksafe.vic.gov.au/properties-containing-asbestos-notification-and-plans",
@@ -733,7 +752,12 @@
           "WHS",
           "safety"
         ]
-      }
+      },
+      "also_requires": [
+        "Part VIA",
+        "1 January 2004",
+        "domestic premise used solely for domestic purposes"
+      ]
     },
     {
       "id": "CONFINED-SPACE",

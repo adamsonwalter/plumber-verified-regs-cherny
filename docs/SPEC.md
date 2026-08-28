@@ -54,6 +54,13 @@ holds, returning one of three verdicts plus a supporting quote from the page:
 | `unverified` | 2xx but `key_substring` absent — the source moved | record `changed_from` / `changed_to` + `remedial_note` |
 | `unreachable` | non-2xx, Cloudflare challenge, or network error | record `last_successful_check` + `http_error` |
 
+A claim may assert more than one fact. `key_substring` carries the primary one;
+the optional `also_requires` array carries the rest, and **every** listed
+substring must be present for the entry to hold. This exists because a claim
+could otherwise promise what the gate never checks — see `LESSONS-LEARNED.md`
+§3. Where a page does not support part of a claim, the claim is trimmed rather
+than a key invented.
+
 **Divergence from the original intent, stated plainly.** The intent called for an
 agent that *reasons* over the page. What is built is a deterministic test: is
 `key_substring` literally present in the fetched visible text? That is

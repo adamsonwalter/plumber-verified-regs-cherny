@@ -148,12 +148,17 @@ hardened:
       support them. Enforcement proven: a bogus extra substring blocks the gate
       (exit 1) naming the missing string, and a malformed `also_requires` fails
       the structure gate.
-- [ ] **Jurisdiction is never surfaced in the UI.** Every entry carries
-      `jurisdiction` (`VIC` / `Federal`) and the gate enforces it, but
-      `public/index.html` never reads the field — cards and filters expose trade
-      task and obligation type only. This is an unmet acceptance criterion from
-      `SPEC.md`: a viewer cannot see which layer of government a rule sits at.
-      Currently 56 VIC / 3 Federal.
+- [x] **Jurisdiction surfaced as a filter.** The results screen now has a
+      "Level" bar (Victoria 57 / Federal 3) beside "Type". Verified: 57 + 3 = 60;
+      both chips on returns 60, confirming OR within the axis rather than
+      intersection; toggling off restores the full list; `documentation` AND
+      `Federal` returns 1, matching a direct query of the data; the search screen
+      and other three-argument `filterEntries` callers are unaffected. Active
+      chip contrast 4.57:1.
+- [x] **Sidebar counts were hardcoded.** The desktop sidebar read
+      "Verified · 29 regulations" and "Browse all 29 regs" — stale literals from
+      when the register held 29. Now derived from the data, and they report
+      "N of M verified" if any entry is degraded rather than overstating.
 - [ ] **Offline settings display.** `paintSettings()` fills Register version and
       Entries only when `REG` is set, so both show "—" when running from cache,
       though `cache.v` holds the version.

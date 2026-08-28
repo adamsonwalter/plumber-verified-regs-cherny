@@ -292,6 +292,12 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
 .filter-bar::-webkit-scrollbar{display:none}
 .filter-chip{flex-shrink:0;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;transition:all .15s}
 .filter-chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Jurisdiction is a different axis from obligation type, so its chips read
+   green rather than blue — two bars of identical blue chips would look like
+   one wrapped list. */
+.filter-chip.juris.on{background:var(--green);color:#fff;border-color:var(--green)}
+.filter-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.filter-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);flex-shrink:0}
 
 /* multi-select hint (unobtrusive, fades for repeat users) */
 .filter-hint{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap;opacity:1;transition:opacity .6s}
@@ -349,7 +355,7 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
   <!-- ===== SIDEBAR (desktop ≥900px) ===== -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">VIC PlumberRegs</div>
-    <div class="sidebar-sub">Verified · 29 regulations</div>
+    <div class="sidebar-sub" id="sidebar-sub">Verified regulations</div>
     <nav class="sidebar-nav">
       <div class="sidebar-nav-item on" data-tab="home" onclick="switchTab('home')"><div class="ico">⌂</div>Home</div>
       <div class="sidebar-nav-item" data-tab="search" onclick="switchTab('search')"><div class="ico">🔍</div>Search</div>
@@ -359,7 +365,7 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
     <div class="sidebar-section">
       <div class="sidebar-section-label">Jobs</div>
       <div class="sidebar-jobs" id="sidebar-jobs"></div>
-      <button class="sidebar-browse" onclick="browseAll()">Browse all 29 regs ›</button>
+      <button class="sidebar-browse" id="sidebar-browse" onclick="browseAll()">Browse all regs ›</button>
     </div>
     <div class="sidebar-data">
       <button onclick="toggleClassic()">◐ Classic mode</button>
@@ -422,9 +428,14 @@ h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;c
     <div class="search-standalone">
       <input type="text" placeholder="Filter these results…" id="results-query" autocomplete="off">
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+    <div class="filter-row">
+      <span class="filter-label">Type</span>
       <div class="filter-bar" id="ob-filter-bar"></div>
       <span class="filter-hint" id="filter-hint">tap to combine</span>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Level</span>
+      <div class="filter-bar" id="juris-filter-bar"></div>
     </div>
     <div class="count-row">
       <div class="count" id="results-count"></div>
@@ -608,6 +619,7 @@ let state = {
   tab: "home",
   activeTasks: [],
   activeObligations: [],
+  activeJurisdictions: [],
   query: "",
   jobId: null,
   jobTasks: [],
@@ -785,12 +797,14 @@ function showWhatsNew() {
   // show results filtered to changed entries
   state.activeTasks = [];
   state.activeObligations = [];
+  state.activeJurisdictions = [];
   state.jobId = null;
   showScreen("screen-results");
   $("results-query").value = "";
   $("results-count").textContent = changedEntries.length + " updated regulation" + (changedEntries.length === 1 ? "" : "s");
   $("results-list").innerHTML = changedEntries.map(e => renderRegCard(e)).join("");
   paintObFilters();
+  paintJurisFilters();
 }
 
 /* ======== PATTERN #3: REVIEWED ======== */
@@ -965,11 +979,20 @@ function matchesObligations(e, obs) {
   return obs.includes(e.ui ? e.ui.obligation : "");
 }
 
-function filterEntries(query, tasks, obligations) {
+// OR within the jurisdiction axis (VIC or Federal), AND against the other
+// filters — same shape as the task and obligation matchers. No selection means
+// no constraint, so the default view still shows everything.
+function matchesJurisdictions(e, js) {
+  if (!js || !js.length) return true;
+  return js.includes(e.jurisdiction);
+}
+
+function filterEntries(query, tasks, obligations, jurisdictions) {
   return entries.filter(e =>
     matchesQuery(e, query) &&
     matchesTasks(e, tasks) &&
-    matchesObligations(e, obligations)
+    matchesObligations(e, obligations) &&
+    matchesJurisdictions(e, jurisdictions)
   );
 }
 
@@ -1015,6 +1038,19 @@ function showScreen(id) {
 
 /* ======== HOME SCREEN ======== */
 function paintHome() {
+  // Sidebar counts were hardcoded to 29 and went stale as the register grew.
+  // Derive them, and count only entries that actually hold (entryTrust "ok"),
+  // so the chrome cannot claim more verified regulations than there are.
+  const total = entries.length;
+  const ok = entries.filter(function(e) { return entryTrust(e).tier === "ok"; }).length;
+  const sub = $("sidebar-sub");
+  if (sub) {
+    sub.textContent = (ok === total ? "Verified · " + total + " regulations"
+                                    : ok + " of " + total + " verified");
+  }
+  const br = $("sidebar-browse");
+  if (br) br.textContent = "Browse all " + total + " regs \u203a";
+
   // what's new banner
   if (changedEntries.length) {
     $("new-banner").classList.add("show");
@@ -1109,6 +1145,7 @@ function runHomeSearch() {
   state.query = q;
   state.activeTasks = [];
   state.activeObligations = [];
+  state.activeJurisdictions = [];
   state.jobId = null;
   showResults();
   $("results-query").value = q;
@@ -1120,6 +1157,7 @@ function quickSearch(q) {
   state.query = q;
   state.activeTasks = [];
   state.activeObligations = [];
+  state.activeJurisdictions = [];
   state.jobId = null;
   showResults();
   $("results-query").value = q;
@@ -1130,6 +1168,7 @@ function browseAll() {
   state.query = "";
   state.activeTasks = [];
   state.activeObligations = [];
+  state.activeJurisdictions = [];
   state.jobId = null;
   showResults();
   $("results-query").value = "";
@@ -1151,6 +1190,7 @@ function selectJob(jobId) {
   state.query = "";
   state.activeTasks = [...job.tasks];
   state.activeObligations = [];
+  state.activeJurisdictions = [];
 
   $("job-title").textContent = job.label;
   $("job-tasks").innerHTML = state.jobTasks.map(function(t) {
@@ -1185,6 +1225,7 @@ function toggleJobPin(jobId) {
 function showResults() {
   showScreen("screen-results");
   paintObFilters();
+  paintJurisFilters();
   updateFilterHint();
 }
 
@@ -1201,6 +1242,35 @@ function paintObFilters() {
   }).join("");
 }
 
+const JURISDICTION_LABELS = { VIC: "Victoria", Federal: "Federal" };
+
+function paintJurisFilters() {
+  const bar = $("juris-filter-bar");
+  if (!bar) return;
+  // Derived from the data, so a register with only one level shows one chip
+  // and a new level appears without a code change.
+  const available = [];
+  entries.forEach(function(e) {
+    if (e.jurisdiction && available.indexOf(e.jurisdiction) < 0) available.push(e.jurisdiction);
+  });
+  available.sort();
+  bar.innerHTML = available.map(function(j) {
+    const on = state.activeJurisdictions.includes(j);
+    const count = entries.filter(function(e) { return e.jurisdiction === j; }).length;
+    return '<button class="filter-chip juris ' + (on ? 'on' : '') +
+      '" onclick="toggleJurisFilter(\'' + j + '\')">' +
+      esc(JURISDICTION_LABELS[j] || j) + ' <span style="opacity:.6">' + count + '</span></button>';
+  }).join("");
+}
+
+function toggleJurisFilter(j) {
+  const idx = state.activeJurisdictions.indexOf(j);
+  if (idx >= 0) state.activeJurisdictions.splice(idx, 1);
+  else state.activeJurisdictions.push(j);
+  paintJurisFilters();
+  paintResults();
+}
+
 function toggleObFilter(ob) {
   const idx = state.activeObligations.indexOf(ob);
   if (idx >= 0) state.activeObligations.splice(idx, 1);
@@ -1209,16 +1279,19 @@ function toggleObFilter(ob) {
   state.filterHintUses = (state.filterHintUses || 0) + 1;
   lsSet("filterHintUses", state.filterHintUses);
   paintObFilters();
+  paintJurisFilters();
   paintResults();
 }
 
 function clearAllFilters() {
   state.activeObligations = [];
+  state.activeJurisdictions = [];
   state.activeTasks = [];
   state.query = "";
   state.jobId = null;
   if ($("results-query")) $("results-query").value = "";
   paintObFilters();
+  paintJurisFilters();
   paintResults();
 }
 
@@ -1232,9 +1305,11 @@ function updateFilterHint() {
 function paintResults() {
   const q = $("results-query") ? $("results-query").value.trim() : state.query;
   state.query = q;
-  const results = filterEntries(q, state.activeTasks, state.activeObligations);
+  const results = filterEntries(q, state.activeTasks, state.activeObligations,
+                                state.activeJurisdictions);
   const total = entries.length;
-  const filtered = (q || state.activeTasks.length || state.activeObligations.length);
+  const filtered = (q || state.activeTasks.length || state.activeObligations.length
+                    || state.activeJurisdictions.length);
   $("results-count").innerHTML = results.length + " result" + (results.length === 1 ? "" : "s") +
     (state.jobId ? " for " + (JOB_PRESETS.find(function(j) { return j.id === state.jobId; }) || {}).label : "") +
     (filtered ? ' <span class="count-total">of ' + total + '</span>' : "");

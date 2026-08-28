@@ -141,9 +141,10 @@ key changes" tables.
 | A moved source flips the entry to a degraded status with a recorded reason, and the publish gate blocks it | **Met** — proven by the corruption test in `REPEATABLE-VALIDATION.md` |
 | Weekly schedule registered on the platform; handler idempotent and keyed on the run id | **Met in code**; not yet observed firing on a published deploy |
 | Page renders each claim as verified with against / on / by + evidence quote, or degraded with what changed | **Met** |
-| Claims grouped or tagged by jurisdictional level so a viewer sees which layer of government a rule sits at | **NOT met** — `jurisdiction` is carried on every entry and enforced by the gate, but `public/index.html` never reads it. Cards and filters expose trade task and obligation type only. |
+| Claims grouped or tagged by jurisdictional level so a viewer sees which layer of government a rule sits at | **Met** — the results screen carries a "Level" filter bar (Victoria / Federal) beside the "Type" bar. Chips toggle on and off; multiple selections OR within the level axis and AND against type, task and free text. Chips and counts are derived from the data, so a new jurisdiction appears without a code change. |
 
-The unmet criterion is tracked in `TEST-AND-VERIFICATION-LOG.md` §3.
+All acceptance criteria are now met except the scheduled function being observed
+firing on a published deploy, tracked in `TEST-AND-VERIFICATION-LOG.md` §3.
 
 ---
 

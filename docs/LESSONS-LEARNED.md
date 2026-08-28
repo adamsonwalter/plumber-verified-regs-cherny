@@ -80,6 +80,26 @@ asserted the DBI threshold was "$22,000 (from 1 July 2024)"; the actual
 Consumer Affairs Victoria page said **$16,000** as of the fetch. The page text
 won. Always.
 
+**Fourth corollary: for an Act, the summary is not the source.** The CAV news
+item says the new domestic building contract laws "will take effect by
+1 December 2026". The Act says something richer: s 2 commences Part 1 and
+Division 3 of Part 8 the day after Royal Assent, leaves the rest to
+proclamation, and makes 1 December 2026 a *backstop* for anything not already in
+operation. Anchoring to the summary would have asserted that nothing is yet in
+force. Two practical notes:
+
+- The legislation.vic.gov.au landing page contains **no operative text** — no
+  "Commencement", no dates. The Act is only published there as `.docx`/`.pdf`,
+  so `fetch_ex` learned to extract `.docx` (stdlib `zipfile`, no dependency).
+- When extracting `.docx`, join runs **within** a paragraph with no separator.
+  Word splits words across runs freely, so joining every `w:t` with a space
+  yields "th e remaining" and "2026 , it" — which silently breaks any
+  `key_substring` longer than a word. Join runs inside a `<w:p>`, separate only
+  paragraphs.
+- "Passed 11 September 2025" is CAV's wording and appears nowhere in the Act
+  (which records "[Assented to 16 September 2025]"). Same overclaim rule: it was
+  dropped from the Act-backed claim rather than keyed to a weaker page.
+
 **Third corollary: a claim can promise more than its key_substring checks.**
 The gate reduces "does this still hold?" to one substring test, so any part of a
 `claim` beyond that substring is asserted but never verified. Six entries were

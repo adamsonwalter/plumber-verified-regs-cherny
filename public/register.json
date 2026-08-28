@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "register_version": "2026-08-28-keys",
+  "register_version": "2026-08-28-act",
   "generated_on": "2026-08-28",
   "generated_by_agent": "build-agent-2026-07-31",
   "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
@@ -1962,22 +1962,22 @@
     {
       "id": "DBCA-2025-COMMENCE",
       "jurisdiction": "VIC",
-      "claim": "Domestic Building Contracts Amendment Act 2025 (passed 11 September 2025) takes effect by 1 December 2026",
-      "value": "by 1 December 2026",
-      "key_substring": "take effect by 1 December 2026",
-      "source_url": "https://www.consumer.vic.gov.au/latest-news/new-domestic-building-contract-laws-passed-in-victoria",
-      "fails_if": "the commencement date is deferred, fixed to a specific date, or the Act commences early; or CAV archives this news item so the date is no longer published here",
+      "claim": "Domestic Building Contracts Amendment Act 2025 (No. 36 of 2025, assented 16 September 2025): Part 1 and Division 3 of Part 8 commenced the day after Royal Assent; the remaining provisions commence on a day or days to be proclaimed; any provision not in operation before 1 December 2026 commences on that day (s 2)",
+      "value": "default commencement 1 December 2026 (s 2)",
+      "key_substring": "If a provision of this Act does not come into operation before 1 December 2026, it comes into operation on that day.",
+      "source_url": "https://content.legislation.vic.gov.au/sites/default/files/2025-09/25-036a.docx",
+      "fails_if": "s 2 of the Act is amended so the default commencement date differs, or the authorised text is republished at a different URL",
       "status": "verified",
       "verified": {
-        "against": "https://www.consumer.vic.gov.au/latest-news/new-domestic-building-contract-laws-passed-in-victoria",
+        "against": "https://content.legislation.vic.gov.au/sites/default/files/2025-09/25-036a.docx",
         "on": "2026-08-28",
-        "by_agent": "dbca-add-2026-08-28",
-        "quote": "The Domestic Building Contracts Amendment Act 2025 passed the Victorian Parliament on Thursday 11 September 2025. The new laws will take effect by 1 December 2026."
+        "by_agent": "act-verify-2026-08-28",
+        "quote": "2 Commencement ... If a provision of this Act does not come into operation before 1 December 2026, it comes into operation on that day."
       },
       "ui": {
-        "title": "New domestic building contract laws — by 1 December 2026",
-        "ref": "by 1 December 2026",
-        "doc": "DBC Amendment Act 2025 (CAV)",
+        "title": "New domestic building contract laws — commencement (s 2)",
+        "ref": "s 2 — by 1 December 2026",
+        "doc": "DBC Amendment Act 2025 (No. 36 of 2025)",
         "obligation": "documentation",
         "tradeTasks": [
           "water-supply",
@@ -1992,9 +1992,17 @@
           "commencement",
           "forthcoming",
           "consumer",
-          "DBCA 2025"
+          "DBCA 2025",
+          "s 2",
+          "Act"
         ]
-      }
+      },
+      "also_requires": [
+        "This Part and Division 3 of Part 8 come into operation on the day after the day on which this Act receives the Royal Assent",
+        "come into operation on a day or days to be proclaimed",
+        "Assented to 16 September 2025"
+      ],
+      "human_url": "https://www.legislation.vic.gov.au/as-made/acts/domestic-building-contracts-amendment-act-2025"
     }
   ]
 }

@@ -33,6 +33,7 @@ gate refuses). Details printed to stdout/stderr.
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import os
 import re
@@ -157,19 +158,59 @@ def fetch_ex(url: str, session=None):
             time.sleep(RETRY_BACKOFF + (attempt % 3))
             continue
         ctype = r.headers.get("Content-Type", "").lower()
-        if "html" in ctype or "xml" in ctype or ctype == "":
+        is_docx = any(c in ctype for c in DOCX_CTYPES) or \
+            r.url.lower().split("?")[0].endswith(".docx")
+        if not is_docx and ("html" in ctype or "xml" in ctype or ctype == ""):
             if any(m in r.content for m in CLOUDFLARE_CHALLENGE_MARKERS):
                 last = ("cloudflare", f"{r.status_code} (Cloudflare challenge)", "", r.url)
                 time.sleep(RETRY_BACKOFF + (attempt % 3))
                 continue
         if 200 <= r.status_code < 300:
-            text = strip_html(r.text) if "html" in ctype or "xml" in ctype else ""
+            if any(c in ctype for c in DOCX_CTYPES) or r.url.lower().split("?")[0].endswith(".docx"):
+                text = extract_docx(r.content)
+            elif "html" in ctype or "xml" in ctype:
+                text = strip_html(r.text)
+            else:
+                text = ""
             return ("ok", r.status_code, text, r.url)
         last = ("http_error", r.status_code, "", r.url)
         # 4xx/5xx — one retry in case transient, then stop
         if attempt < 1:
             time.sleep(RETRY_BACKOFF)
     return last
+
+
+DOCX_CTYPES = (
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword",
+)
+
+
+def extract_docx(content: bytes) -> str:
+    """Visible text from a .docx, using only the stdlib.
+
+    Primary legislation is published by legislation.vic.gov.au as .docx/.pdf,
+    not HTML — the landing page carries no operative text. Without this, a claim
+    about what an Act actually says can only be verified against somebody's
+    summary of it. Word field codes (TOC entries, PAGEREF) live outside w:t
+    nodes, so taking only w:t text drops them naturally.
+    """
+    import zipfile, html as _html
+    try:
+        with zipfile.ZipFile(io.BytesIO(content)) as z:
+            xml = z.read("word/document.xml").decode("utf-8", "replace")
+    except Exception:
+        return ""
+    # Word splits a single word across runs freely ("th" + "e remaining"), so
+    # runs must be joined WITHIN a paragraph with no separator and only
+    # paragraphs separated by whitespace. Joining every run with a space
+    # produces "th e remaining" and " , " and makes any key_substring brittle.
+    out = []
+    for para in re.findall(r"<w:p\b.*?</w:p>", xml, re.S):
+        runs = re.findall(r"<w:t[^>]*>([^<]*)</w:t>", para)
+        if runs:
+            out.append(_html.unescape("".join(runs)))
+    return " ".join(" ".join(out).split())
 
 
 def same_url(a: str, b: str) -> bool:
@@ -223,9 +264,16 @@ def check_domains(entries):
     """(4) Every source_url host must be an official domain."""
     failures = []
     for e in entries:
-        host = urlparse(e["source_url"]).hostname or ""
-        if not is_official(host):
-            failures.append((e["id"], host, e["source_url"]))
+        # human_url is where a person should read the rule; source_url is what
+        # the gate verifies. They can differ (an Act is published as .docx, but
+        # a human wants the landing page). Both must be official.
+        for field in ("source_url", "human_url"):
+            url = e.get(field)
+            if not url:
+                continue
+            host = urlparse(url).hostname or ""
+            if not is_official(host):
+                failures.append((e["id"], host, url))
     return failures
 
 

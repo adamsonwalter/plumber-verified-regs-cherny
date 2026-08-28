@@ -1427,8 +1427,11 @@ function openSheet(id) {
   const quote = trust.showQuote && e.verified ? (e.verified.quote || "") : "";
   $("sheet-quote").textContent = quote;
   $("sheet-quote").style.display = quote ? "" : "none";
-  $("sheet-source").href = e.source_url;
-  $("sheet-source-host").textContent = sourceDomain(e.source_url);
+  // Prefer human_url for reading: some sources verify against a document
+  // (an Act published as .docx) that a person should not be handed directly.
+  const readUrl = e.human_url || e.source_url;
+  $("sheet-source").href = readUrl;
+  $("sheet-source-host").textContent = sourceDomain(readUrl);
 
   updateSheetBookmark();
   updateSheetReviewed();

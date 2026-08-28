@@ -54,6 +54,13 @@ holds, returning one of three verdicts plus a supporting quote from the page:
 | `unverified` | 2xx but `key_substring` absent — the source moved | record `changed_from` / `changed_to` + `remedial_note` |
 | `unreachable` | non-2xx, Cloudflare challenge, or network error | record `last_successful_check` + `http_error` |
 
+Sources need not be HTML. Primary legislation is published by
+legislation.vic.gov.au as `.docx`/`.pdf` and its landing pages carry no
+operative text, so the fetcher extracts `.docx` (stdlib only). Where the
+verification target is a document a person should not be handed directly, the
+optional `human_url` gives the page to read; both URLs must be on official
+domains, and the gate always verifies `source_url`.
+
 A claim may assert more than one fact. `key_substring` carries the primary one;
 the optional `also_requires` array carries the rest, and **every** listed
 substring must be present for the entry to hold. This exists because a claim

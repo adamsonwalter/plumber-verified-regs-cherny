@@ -22,6 +22,8 @@ compliance determination**.
 > dominate this project. For what was tested and what remains, see
 > [`docs/TEST-AND-VERIFICATION-LOG.md`](docs/TEST-AND-VERIFICATION-LOG.md); to
 > re-run every check, follow [`docs/REPEATABLE-VALIDATION.md`](docs/REPEATABLE-VALIDATION.md).
+> Moving this to another host? Start at
+> [`docs/BOLT-MIGRATION-BRIEF.md`](docs/BOLT-MIGRATION-BRIEF.md).
 
 ## Three capabilities
 

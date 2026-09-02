@@ -163,7 +163,7 @@ published "Summary of key changes" tables.
 |---|---|
 | `register.json` populated by real fetches against live URLs | **Met** — all 60 confirmed by `verify_register.py --live` |
 | A moved source flips the entry to a degraded status with a recorded reason, and the publish gate blocks it | **Met** — proven by the corruption test in `REPEATABLE-VALIDATION.md` |
-| Weekly schedule registered on the platform; handler idempotent and keyed on the run id | **Met in code**; not yet observed firing on a published deploy |
+| Weekly schedule registered on the platform; handler idempotent and keyed on the run id | **NOT met.** Three confirmed blockers: deployed synchronous against a 30 s limit for 56.7 s of work; `scripts/` likely absent from the function bundle so the import fails; and the publisher writes root `register.json` while the site serves `public/register.json` with no copy step. No scheduled run has ever published — the live register has no `last_run`. See `AI-CODER-ANSWERS.md`. |
 | Page renders each claim as verified with against / on / by + evidence quote, or degraded with what changed | **Met** |
 | Claims grouped or tagged by jurisdictional level so a viewer sees which layer of government a rule sits at | **Met** — the results screen carries a "Level" filter bar (Victoria / Federal) beside the "Type" bar. Chips toggle on and off; multiple selections OR within the level axis and AND against type, task and free text. Chips and counts are derived from the data, so a new jurisdiction appears without a code change. |
 

@@ -125,7 +125,11 @@ python3 functions/verify_register_scheduled.py
 - `publish = "public"` (the static site).
 - `functions = "functions"` (the Python scheduled function).
 - `[functions."verify_register_scheduled"] schedule = "0 7 * * 1"` — weekly re-verification on the platform scheduler.
-- A build `command` that runs the live publish gate so a bad register fails the deploy.
+- A build `command` that runs the **offline** gate (structure, domain,
+  self-consistency) so a malformed register fails the deploy. It is offline
+  deliberately: Netlify's build servers are reliably 403'd by Cloudflare on
+  `bpc.vic.gov.au`, so the live gate cannot pass there. See
+  [`docs/LESSONS-LEARNED.md`](docs/LESSONS-LEARNED.md) §1.
 
 To let the scheduled agent commit its proposed update back (so the site
 auto-republishes), set these environment variables in Netlify:

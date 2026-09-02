@@ -14,20 +14,18 @@
   # The root / serves the plumber/roofer-facing production app.
   # The scheduled re-verification function lives in functions/.
   functions = "functions"
-  # Publish gate as a build CI check: run the verify gate against the committed
-  # register on every build. Fail the build if any verified entry can't be
-  # confirmed against the live source. Comment out `command` to skip live
-  # network checks in the build pipeline.
-  # Offline gate for the build pipeline: checks structure, domain allow-list,
-  # and self-consistency — no live network fetches.  The full live gate
-  # (verify_register.py --live) is intended for local pre-commit checks and
-  # runs as part of the weekly scheduled agent on Netlify's functions
-  # runtime, where Cloudflare per-host sessions pass reliably.
+  # Build CI check: the OFFLINE gate only — structure, domain allow-list and
+  # self-consistency, no network. It fails the deploy on a malformed register.
   #
-  # The build command was previously --live but Netlify's build servers
-  # get consistently 403'd by Cloudflare on bpc.vic.gov.au (different
-  # TLS/JA3 fingerprint than a local Python runtime), so the live gate
-  # cannot pass inside a Netlify build.  See docs/LESSONS-LEARNED.md §1.
+  # It is offline deliberately. The build command was previously --live, but
+  # Netlify's build servers are consistently 403'd by Cloudflare on
+  # bpc.vic.gov.au (different TLS/JA3 fingerprint than an ordinary client), so
+  # the live gate cannot pass inside a Netlify build. See LESSONS-LEARNED.md §1.
+  #
+  # The live gate therefore runs locally before commit, and is *intended* to run
+  # in the weekly scheduled agent below. Whether it passes from the functions
+  # runtime is UNPROVEN — no scheduled run has ever completed. See
+  # docs/AI-CODER-ANSWERS.md.
   command = "python3 scripts/verify_register.py --offline"
 
 [build.environment]
@@ -42,22 +40,23 @@
 # Netlify-provided invocation id; it never trusts a request body.
 #
 # IMPORTANT: scheduled functions only fire automatically for PUBLISHED deploys.
-# A 30 s execution limit applies to *synchronous* scheduled functions; because
-# re-verifying ~30 Cloudflare-protected sources needs minutes, the function is
-# also invocable as a background function. If you hit the 30 s wall on a very
-# cold/unlucky run, rename the file to verify_register_scheduled-background.py
-# to run it as a background function (up to 15 min) — the handler signature is
-# identical.
+#
+# KNOWN BROKEN AS CONFIGURED. A 30 s limit applies to *synchronous* scheduled
+# functions, and this file is not named -background.py, so it deploys as
+# synchronous. A full live verification of the 60 sources was measured at
+# 56.7 s on a fast local connection with no Cloudflare challenges — nearly 2x
+# the ceiling. It cannot finish. Rename to
+# verify_register_scheduled-background.py (identical handler signature, 15 min
+# ceiling).
+#
+# Two further blockers, both confirmed: this config has no `included_files`, so
+# scripts/ is likely absent from the function bundle and the import of
+# verify_register/fsutil fails; and the publisher commits root register.json
+# while the site serves public/register.json with no copy step, so even a
+# successful run would never reach a user. See docs/AI-CODER-ANSWERS.md §B.
 # ----------------------------------------------------------------------------
 [functions."verify_register_scheduled"]
   schedule = "0 7 * * 1"
-
-# ----------------------------------------------------------------------------
-# Publish gate as a CI check (optional but recommended): runs the verify gate
-# against the committed register on every build. Fail the build if any verified
-# entry can't be confirmed against the live source.
-# Comment this out if you don't want live network checks in the build pipeline.
-# ----------------------------------------------------------------------------
 
 # Sensible security/ caching headers for the static assets.
 [[headers]]
@@ -70,6 +69,15 @@
 
 [[headers]]
   for = "/*.html"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+
+# The /*.html pattern does not match the bare "/" path, so the root document —
+# the one almost every visitor actually loads — was served without these two
+# headers while /index.html had them. Verified against production.
+[[headers]]
+  for = "/"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer"

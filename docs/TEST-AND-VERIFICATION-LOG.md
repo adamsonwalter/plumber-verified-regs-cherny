@@ -102,11 +102,17 @@ hardened:
       the home screen (`56cc0a1`); the offline pill had never worked because no
       element carried `id="offline"` (`56cc0a1`); and classic mode collapsed to
       188 px on a 375 px phone (`a7d21ff`).
-- [ ] **A real Netlify deploy** and confirmation that (a) the static site
-      publishes, (b) the build's live gate runs and passes, and (c) the
-      scheduled function actually fires on its cron (check Netlify Functions
-      logs for the `run_id`). Scheduled functions only auto-fire on
-      **published** deploys, not previews.
+- [x] **The static site publishes.** Live at `plumber-cherny.netlify.app`,
+      serving a register byte-identical to `public/register.json` at HEAD, with
+      correct JSON content-type and cache headers.
+- [ ] **The scheduled function has NEVER fired successfully — three confirmed
+      blockers.** Deployed synchronous (filename is not `-background.py`) against
+      a 30 s ceiling, for work measured at 56.7 s; no `included_files`, so
+      `scripts/` is likely missing from the bundle and the import raises; and the
+      publisher commits root `register.json` while the site serves
+      `public/register.json` with no copy step. Repair sequence in
+      `AI-CODER-ANSWERS.md` §C. Note the build gate is `--offline` by design, not
+      live — Cloudflare 403s Netlify's build servers.
 - [ ] **The 30-second scheduled-function limit under load.** Weekly runs on
       the published site typically finish well under 30 s with session reuse,
       but a very cold/unlucky run (many Cloudflare retries) could approach it.
@@ -114,11 +120,18 @@ hardened:
       `verify_register_scheduled-background.py` to run it as a background
       function (up to 15 min) — the `handler(event, context)` signature is
       identical. Verify this before relying on it.
-- [ ] **Git-publish round-trip.** The `_git_publish` path (commits the proposed
-      register back via the GitHub Contents API when `GIT_PUBLISH_TOKEN` +
-      `GIT_REPO` are set) is implemented but was **not** exercised against a
-      live repo (no token was available). Set the env vars and confirm one
-      scheduled run commits `register.json` and the site redeploys.
+- [ ] **Git-publish round-trip.** Still unexercised, and it cannot work as
+      configured: it commits root `register.json` while the site serves
+      `public/register.json`. Fix the path before testing the round-trip, or a
+      "successful" publish will prove nothing.
+- [ ] **No freshness fail-closed.** If the schedule dies, the app shows
+      "Verified on <old date>" indefinitely with no staleness signal — the
+      product's own failure mode, one level up. Recommended: fail closed at 14
+      days (two missed cycles) with "Verification overdue".
+- [ ] **No monitoring.** Nothing alerts when a run fails or is overdue.
+- [ ] **`/` served without security headers.** The `/*.html` rule does not match
+      the bare path; an explicit `for = "/"` rule has been added but is unverified
+      in production until the next deploy.
 - [ ] **Periodic reconfirmation cadence.** The register is correct as of the
       `verified.on` dates. The schedule re-verifies weekly; confirm the first
       few weekly runs stay green and that any genuine regulatory change (e.g.

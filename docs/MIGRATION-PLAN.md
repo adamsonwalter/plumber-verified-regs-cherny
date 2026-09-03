@@ -1,6 +1,6 @@
 # Migration plan — Netlify → Bolt.new, with verification on GitHub Actions
 
-Status: **agreed sequence, not yet started.** Written 2026-09-03 after a full
+Status: **agreed sequence; §2.0 executed and failed — see §2.0a.** Written 2026-09-03 after a full
 verification pass against the live site, the repo, and the Netlify deploy API.
 
 Read order for anyone picking this up: [`SPEC.md`](SPEC.md) (what the system
@@ -28,7 +28,7 @@ command reproducible) or **OPEN** (untested, and named as such).
 | Scheduled function | **CONFIRMED never deployed** — see §1 |
 | Freshness fail-closed | **CONFIRMED absent.** No "overdue" or "Never checked" state exists in the app |
 | Monitoring | **CONFIRMED absent.** Nothing alerts on a failed or missed run |
-| GitHub Actions | **CONFIRMED absent** before this branch — no `.github/` directory existed |
+| GitHub Actions | Added on this branch. Egress test run 2026-09-03: **FAILED** — see §2.0a |
 | Bolt | **CONFIRMED not initiated.** No `BOLT.md`, no Bolt artefacts |
 | Repo visibility | **CONFIRMED public.** `raw.githubusercontent.com/.../register.json` → 200. Bears on §3.1 |
 
@@ -87,9 +87,10 @@ Two consequences, both load-bearing for this plan:
 Ordered. Each step has a stop condition that is checkable by someone other than
 the person who did the work.
 
-### 2.0 — Test GitHub Actions egress FIRST (before any other work)
+### 2.0 — Test GitHub Actions egress FIRST — DONE 2026-09-03, **FAILED**
 
-**Highest-information move available, and it gates everything after it.**
+**Result: GitHub-hosted runners cannot verify `bpc.vic.gov.au`.** Evidence and
+consequences in §2.0a below. Read that before anything else in this plan.
 
 46 of the 60 sources are `bpc.vic.gov.au`, behind Cloudflare. Netlify's build
 servers are reliably 403'd there (`LESSONS-LEARNED.md` §1) because of their TLS
@@ -106,11 +107,99 @@ things and publishes nothing:
 
 **Stop condition: 60/60 confirmed from a GitHub-hosted runner, exit 0.**
 
-If `bpc.vic.gov.au` is challenged, stop and re-plan §2.2 before writing anything
-else. Options in that case, in order of preference: a self-hosted runner on a
-network gov.au serves; a scheduled job on a host whose egress does pass; or the
-existing local pre-commit gate kept as the only live gate, with the app told to
-say so honestly. **Do not proceed to §2.2 on an assumption here.**
+**NOT MET.**
+
+---
+
+### 2.0a — Egress test result — CONFIRMED FAILED
+
+Run [33715477272](https://github.com/adamsonwalter/plumber-verified-regs-cherny/actions/runs/33715477272),
+`ubuntu-latest`, 2026-09-03.
+
+**Probe job** (3 retries, one session per host) — **succeeded as a diagnostic**,
+and the diagnosis is bad:
+
+```
+HOST                                 N   OK   CF  HTTP  NET
+www.bpc.vic.gov.au                  46    0   46     0    0   <- all challenged
+www.legislation.vic.gov.au           1    1    0     0    0
+www.planning.vic.gov.au              1    1    0     0    0
+www.worksafe.vic.gov.au              5    5    0     0    0
+www.energysafe.vic.gov.au            1    1    0     0    0
+www.consumer.vic.gov.au              3    3    0     0    0
+ncc.abcb.gov.au                      1    1    0     0    0
+www.abcb.gov.au                      1    1    0     0    0
+content.legislation.vic.gov.au       1    1    0     0    0
+TOTAL                               60   14              elapsed 437s
+```
+
+**Gate job** (the real test, 12 retries, unmodified `verify_register.py --live`):
+
+```
+offline gate           -> exit 0
+live gate  exit=1  elapsed=2255s
+every bpc.vic.gov.au entry: kind=cloudflare, needle_present=False
+```
+
+So the retry budget is not the problem. Three retries and twelve retries both
+return zero successful BPC fetches; the second merely takes 37 minutes to say so.
+**46 of the 60 sources are unreachable from a GitHub-hosted runner.**
+
+Same-day local baseline for comparison: `verify_register.py --live` from
+Walter's machine, **exit 0, 60/60 confirmed, ~57 s**.
+
+The gate failed closed and refused to publish, which is the system working
+correctly. That is the only good news in this section.
+
+#### Correction to LESSONS-LEARNED §1 — the cause is probably not JA3
+
+`LESSONS-LEARNED.md` §1 attributes the Netlify block to a "different TLS/JA3
+fingerprint than an ordinary client". **INFERRED, and probably wrong.**
+
+Plain `curl` from the *same local IP that passes* also receives a 403 managed
+challenge on `bpc.vic.gov.au`. Local runs clear it by retrying with a reused
+session; the GitHub runner never clears it at all, running byte-identical Python
+and `requests` with the same `BROWSER_HEADERS`. The client TLS stack is
+therefore not the differentiator between the passing and failing cases.
+
+The remaining difference is the network: GitHub-hosted runners are Azure
+datacentre IPs. **IP/ASN reputation is the more likely cause.** This is
+INFERRED, not confirmed — confirming it means running the same code from a
+non-Azure datacentre IP and from a residential IP and comparing.
+
+It matters because it decides which fix works. If it is ASN reputation, no
+amount of header or TLS impersonation from a datacentre helps, and most cheap
+VPS providers will fail the same way.
+
+#### Options, ranked
+
+1. **Self-hosted GitHub Actions runner on a network gov.au serves.**
+   *Proven today* — Walter's connection does 60/60 in ~57 s. Only `runs-on:`
+   changes; the whole Actions design, the cron, the secrets handling and the
+   publish step survive unmodified. **Cost: it needs an always-on machine.** For
+   a paid weekly promise, "unattended" cannot mean "whenever the laptop is
+   open" — budget for a small dedicated box on that connection.
+2. **Test a VPS in a different ASN before committing to (1).** Cheap, and
+   `scripts/egress_report.py` is the test — it runs anywhere Python does. If the
+   cause is datacentre-IP reputation this will fail too, which is itself worth
+   knowing in ten minutes.
+3. **Approach BPC for an allowlist or a data feed.** Slow, but it is the durable
+   answer for a paid product that cites them weekly, and it removes the
+   dependency on clearing a bot challenge entirely. Worth starting in parallel
+   with (1) rather than instead of it.
+
+**Not recommended: TLS/JA3 impersonation libraries.** If the diagnosis above is
+right they do not address the cause; if it is wrong they work until Cloudflare
+updates, and a weekly compliance guarantee should not rest on winning that race.
+
+#### What this does NOT change
+
+- §2.1 (stabilise the trust system) is untouched and still first in line for
+  actual work. It is more urgent now, not less: the register cannot yet be
+  re-verified unattended anywhere, so the app must stop implying it is.
+- §2.5 onward (the Bolt commercial layer) is untouched. The verifier's runtime
+  was always a separate question — `AI-CODER-ANSWERS.md` §E/Q43 — and the
+  smallest path to a paid pilot still does not touch it.
 
 ### 2.1 — Stabilise the trust system
 
@@ -132,9 +221,12 @@ evidence. All in `public/index.html` unless noted.
 **Stop condition: the UI never implies freshness without a successful recorded
 run.** Testable by deleting `last_run` and by back-dating it 15 days.
 
-### 2.2 — Move weekly verification to GitHub Actions
+### 2.2 — Move weekly verification to GitHub Actions — BLOCKED on §2.0a
 
-Preserve the working Python verifier. Do not port it.
+Preserve the working Python verifier. Do not port it. **Everything below is
+correct except the runner**: per §2.0a, `runs-on: ubuntu-latest` cannot reach 46
+of the 60 sources. Settle option 1 or 2 in §2.0a first, then the rest of this
+step stands as written.
 
 The workflow needs: weekly cron; `workflow_dispatch`; Python 3.12 + `requests`;
 per-host session reuse (**not optional** — it took the pass rate from ~25% to
@@ -272,7 +364,10 @@ to the old domain; keep Netlify available for rollback.
    **Decide before building payments, not after.**
 2. **The overdue threshold.** 14 days recommended — two missed weekly cycles.
    One missed run is a transient; two is a broken pipeline.
-3. **Where the verifier runs** if GitHub Actions egress fails (§2.0).
+3. **Where the verifier runs.** GitHub-hosted runners are ruled out (§2.0a).
+   Choose between a self-hosted runner on a passing network, a VPS in another
+   ASN if it tests clean, and approaching BPC directly. This is now the
+   plan's critical path.
 
 ---
 

@@ -171,6 +171,53 @@ It matters because it decides which fix works. If it is ASN reputation, no
 amount of header or TLS impersonation from a datacentre helps, and most cheap
 VPS providers will fail the same way.
 
+#### DataVic (CKAN) assessed as a side door — does NOT substitute
+
+Checked 2026-09-03 after it was raised as an alternative.
+
+**The portal is clean.** `discover.data.vic.gov.au` classifies as *reachable* —
+the honest, self-identifying client succeeds with no WAF, no challenge, no UA
+sniff. Its CKAN API answers directly:
+
+```
+GET /api/3/action/organization_show?id=building-and-plumbing-commission
+  -> 6 datasets
+```
+
+**But none of the six carry the facts this register verifies.** They are
+administrative and statistical publications:
+
+| Dataset | What it is |
+|---|---|
+| Building Permit Activity Data | permit counts, cost, type, location |
+| Building Permit Activity Monthly Summaries | the above, consolidated monthly |
+| BPC - Building Practitioner Register | who is registered, 48,397 rows |
+| Security of Payment Adjudication Activity Data | payment-dispute adjudications |
+| VBA five-year metrics 2011-2016 | historical agency metrics |
+| VBA Financial Statement 2014-15 | agency financials |
+
+The 46 blocked entries verify none of that. They assert **regulatory content** —
+`3500.3:2025` as the mandated stormwater edition, a valley-gutter catchment
+limit of `40 m²`, Appendix F eaves overflow at `400 m²`, the scope of each
+plumber class and category, compliance-certificate and registration
+requirements. That text lives on BPC's own guidance pages and is not published
+as a dataset anywhere.
+
+**No sitemap side door either.** `/sitemap.xml`, `/sitemap_index.xml` and
+`/robots.txt` on `www.bpc.vic.gov.au` all return 403 behind the same challenge.
+And a sitemap would only yield URLs; the gate needs the page *text*, because the
+whole method is asserting a `key_substring` appears verbatim.
+
+**Conclusion: DataVic does not change §2.0a.** The options below stand.
+
+*Separate from this problem — a product opportunity, not a fix.* The Building
+Practitioner Register has a live, unchallenged datastore API
+(`/api/3/action/datastore_search?resource_id=3599fa1f-…`, 48,397 rows, fields
+including accreditation id, status, limitation, commenced, expires). "Is this
+builder actually registered?" is a plausible paid feature for the Bolt app, on
+an official feed that needs none of the machinery in this section. Worth its own
+decision after §2.5, and it must not be confused with weekly verification.
+
 #### Options, ranked
 
 1. **Self-hosted GitHub Actions runner on a network gov.au serves.**
@@ -187,6 +234,20 @@ VPS providers will fail the same way.
    answer for a paid product that cites them weekly, and it removes the
    dependency on clearing a bot challenge entirely. Worth starting in parallel
    with (1) rather than instead of it.
+
+#### Cheap win, independent of where the verifier runs
+
+The 46 BPC entries resolve to only **14 distinct URLs** — 36 of them come from
+just four pages (the AS/NZS 3500 Parts 1-4 guidance pages, carrying 10, 11, 9
+and 6 entries each). `run_live_checks()` fetches per entry, so it issues 46
+requests where 14 would do.
+
+De-duplicating by URL within a run cuts BPC requests by 70%, shortens the run
+proportionally (the failed GitHub run spent 2255 s largely on redundant
+retries), and is gentler on a host that is already challenging us. It does not
+defeat a hard block, and it must not change verdict semantics — each entry still
+gets its own `key_substring` and `also_requires` assertion against the shared
+fetched text. Worth doing wherever the verifier ends up.
 
 **Not recommended: TLS/JA3 impersonation libraries.** If the diagnosis above is
 right they do not address the cause; if it is wrong they work until Cloudflare

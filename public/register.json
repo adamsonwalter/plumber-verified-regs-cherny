@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "register_version": "2026-08-28-act",
+  "register_version": "2026-09-03-agent",
   "generated_on": "2026-08-28",
   "generated_by_agent": "build-agent-2026-07-31",
   "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
@@ -26,9 +26,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "AS/NZS 3500.3:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "es Updated plumbing and drainage standards - Part 3: Stormwater drainage AS/NZS 3500.3:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It"
       },
       "ui": {
         "title": "Stormwater drainage — current standard edition",
@@ -57,9 +57,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Clause 3.6.1 Limitations (Update to clause) ... In the 2025 edition, the limit has increased from 20 m² to 40 m²."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "its in Figure 3.6.2. In the 2025 edition, the limit has increased from 20 m² to 40 m². Clause 3.6.2 Design procedure (Update to clause) A new Figure 3.6.2 has been included to compare design rainfall inten"
       },
       "ui": {
         "title": "Valley-gutter catchment limit increased to 40 m²",
@@ -89,9 +89,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Appendix F has become normative in the 2025 edition, meaning it is now a mandatory requirement. ... Appendix F specifies requirements for design of eaves gutter overflow measures for on roof catchments up to 400 m²."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ments for design of eaves gutter overflow measures for on roof catchments up to 400 m². Explanatory note: the 400 m² limit represents residential and small commercial buildings. This means that Appendix F d"
       },
       "ui": {
         "title": "Eaves-gutter overflow now mandatory (Appendix F)",
@@ -125,9 +125,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "services AS/NZS 3500.1:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "series Updated plumbing and drainage standards - Part 1: Water services AS/NZS 3500.1:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition"
       },
       "ui": {
         "title": "Water services — current standard edition",
@@ -155,9 +155,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "drainage AS/NZS 3500.2:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "plumbing and drainage standards - Part 2: Sanitary plumbing and drainage AS/NZS 3500.2:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition"
       },
       "ui": {
         "title": "Sanitary plumbing & drainage — current standard edition",
@@ -186,9 +186,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "500 series Updated plumbing and drainage standards - Part 4: Heated water services AS/NZS 3500.4:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition. It is a referenced standard"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "Updated plumbing and drainage standards - Part 4: Heated water services AS/NZS 3500.4:2025 On 17 April 2025, Standards Australia published AS/NZS 3500:2025 plumbing and drainage to replace the 2021 edition"
       },
       "ui": {
         "title": "Heated water services — current standard edition",
@@ -217,9 +217,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/compliance-certificates",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "where the total value of work (including materials, appliances, labour and GST) exceeds $750"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "e total value of work (including materials, appliances, labour and GST) exceeds $750 Note: The cost of materials and appliances must be included, regardless of whether they were supplied by another person"
       },
       "ui": {
         "title": "Compliance certificate required over $750",
@@ -253,9 +253,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.legislation.vic.gov.au/in-force/statutory-rules/plumbing-regulations-2018/018",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Plumbing Regulations 2018 | legislation.vic.gov.au"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ked ⁠ Legislative information ⁠ Search ⁠ Home In force Statutory rules in force Plumbing Regulations 2018 Plumbing Regulations 2018 Statutory rule in force Statutory rule number 149/2018 Version 018 Version history Effective"
       },
       "ui": {
         "title": "Plumbing Regulations 2018 — governing instrument",
@@ -288,9 +288,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.planning.vic.gov.au/guides-and-resources/building-policy/building-reform",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "The Building and Plumbing Commission (BPC) - a single, integrated regulator for the building system established on 1 July 2025."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "d the work we’ll be doing over the next 18 months and beyond. Strengthening the Building and Plumbing Commission A new building regulator has been created to strengthen Victoria’s domestic building and plumbing industries. The Build"
       },
       "ui": {
         "title": "Victorian regulator is the BPC (est. 1 July 2025)",
@@ -328,9 +328,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/backflow-prevention-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 5 of the Plumbing Regulations 2018, Backflow Prevention work is the repair, alteration, maintenance, testing or commissioning of a backflow prevention device"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "vention work What is backflow prevention work? Get to know the regulation Under Part 5 of the Plumbing Regulations 2018 , Backflow Prevention work is the repair, alteration, maintenance, testing or commissi"
       },
       "ui": {
         "title": "Backflow prevention — registration & testing",
@@ -363,9 +363,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/gasfitting-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 4 of the Plumbing Regulations 2018, gasfitting work is defined as the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "fitting work Home Plumbers Plumber classes and categories Gasfitting work Under Part 4 of the Plumbing Regulations 2018, gasfitting work is defined as the construction, installation, replacement, repair, al"
       },
       "ui": {
         "title": "Gasfitting work — definition & classes",
@@ -394,9 +394,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/drainage-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 4 of the Plumbing Regulations 2018, drainage work is the construction, installation, replacement, repair, alteration, maintenance, relining, testing or commissioning"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "classes and categories Drainage work What is drainage work? Under Part 4 of the Plumbing Regulations 2018 , drainage work is the construction, installation, replacement, repair, alteration, maintenance, relining, testing or c"
       },
       "ui": {
         "title": "Drainage work — definition (sanitary + stormwater)",
@@ -426,9 +426,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/sanitary-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 4 of the Plumbing Regulations 2018, sanitary work is: the construction, installation, replacement, repair, alteration, maintenance, relining, testing or commissioning"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "classes and categories Sanitary work What is sanitary work? Under Part 4 of the Plumbing Regulations 2018 , sanitary work is: the construction, installation, replacement, repair, alteration, maintenance, relining, testing or"
       },
       "ui": {
         "title": "Sanitary work — definition",
@@ -456,9 +456,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/roofing-stormwater-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 4 of the Plumbing Regulations 2018, roofing stormwater work is the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning of any roof covering"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "es Roofing stormwater work What is roofing stormwater work? Under Part 4 of the Plumbing Regulations 2018 , roofing stormwater work is the construction, installation, replacement, repair, alteration, maintenance, testing or c"
       },
       "ui": {
         "title": "Roofing (stormwater) work — definition",
@@ -486,9 +486,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/water-supply-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 4 of the Plumbing Regulations 2018, water supply work is: a. the construction, installation, replacement, repair, alteration, relining, maintenance, testing or commissioning"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "and categories Water supply work What is water supply work? Under Part 4 of the Plumbing Regulations 2018 , water supply work is: a. the construction, installation, replacement, repair, alteration, relining, maintenance, test"
       },
       "ui": {
         "title": "Water supply work — definition",
@@ -516,9 +516,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/plumber-classes-and-categories/mechanical-services-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Under Part 4 of the Plumbing Regulations 2018, mechanical services work is: a. the construction, installation, replacement, repair, alteration, maintenance, testing or commissioning of a mechanical"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "Mechanical services work What is mechanical services work? Under Part 4 of the Plumbing Regulations 2018, mechanical services work is: a. the construction, installation, replacement, repair, alteration, maintenance, testing"
       },
       "ui": {
         "title": "Mechanical services work (HVAC) — definition",
@@ -547,9 +547,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/registration-and-licensing",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Plumbing registration and licensing | Building and Plumbing Commission --> --> --> Skip to main content Go to BPC Homepage Search BPC Login Menu Log in Log in to BPC Onlin"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ne Apply for and manage building permits (replaces BAMS) Apply for and maintain registration Keep insurance up to date Log in to BAMS Apply for building permit numbers (BPNs) Process levy payments Submit relevant"
       },
       "ui": {
         "title": "Plumber registration & licensing required",
@@ -582,9 +582,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/resource-hub/safety-guides/hot-water-safety",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Hot water needs to be stored above 60°C in hot water systems to prevent bacteria growth (such as Legionella), but a tempering valve ensures that the water comes out of the tap at a lower temperature."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "maximum hot water delivery temperature of 45°C. Tempering Hot water needs to be stored above 60°C in hot water systems to prevent bacteria growth (such as Legionella), but a tempering valve ensures that the water come"
       },
       "ui": {
         "title": "Hot water storage >60°C, tempering valve at outlet",
@@ -619,9 +619,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.worksafe.vic.gov.au/resources/compliance-code-prevention-falls-housing-construction",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "how to control risks associated with falls from more than 2 metres"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "associated with falls how to control risks associated with falls from more than 2 metres how to control risks associated with falls from 2 metres or less It is recommended that you follow the compliance code"
       },
       "ui": {
         "title": "Falls prevention — housing construction >2 m",
@@ -654,9 +654,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.worksafe.vic.gov.au/resources/compliance-code-prevention-falls-general-construction",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "how to control risks associated with falls from more than 2 metres"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "associated with falls how to control risks associated with falls from more than 2 metres the prevention of falls in trenching and excavation work how to control risks associated with falls from 2 metres or l"
       },
       "ui": {
         "title": "Falls prevention — general construction >2 m",
@@ -692,9 +692,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.worksafe.vic.gov.au/case-study-asbestos-removal-domestic-demolition",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "the area of asbestos-containing material to be removed does not exceed 10 square metres in total; and the total time taken to perform the asbestos removal work in any seven day period does not exceed one hour."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ccur if: the area of asbestos-containing material to be removed does not exceed 10 square metres in total; and the total time taken to perform the asbestos removal work in any seven day period does not exceed one hou"
       },
       "ui": {
         "title": "Asbestos removal — unlicensed cap 10 m² / 1 hr",
@@ -731,9 +731,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.worksafe.vic.gov.au/properties-containing-asbestos-notification-and-plans",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Notification of asbestos installed on or after 1 January 2004 ... The person must enter into an agreement with WorkSafe within 60 days"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "proved by WorkSafe The person must enter into an agreement with WorkSafe within 60 days or a timeframe determined by WorkSafe. Failure to enter into an agreement with WorkSafe is an offence. Removal plan req"
       },
       "ui": {
         "title": "Asbestos notification — 60-day agreement",
@@ -770,9 +770,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.worksafe.vic.gov.au/resources/compliance-code-confined-spaces",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "this compliance code provides practical guidance on how to comply with your obligations under Victoria’s occupational health and safety legislation when your work involves confined spaces"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "cences Insurance Claims and recovery Home Laws and regulations Compliance code: Confined spaces This compliance code provides practical guidance on how to comply with your obligations under Victoria’s occupational h"
       },
       "ui": {
         "title": "Confined spaces — compliance code",
@@ -803,9 +803,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.energysafe.vic.gov.au/industry-guidance/electrical/electrical-network-infrastructure/working-around-powerlines",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Work within 3.0m from an overhead power line, permit ... Work between 3.0m and 6.4m from an overhead power line, a registered Spotter is required."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ily the Victorian Occupational Health and Safety Regulations 2017. Work between 3.0m and 6.4m from an overhead power line, a registered Spotter is required. This is known as the Spotter Zone. Work within"
       },
       "ui": {
         "title": "Powerline approach distances — 3.0 m / 6.4 m",
@@ -837,9 +837,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/implied-warranties-on-home-building-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "The Building Act 1993 allows action to be brought against a builder for up to 10 years from the date the work was completed."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": ". The Building Act 1993 allows action to be brought against a builder for up to 10 years from the date the work was completed. This right transfers to a new owner if the property is sold within this time. Rel"
       },
       "ui": {
         "title": "Implied warranties — up to 10 years",
@@ -872,9 +872,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/domestic-building-insurance",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "This is insurance that you take out for your client on works over $16,000. It was previously known as 'builders warranty insurance'."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "mail Facebook This is insurance that you take out for your client on works over $16,000. It was previously known as 'builders warranty insurance'. You must provide your client with a copy of the policy and a"
       },
       "ui": {
         "title": "Domestic building insurance over $16,000",
@@ -907,9 +907,9 @@
       "status": "verified",
       "verified": {
         "against": "https://ncc.abcb.gov.au/editions/ncc-2022/adopted/housing-provisions/7-roof-and-wall-cladding/part-74-gutters-and-downpipes",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "Part 7.4 Gutters and downpipes"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ational Construction Code 2022 ABCB Housing Provisions 7 Roof and wall cladding Part 7.4 Gutters and downpipes 7.4 Part 7.4 Gutters and downpipes Part 7.4 Gutters and downpipes 7.4.1 Application New for 2022"
       },
       "ui": {
         "title": "Gutters & downpipes — NCC Housing Provisions",
@@ -939,9 +939,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.abcb.gov.au/news/2022/new-ncc-2022-requirements-gutters-and-downpipes",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "An important change is set out in clause H2D6(3). It excludes box gutters from Part 7.4."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "Solution can be developed. Box gutters An important change is set out in clause H2D6(3). It excludes box gutters from Part 7.4 meaning the only DTS Solutions are in AS/NZS 3500.3. All references to a 1:100 f"
       },
       "ui": {
         "title": "Box gutters carved out of deemed-to-satisfy",
@@ -971,9 +971,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.consumer.vic.gov.au/licensing-and-registration/builders-and-tradespeople/running-your-business/warranties-and-insurance/implied-warranties-on-home-building-work",
-        "on": "2026-07-31",
-        "by_agent": "build-agent-2026-07-31",
-        "quote": "These are called ‘warranties’ in the Domestic Building Contracts Act 1995, and ‘consumer guarantees’ in the Australian Consumer Law."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "in the Domestic Building Contracts Act 1995 , and ‘consumer guarantees’ in the Australian Consumer Law. Consumers have similar rights under both laws. Find more information about consumer guarantees . Under the Domestic Bu"
       },
       "ui": {
         "title": "Consumer guarantees — Australian Consumer Law",
@@ -1006,9 +1006,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 1.3 Normative references (Update to clause) The standards below are now called up in the normative references as referenced by various clauses, and must be complied with."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ier to read. Summary of key changes since the 2021 edition 1. Scope and general Clause 1.3 Normative references (Update to clause) The standards below are now called up in the normative references as referenced"
       },
       "ui": {
         "title": "Normative references — standards now called up",
@@ -1038,9 +1038,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.3.1 Pipes and fittings (Update to clause) This change accommodates the different pipe description methods – some 100 mm pipes are referred to by internal, nominal, or external diameter. As a result, 110 mm has now been included instead of 100 mm."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "or water and chemicals 2.3 Pipes, fittings and connectors – General limitations Clause 2.3.1 Pipes and fittings (Update to clause) This change accommodates the different pipe description methods – some 100 mm pip"
       },
       "ui": {
         "title": "Pipes and fittings — 110 mm replaces 100 mm",
@@ -1070,9 +1070,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.3.3 Semi-flexible hose assemblies (New clause) Semi-flexible hoses must: only be used in accessible locations not be buried not be used where repeated movement is expected."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ed for submersion and hoses marked with “S” 2.3.3 Semi-flexible hose assemblies Clause 2.3.3 Semi-flexible hose assemblies (New clause) Semi-flexible hoses must: only be used in accessible locations not be buried"
       },
       "ui": {
         "title": "Semi-flexible hose assemblies — new restrictions",
@@ -1102,9 +1102,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 4.4.6 Commissioning (Update to clause) In the 2025 edition, atmospheric vacuum breakers (AVBs) are testable backflow prevention devices that must be commissioned and tested as specified in AS/NZS 2845.3."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ntenance procedures for backflow prevention devices are specified in AS 2845.3. Clause 4.4.6 Commissioning (Update to clause) In the 2025 edition, atmospheric vacuum breakers (AVBs) are testable backflow preventi"
       },
       "ui": {
         "title": "Backflow — AVBs now testable, commissioning required",
@@ -1136,9 +1136,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 4.6.1 General installation requirements (Update to clause) Except for fire services, AVBs must be fitted with line strainers. Explanatory note: AVBs should not be installed with downstream isolating valves."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "tration and test certification. 4.6 Installation of backflow prevention devices Clause 4.6.1 General installation requirements (Update to clause) Except for fire services, AVBs must be fitted with line strainers."
       },
       "ui": {
         "title": "Backflow — AVBs must be fitted with line strainers",
@@ -1170,9 +1170,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 4.6.2.2 Accessibility (Update to clause) If backflow prevention devices are fitted with test taps, or if dismantling of backflow prevention devices is required for testing; the location of the device needs to enable the test procedure or maintenance to be performed."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "xplanatory note: AVBs should not be installed with downstream isolating valves. Clause 4.6.2.2 Accessibility (Update to clause) If backflow prevention devices are fitted with test taps, or if dismantling of backflo"
       },
       "ui": {
         "title": "Backflow devices — accessibility for testing",
@@ -1203,9 +1203,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 5.4.2 Location (Update to clause) Isolation valves must be installed immediately before each flexible hose assembly that is connected to a mixer valve, tape outlet or cistern."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ch flexible hose assembly is connected to a mixer valve, tap outlet or cistern (clause 5.4.2) New requirements for the connection of miscellaneous devices and appliances to the drinking water supply (Clause 5.20)"
       },
       "ui": {
         "title": "Isolation valve before each flexible hose assembly",
@@ -1235,9 +1235,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 5.20) Editorial changes that make the standard easier to read. Summary of key changes since the 2021 edition 1. Scope and general"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "onnection of miscellaneous devices and appliances to the drinking water supply (Clause 5.20) Editorial changes that make the standard easier to read. Summary of key changes since the 2021 edition 1. Scope and ge"
       },
       "ui": {
         "title": "Miscellaneous devices and appliances — new section",
@@ -1267,9 +1267,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-1-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 9.1 Scope of section (Update to clause) Explanatory note added: Plumbing practitioners need to consult the network utility operator, because the network utility operator may require the non-drinking water meter assembly to be in a different location to Figure 9.1."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "that products and materials are fit for purpose. 9. Non-drinking water services Clause 9.1 Scope of section (Update to clause) Explanatory note added: Plumbing practitioners need to consult the network utility"
       },
       "ui": {
         "title": "Non-drinking water meter — consult network operator",
@@ -1299,9 +1299,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 1.1 Scope (Update to clause) Updated text: AS/NZS 3500.2 does not apply to the pre-treatment of trade wastes. In the 2025 edition, this requirement has been moved from a note to the main clause, confirming that compliance is now mandatory."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ier to read. Summary of key changes since the 2021 edition 1. Scope and general Clause 1.1 Scope (Update to clause) Updated text: AS/NZS 3500.2 does not apply to the pre-treatment of trade wastes. In the 2025 e"
       },
       "ui": {
         "title": "Scope — trade waste pre-treatment excluded",
@@ -1331,9 +1331,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.21 Connection of tundishes (Update to clause) In the 2025 edition, tundishes can be connected to a disconnector gully, as specified in Clause 4.6.6. Any discharge from pipes over a tundish must be visible to building occupants."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "g requirements for the treatment of trade wastes. 13.21 Connection of tundishes Clause 13.21 Connection of tundishes (Update to clause) In the 2025 edition, tundishes can be connected to a disconnector gully, as"
       },
       "ui": {
         "title": "Connection of tundishes — disconnector gully allowed",
@@ -1362,9 +1362,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.24.3 Conversion to waterless urinals (Update to clause) Urinals must not be converted into waterless urinals. Urinals must not be replaced with waterless urinals, unless the requirements of clause 13.24.2.1 and of clause 13.24.2.3 are met."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "gure doesn't show venting requirements. 13.24.3 Conversion to waterless urinals Clause 13.24.3 Conversion to waterless urinals (Update to clause) Urinals must not be converted into waterless urinals. Urinals must n"
       },
       "ui": {
         "title": "Conversion to waterless urinals — restricted",
@@ -1394,9 +1394,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.28.1 General (New clause) – There are new requirements for the connection of miscellaneous devices and appliances to a sanitary drainage system."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "e met. 13.28 Miscellaneous discharges to sanitary plumbing and drainage systems Clause 13.28.1 General (New clause) – There are new requirements for the connection of miscellaneous devices and appliances to a sanit"
       },
       "ui": {
         "title": "Miscellaneous devices — new sanitary section",
@@ -1426,9 +1426,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.28.2 Materials (New clause) – The below is a new requirement. Pipes and fittings connected to miscellaneous devices and appliances shall meet the requirements of Section 2."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "require approval and/or pre-treatment as determined by the relevant authority. Clause 13.28.2 Materials (New clause) – The below is a new requirement. Pipes and fittings connected to miscellaneous devices and appl"
       },
       "ui": {
         "title": "Miscellaneous devices — materials requirement",
@@ -1458,9 +1458,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.28.3 Connections to the sanitary system (New clause) – The below is a new requirement. Discharge shall enter the sanitary system by either: (a) direct connection to a dedicated trap connection (b) a tundish as specified in clause 13.21."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "miscellaneous devices and appliances shall meet the requirements of Section 2. Clause 13.28.3 Connections to the sanitary system (New clause) – The below is a new requirement. Discharge shall enter the sanitary sy"
       },
       "ui": {
         "title": "Miscellaneous devices — connection to sanitary system",
@@ -1490,9 +1490,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.28.4 Intermittent discharge (New clause) – The below is a new requirement. If the frequency of discharge from appliance or device is not sufficient to maintain a trap seal, the wastewater discharge shall drain over a tundish with either a: (a) charge pipe from a tap set (b) drain from a wa…"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "tion to a dedicated trap connection (b) a tundish as specified in clause 13.21. Clause 13.28.4 Intermittent discharge (New clause) – The below is a new requirement. If the frequency of discharge from appliance or d"
       },
       "ui": {
         "title": "Miscellaneous devices — intermittent discharge",
@@ -1522,9 +1522,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 13.28.5 Large-volume discharge (New clause) – The below is a new requirement. A sanitary system shall: (a) be of a size suitable for the expected discharge volume as specified in clause 6.3 (b) have a trap with: (i) a water seal of not less than 100 mm (ii) an equivalent size to the discharge…"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "e (c) charge pipe extended from a mechanical or electronic trap priming device. Clause 13.28.5 Large-volume discharge (New clause) – The below is a new requirement. A sanitary system shall: (a) be of a size suitabl"
       },
       "ui": {
         "title": "Miscellaneous devices — large-volume discharge",
@@ -1554,9 +1554,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 14.2.1 General (Update to clause) – A new note has been added. Plumbers must coordinate with water authorities to obtain additional information before installing sewer infrastructure for multi-unit developments: Note: Refer to local government or the network utility operator for additional in…"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "eptable limits to a network utility operator’s capacity. 14.2 Methods of design Clause 14.2.1 General (Update to clause) – A new note has been added. Plumbers must coordinate with water authorities to obtain addit"
       },
       "ui": {
         "title": "Multi-unit sewer infrastructure — coordinate with authority",
@@ -1586,9 +1586,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-2-sanitary-plumbing-and-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 16.2 Materials and products for vacuum drainage systems (Update to clause) In the 2025 edition, plumbing practitioners are able to use polypropylene (PP) pipes and fittings with a minimum wall thickness equivalent to pipe series S16 (SDR 33) to construct vacuum pipelines."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ngs included as alternative materials and products for vacuum drainage systems (clause 16.2). Editorial changes that make the standard easier to read. Summary of key changes since the 2021 edition 1. Scope and g"
       },
       "ui": {
         "title": "Vacuum drainage — PP pipe now permitted",
@@ -1618,9 +1618,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.2.1 General (Update to clause) Note 3: has been added to Section 2.2.1. It requires plumbers to consider the quality and quantity of stormwater discharge. This is to ensure it does not negatively impact council infrastructure or on-site systems."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "o read. Summary of key changes since the 2021 edition 2. Materials and products Clause 2.2.1 General (Update to clause) Note 3: has been added to Section 2.2.1. It requires plumbers to consider the quality and qu"
       },
       "ui": {
         "title": "Stormwater discharge quality and quantity — new note",
@@ -1650,9 +1650,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.2.2 Materials for devices and appliances connected to stormwater drainage (New clause) – The below is a new requirement."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ensure it does not negatively impact council infrastructure or on-site systems. Clause 2.2.2 Materials for devices and appliances connected to stormwater drainage (New clause) – The below is a new requirement. Th"
       },
       "ui": {
         "title": "Materials for devices connected to stormwater",
@@ -1682,9 +1682,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 3.6.2 Design procedure (Update to clause) A new Figure 3.6.2 has been included to compare design rainfall intensity (DRI) with catchment area for various valley gutter effective widths, now allowing up to 40 m²."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "Figure 3.6.2. In the 2025 edition, the limit has increased from 20 m² to 40 m². Clause 3.6.2 Design procedure (Update to clause) A new Figure 3.6.2 has been included to compare design rainfall intensity (DRI) wit"
       },
       "ui": {
         "title": "Valley gutter design procedure — new Figure 3.6.2",
@@ -1714,9 +1714,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 5.3.8.1 General (New clause) – The below is a new requirement. This section specifies stormwater drainage system requirements for miscellaneous devices and appliances that produce discharge water as part of their function."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ley gutter (see clause F.4.5). 5.3.8 Discharges to a stormwater drainage system Clause 5.3.8.1 General (New clause) – The below is a new requirement. This section specifies stormwater drainage system requirements f"
       },
       "ui": {
         "title": "Miscellaneous devices — new stormwater section",
@@ -1746,9 +1746,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 5.3.8.2 Stormwater connection (New clause) – The below is a new requirement. If a device or appliance discharges to a stormwater drainage system: (a) the discharge to the stormwater system shall be via a tundish or pit; and (b) the point of discharge from each drain line shall be located so t…"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "equire approval, pre-treatment or both as determined by the relevant authority. Clause 5.3.8.2 Stormwater connection (New clause) – The below is a new requirement. If a device or appliance discharges to a stormwate"
       },
       "ui": {
         "title": "Device discharge to stormwater — via tundish or pit",
@@ -1778,9 +1778,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-3-stormwater-drainage",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 5.3.8.3 Stormwater system design (New clause) – The below is a new requirement. The stormwater system shall be sized to allow for the maximum discharge. Note 1: Refer to the manufacturer’s specifications for information relating to anticipated discharge volumes."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "arge to be visible to building occupants (iv) maintain a minimum 25 mm air gap. Clause 5.3.8.3 Stormwater system design (New clause) – The below is a new requirement. The stormwater system shall be sized to allow f"
       },
       "ui": {
         "title": "Stormwater system sized for maximum discharge",
@@ -1810,9 +1810,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.3.1 Pipes and fittings (Update to clause) This change accommodates the different pipe description methods – some 100 mm pipes are referred to by internal, nominal, or external diameter. As a result, 110 mm has now been included instead of 100 mm."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "since the 2021 edition 2.3 Pipes, fittings and connectors – General limitations Clause 2.3.1 Pipes and fittings (Update to clause) This change accommodates the different pipe description methods – some 100 mm pip"
       },
       "ui": {
         "title": "Pipes and fittings — 110 mm replaces 100 mm",
@@ -1842,9 +1842,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.3.2.1 Accessibility (New clause) The requirements regarding flexible hoses have been relocated to this clause (previously in Clause 2.3(c) of the 2021 edition). The requirements have not changed."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "110 mm has now been included instead of 100 mm. 2.3.2 Flexible hose assemblies Clause 2.3.2.1 Accessibility (New clause) The requirements regarding flexible hoses have been relocated to this clause (previously in"
       },
       "ui": {
         "title": "Flexible hose accessibility — relocated clause",
@@ -1874,9 +1874,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 2.3.3 Semi-flexible hose assemblies (New clause) Semi-flexible hoses must: only be used in accessible locations not be buried not be used where repeated movement is expected."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "ed for submersion and hoses marked with “S” 2.3.3 Semi-flexible hose assemblies Clause 2.3.3 Semi-flexible hose assemblies (New clause) Semi-flexible hoses must: only be used in accessible locations not be buried"
       },
       "ui": {
         "title": "Semi-flexible hose assemblies — new restrictions",
@@ -1906,9 +1906,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 5.4.2 Unconcealed water storage tanks (Update to clause) No change in requirements. The clause has been re-worded to clarify the following: All unconcealed water storage tanks that are installed inside buildings must be installed with safe trays (as specified in Clause 5.4.3) and safe wastes…"
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "joints, or offset connectors. 5.4 Protection against damage from leaking water Clause 5.4.2 Unconcealed water storage tanks (Update to clause) No change in requirements. The clause has been re-worded to clarify"
       },
       "ui": {
         "title": "Unconcealed water storage tanks — safe trays",
@@ -1938,9 +1938,9 @@
       "status": "verified",
       "verified": {
         "against": "https://www.bpc.vic.gov.au/plumbers/delivering-safe-and-compliant-plumbing/updated-plumbing-and-drainage-standards-asnzs-3500-series/updated-plumbing-and-drainage-standards-part-4-heated-water-services",
-        "on": "2026-08-27",
-        "by_agent": "pointer-agent-2026-08-27",
-        "quote": "Clause 10.10.2 Location (Update to clause) Isolating valves must be installed immediately before each flexible hose assembly connected to a mixer valve or tap outlet."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "before each flexible hose assembly is connected to a mixer valve or tap outlet (clause 10.10.2). Editorial changes that make the standard easier to read. Summary of key changes since the 2021 edition 2.3 Pipes, fit"
       },
       "ui": {
         "title": "Isolating valve before flexible hose to mixer/tap",
@@ -1970,9 +1970,9 @@
       "status": "verified",
       "verified": {
         "against": "https://content.legislation.vic.gov.au/sites/default/files/2025-09/25-036a.docx",
-        "on": "2026-08-28",
-        "by_agent": "act-verify-2026-08-28",
-        "quote": "2 Commencement ... If a provision of this Act does not come into operation before 1 December 2026, it comes into operation on that day."
+        "on": "2026-09-03",
+        "by_agent": "agent-2026-09-03-l-1788423377",
+        "quote": "rovisions of this Act come into operation on a day or days to be proclaimed. (3)If a provision of this Act does not come into operation before 1 December 2026, it comes into operation on that day. Part 2—Application of Act 3Definitions (1)In section 3(1) of the Domestic Building Contracts Act 1995 insert the follow"
       },
       "ui": {
         "title": "New domestic building contract laws — commencement (s 2)",
@@ -2004,5 +2004,19 @@
       ],
       "human_url": "https://www.legislation.vic.gov.au/as-made/acts/domestic-building-contracts-amendment-act-2025"
     }
-  ]
+  ],
+  "last_agent_run": "2026-09-03",
+  "last_run_id": "agent-2026-09-03-l-1788423377",
+  "last_run": {
+    "run_id": "agent-2026-09-03-l-1788423377",
+    "on": "2026-09-03",
+    "by_agent": "agent-2026-09-03-l-1788423377",
+    "counts": {
+      "verified": 60,
+      "unverified": 0,
+      "unreachable": 0
+    },
+    "moved": [],
+    "note": "Currency of the published text on official pages this run. Not a compliance determination."
+  }
 }

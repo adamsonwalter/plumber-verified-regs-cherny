@@ -24,6 +24,9 @@ compliance determination**.
 > re-run every check, follow [`docs/REPEATABLE-VALIDATION.md`](docs/REPEATABLE-VALIDATION.md).
 > Moving this to another host? Start at
 > [`docs/BOLT-MIGRATION-BRIEF.md`](docs/BOLT-MIGRATION-BRIEF.md).
+> Weekly fetch runs on the Grok Bot VM (Stan), not GitHub-hosted Actions —
+> [`docs/STAN-GROKBOT-MOAT.md`](docs/STAN-GROKBOT-MOAT.md) and
+> [`docs/MIGRATION-PLAN.md`](docs/MIGRATION-PLAN.md).
 
 ## Three capabilities
 

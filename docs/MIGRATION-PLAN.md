@@ -6,7 +6,8 @@ verification pass against the live site, the repo, and the Netlify deploy API.
 Read order for anyone picking this up: [`SPEC.md`](SPEC.md) (what the system
 must prove) → [`LESSONS-LEARNED.md`](LESSONS-LEARNED.md) (what already went
 wrong) → [`BOLT-MIGRATION-BRIEF.md`](BOLT-MIGRATION-BRIEF.md) (the migration
-itself) → this file (the order to do it in, and why).
+itself) → [`STAN-GROKBOT-MOAT.md`](STAN-GROKBOT-MOAT.md) (Grok Bot VM, egress
+moat, Stan paste jobs) → this file (the order to do it in, and why).
 
 This plan **supersedes** [`AI-CODER-ANSWERS.md`](AI-CODER-ANSWERS.md) §F item 4
 ("whether to repair Netlify at all"). That question is closed — see §1.
@@ -151,6 +152,63 @@ Walter's machine, **exit 0, 60/60 confirmed, ~57 s**.
 The gate failed closed and refused to publish, which is the system working
 correctly. That is the only good news in this section.
 
+#### VPS / other-ASN probe — CONFIRMED FAILED (AWS, 2026-09-03)
+
+`scripts/egress_report.py --retries 3 --timeout 20 --strict` from a Cursor
+cloud VM (not GitHub-hosted, not Azure):
+
+```
+Public IP  18.235.67.204
+ASN        AS14618 Amazon.com, Inc.  (us-east-1, Ashburn VA)
+elapsed    443.4s
+strict     exit 1
+```
+
+| Host | N | OK | CF |
+|---|---|---|---|
+| `www.bpc.vic.gov.au` | 46 | **0** | 46 |
+| `www.planning.vic.gov.au` | 1 | **0** | 1 |
+| other 7 hosts | 13 | 13 | 0 |
+| **TOTAL** | 60 | 13 | |
+
+One-off BPC GET with the same `BROWSER_HEADERS`: HTTP 403, body is a Cloudflare
+JS challenge (`Just a moment…`, `cdn-cgi/challenge`).
+
+Same afternoon, the same script from Walter's **residential** iiNet/TPG IP
+(`124.170.123.36`, AS7545, Melbourne): BPC **46/46 OK** in 32s; Planning
+Cloudflare 403 (1/1). So a "passing network" is not 60/60 on every host every
+run — BPC clears on AU residential, Planning did not on that pass.
+
+A one-shot **Cursor cloud Task** is ephemeral AWS and is not a Grok Bot. Do not
+conflate them.
+
+#### Grok Bot VM (Stan) — CONFIRMED PASS (2026-09-03)
+
+Walter's always-on Grok Bot computer, orchestrator **Stan**, ran the **repo
+script** (not homepage pings):
+
+```
+.venv/bin/python scripts/egress_report.py --retries 3 --timeout 20 --strict
+branch   migration-plan-and-egress-test
+Public IP  104.30.175.37
+ASN        AS13335 Cloudflare, Inc. (US)
+elapsed    ~100.5s
+```
+
+| Host | Result |
+|---|---|
+| `www.bpc.vic.gov.au` | **46/46 OK**, 0 Cloudflare-blocked |
+| `www.planning.vic.gov.au` | **success** |
+| all 60 URLs | probed |
+
+The Auto-review hold only blocked a `/usr/bin/time` + redirect wrapper; Stan
+re-ran the same `egress_report.py` without that wrapper.
+
+**This VM is usable as the weekly verifier for egress.** It is persistent by
+design. Remaining work is the scheduled live gate + gated publish of `last_run`,
+not finding another network. A throwaway AWS Cursor task still fails BPC;
+Grok Bot's Cloudflare egress did not.
+
 #### Correction to LESSONS-LEARNED §1 — the cause is probably not JA3
 
 `LESSONS-LEARNED.md` §1 attributes the Netlify block to a "different TLS/JA3
@@ -158,18 +216,16 @@ fingerprint than an ordinary client". **INFERRED, and probably wrong.**
 
 Plain `curl` from the *same local IP that passes* also receives a 403 managed
 challenge on `bpc.vic.gov.au`. Local runs clear it by retrying with a reused
-session; the GitHub runner never clears it at all, running byte-identical Python
-and `requests` with the same `BROWSER_HEADERS`. The client TLS stack is
-therefore not the differentiator between the passing and failing cases.
+session; GitHub-hosted and AWS datacentre runs never clear it at all, with
+byte-identical Python and `requests` and the same `BROWSER_HEADERS`. The client
+TLS stack is therefore not the differentiator.
 
-The remaining difference is the network: GitHub-hosted runners are Azure
-datacentre IPs. **IP/ASN reputation is the more likely cause.** This is
-INFERRED, not confirmed — confirming it means running the same code from a
-non-Azure datacentre IP and from a residential IP and comparing.
-
-It matters because it decides which fix works. If it is ASN reputation, no
-amount of header or TLS impersonation from a datacentre helps, and most cheap
-VPS providers will fail the same way.
+**CONFIRMED so far:** Azure (GitHub `ubuntu-latest`) and AWS us-east-1
+(Cursor cloud Task) both get BPC 0/46 Cloudflare. AS7545 residential Melbourne
+gets BPC 46/46 (Planning flaked once). **Cloudflare-egress Grok Bot
+(`104.30.175.37`, AS13335) gets BPC 46/46 and Planning OK.** IP/ASN still
+explains the failures; Cloudflare's own egress is a passing class, not a
+generic US VPS. Do not buy an AWS/Azure droplet hoping it matches Stan.
 
 #### DataVic (CKAN) assessed as a side door — does NOT substitute
 
@@ -220,20 +276,18 @@ decision after §2.5, and it must not be confused with weekly verification.
 
 #### Options, ranked
 
-1. **Self-hosted GitHub Actions runner on a network gov.au serves.**
-   *Proven today* — Walter's connection does 60/60 in ~57 s. Only `runs-on:`
-   changes; the whole Actions design, the cron, the secrets handling and the
-   publish step survive unmodified. **Cost: it needs an always-on machine.** For
-   a paid weekly promise, "unattended" cannot mean "whenever the laptop is
-   open" — budget for a small dedicated box on that connection.
-2. **Test a VPS in a different ASN before committing to (1).** Cheap, and
-   `scripts/egress_report.py` is the test — it runs anywhere Python does. If the
-   cause is datacentre-IP reputation this will fail too, which is itself worth
-   knowing in ten minutes.
-3. **Approach BPC for an allowlist or a data feed.** Slow, but it is the durable
-   answer for a paid product that cites them weekly, and it removes the
-   dependency on clearing a bot challenge entirely. Worth starting in parallel
-   with (1) rather than instead of it.
+1. **Weekly verifier on the Grok Bot VM (Stan).** *Proven egress 2026-09-03:*
+   BPC 46/46 and Planning OK via `egress_report.py --strict`. Persistent
+   machine; no extra VPS. Next: unattended live gate (`verify_register.py
+   --live`), then gated publish of `last_run` into the served register. Do
+   not treat a Cursor cloud Task as the same computer.
+2. **Cheap US/AWS/Azure VPS — ruled out for BPC.** GitHub-hosted Azure and
+   AWS us-east-1 both 0/46. Do not buy a generic cloud droplet hoping it
+   matches Stan's Cloudflare egress.
+3. **Approach BPC for an allowlist or a data feed.** Still the durable
+   long-term answer. Worth starting in parallel; it is no longer the blocker
+   for a weekly loop. DataVic shows they already serve machines where they
+   have tabular data.
 
 #### Cheap win, independent of where the verifier runs
 
@@ -425,10 +479,11 @@ to the old domain; keep Netlify available for rollback.
    **Decide before building payments, not after.**
 2. **The overdue threshold.** 14 days recommended — two missed weekly cycles.
    One missed run is a transient; two is a broken pipeline.
-3. **Where the verifier runs.** GitHub-hosted runners are ruled out (§2.0a).
-   Choose between a self-hosted runner on a passing network, a VPS in another
-   ASN if it tests clean, and approaching BPC directly. This is now the
-   plan's critical path.
+3. **Where the verifier runs.** **Settled for egress:** Grok Bot VM (Stan),
+   Cloudflare AS13335, BPC 46/46. GitHub-hosted and AWS Cursor Tasks remain
+   ruled out. Next decision is how Stan publishes (commit both register
+   paths vs Bolt later), not which network. Approach BPC in parallel as
+   hardening, not as the weekly path.
 
 ---
 

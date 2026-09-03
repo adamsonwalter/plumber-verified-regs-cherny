@@ -1,0 +1,82 @@
+# Can a GitHub-hosted runner reach the register's sources?
+#
+# This is the test that gates docs/MIGRATION-PLAN.md §2.0. It publishes
+# NOTHING and writes NOTHING back to the repo — it only reports.
+#
+# Why it exists: 46 of the 60 sources are bpc.vic.gov.au, behind Cloudflare.
+# Netlify's build servers are reliably 403'd there (docs/LESSONS-LEARNED.md §1)
+# because of their TLS fingerprint. GitHub-hosted runners are Azure IPs and may
+# be challenged the same way. If they are, GitHub Actions cannot be the
+# verifier's scheduled runtime and the migration plan changes.
+#
+# Two jobs, deliberately independent so both always report even if one hangs:
+#   probe — fast per-host diagnostic, low retries, tells you WHICH host blocks
+#   gate  — the real acceptance test, verify_register.py --live, unmodified
+#
+# Verdict: the gate job passing (exit 0, 60/60) is the stop condition.
+
+name: Egress test
+
+on:
+  push:
+    branches: [migration-plan-and-egress-test]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: egress-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    name: Per-host egress probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Runner egress identity
+        run: |
+          echo "Runner public IP / network identity (for a 403 post-mortem):"
+          curl -s https://api.ipify.org || true
+          echo
+
+      - name: Probe every source, grouped by host
+        run: python3 scripts/egress_report.py --retries 3 --timeout 20
+
+  gate:
+    name: Full live publish gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Offline gate (structure, domains, self-consistency)
+        run: python3 scripts/verify_register.py --offline
+
+      - name: Live gate — all 60 sources
+        run: |
+          start=$(date +%s)
+          set +e
+          python3 scripts/verify_register.py --live
+          rc=$?
+          set -e
+          echo "----"
+          echo "live gate exit=$rc elapsed=$(( $(date +%s) - start ))s"
+          exit $rc

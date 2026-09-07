@@ -33,6 +33,7 @@ the gate and the agent agree on what "verified" means.
 """
 import json
 import os
+import re
 import sys
 import traceback
 from datetime import datetime, timezone
@@ -92,33 +93,141 @@ def _trim_word_boundary(s, *, left, limit=40):
     return s[:sp] if sp >= 0 and len(s) - sp <= limit else s
 
 
-def _extract_snippet(text, needle, span=180):
-    """A quote window around `needle` (or the start of `text` if no needle),
-    trimmed to whole words at both edges.
+# Words that end in a full stop without ending a sentence. Regulatory text is
+# dense with them ("No. 36 of 2025", "cl. 5.4.2", "Pt. 4").
+_ABBREVIATIONS = {
+    "no", "cl", "cls", "reg", "regs", "s", "ss", "pt", "pts", "div", "fig",
+    "figs", "vol", "ed", "eds", "approx", "etc", "e.g", "i.e", "cf", "al",
+    "dr", "mr", "mrs", "ms", "st", "sch", "para", "paras", "ch", "app",
+}
 
-    `verified.quote` is rendered verbatim to users in public/index.html,
-    wrapped in curly quotes — plain character-slicing regularly cut a word in
-    half at either edge (e.g. "...This means that Appendix F d"), which reads
-    as broken rather than abridged. Trimming to the nearest word boundary
-    fixes the display without touching what is actually asserted: the
-    key_substring / also_requires check runs against the full fetched text,
-    not against this snippet.
+_MAX_QUOTE = 320
+
+
+def _ends_sentence(text, i):
+    """True if `text[i]` is a full stop / ! / ? that genuinely ends a sentence.
+
+    Deliberately conservative, because this corpus is full of periods that do
+    NOT end sentences: clause numbers (3.6.2, 13.24.2.3.2), standard editions
+    (AS/NZS 3500.1:2025), and abbreviations (No. 36 of 2025). Splitting on a
+    bare "." would shred every one of them. A real boundary needs whitespace
+    after it, then a capital or an opening quote, and must not follow a known
+    abbreviation.
+    """
+    if text[i] not in ".!?":
+        return False
+    j = i + 1
+    if j >= len(text):
+        return True                      # end of the text is a boundary
+    if not text[j].isspace():
+        return False                     # "3.6.2" / "3500.1:2025"
+    while j < len(text) and text[j].isspace():
+        j += 1
+    if j >= len(text):
+        return True
+    nxt = text[j]
+    if not (nxt.isupper() or nxt in '"\u201c\u2018('):
+        return False                     # "No. 36", "m. and"
+    m = re.search(r"([A-Za-z.]+)$", text[:i])
+    if m and m.group(1).lower().strip(".") in _ABBREVIATIONS:
+        return False
+    return True
+
+
+def _sentence_start_before(text, idx, floor):
+    """Index just past the nearest sentence end before `idx`, or None."""
+    for i in range(idx - 1, floor - 1, -1):
+        if _ends_sentence(text, i):
+            return i + 1
+    return None
+
+
+def _sentence_end_after(text, idx, ceiling):
+    """Index just past the nearest sentence end at or after `idx`, or None."""
+    for i in range(idx, min(len(text), ceiling)):
+        if _ends_sentence(text, i):
+            return i + 1
+    return None
+
+
+def _mark_abridged(s, *, left, right):
+    """Mark an edge that stopped mid-sentence with an ellipsis.
+
+    Where a sentence cannot be completed inside the length cap — long legal
+    definitions run hundreds of characters — the quote necessarily stops
+    mid-clause. Without a mark that reads as though the *rule* were truncated,
+    which is alarming on a compliance screen. An explicit ellipsis says
+    "abridged here", which is honest and calm.
+    """
+    s = (s or "").strip()
+    if not s:
+        return s
+    if left and not s.startswith("\u2026"):
+        s = "\u2026" + s
+    if right and not s.endswith("\u2026"):
+        s = s.rstrip(" ,;:") + "\u2026"
+    return s
+
+
+def _extract_snippet(text, needle, span=180):
+    """A quote window around `needle`, snapped to whole sentences where possible.
+
+    `verified.quote` is rendered verbatim to users in public/index.html, wrapped
+    in curly quotes. Two rounds of this: plain character-slicing cut words in
+    half ("...Appendix F d"), and word-boundary trimming alone still left
+    quotes hanging mid-clause ("...to replace the 2021 edition. It",
+    "...maintenance, testing or"), which reads to a tradesperson as though the
+    rule itself were truncated.
+
+    So: prefer a complete sentence at both edges. Fall back to the whole-word
+    trim when no boundary is near, or when completing the sentence would push
+    the quote past `_MAX_QUOTE`. Never returns a mid-word edge.
+
+    This is presentation only. What is actually asserted — key_substring and
+    every also_requires string — is checked against the full fetched text, not
+    against this snippet.
     """
     if not text:
         return ""
-    if not needle:
-        return _trim_word_boundary(text[:span], left=False).strip()
-    idx = text.lower().find(needle.lower())
+
+    idx = text.lower().find(needle.lower()) if needle else -1
+
     if idx < 0:
-        return _trim_word_boundary(text[:span], left=False).strip()
-    start = max(0, idx - 80)
-    end = idx + len(needle) + 120
+        # No needle to centre on: take the head, ending on a sentence if one
+        # lands within reach of `span`.
+        end = _sentence_end_after(text, 0, span + 140)
+        if end is None or end > _MAX_QUOTE:
+            cut = min(span, len(text))
+            return _mark_abridged(_trim_word_boundary(text[:cut], left=False),
+                                  left=False, right=cut < len(text))
+        return text[:end].strip()
+
+    need_end = idx + len(needle)
+    win_start = max(0, idx - 80)
+    win_end = min(len(text), need_end + 120)
+
+    start = _sentence_start_before(text, idx, win_start)
+    left_snapped = start is not None
+    if not left_snapped:
+        start = win_start
+
+    end = _sentence_end_after(text, need_end, win_end + 140)
+    right_snapped = end is not None
+    if not right_snapped:
+        end = win_end
+
+    # Completing the sentence must not bloat the quote; fall back if it would.
+    if end - start > _MAX_QUOTE:
+        start, end = win_start, win_end
+        left_snapped = right_snapped = False
+
     raw = text[start:end]
-    if start > 0:
+    if not left_snapped and start > 0:
         raw = _trim_word_boundary(raw, left=True)
-    if end < len(text):
+    if not right_snapped and end < len(text):
         raw = _trim_word_boundary(raw, left=False)
-    return raw.strip()
+    return _mark_abridged(raw, left=not left_snapped and start > 0,
+                          right=not right_snapped and end < len(text))
 
 
 def reverify_all(run_id):

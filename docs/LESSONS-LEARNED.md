@@ -253,6 +253,24 @@ catch you (the needle won't match on a real fetch).
   "Under Part 4 of the Plumbing Regulations 2018 …"). The brief claimed
   "Division 7" for roofing — the page says **Part 4**. Record what the page
   says, not what the brief says.
+- **`verified.quote` is user-facing prose, and it took three passes to get
+  right.** It is rendered verbatim inside curly quotes on a compliance screen,
+  so how it *ends* is not cosmetic — a plumber reads a severed quote as a
+  severed rule. Pass one sliced a fixed character window and cut words in half
+  ("...Appendix F d"). Pass two trimmed to whole words, which still left 58 of
+  60 hanging mid-clause ("...the 2021 edition. It", "...testing or"). Pass three
+  snaps to whole sentences, falling back to whole words with an explicit
+  ellipsis when the sentence cannot close inside the length cap.
+
+  Two traps worth knowing if you touch it. **Never split sentences on a bare
+  period** — this corpus is made of clause numbers (3.6.2, 13.24.2.3.2),
+  editions (AS/NZS 3500.1:2025) and abbreviations ("No. 36 of 2025"), and a
+  naive splitter shreds all of them; require whitespace then a capital, and
+  keep an abbreviation list. And **fix the generator, not the data**: pass one
+  was "fixed" by hand-editing two entries' quotes, which of course regenerated
+  broken on the next agent run — and because the agent had never successfully
+  run, that landed on all 60 entries at once the moment the egress path worked.
+
 - **A followed redirect hides a moved source.** `requests` follows 301s, so a
   publisher can permanently relocate a page and the entry still verifies — the
   needle is present at the new home. The register then silently depends on a

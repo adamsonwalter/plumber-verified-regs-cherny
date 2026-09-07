@@ -79,16 +79,46 @@ def _load_register():
     return None, None
 
 
+def _trim_word_boundary(s, *, left, limit=40):
+    """Drop a partial word at one edge of `s`, if a space sits within `limit`
+    chars of that edge. Leaves `s` unchanged if no nearby boundary exists
+    (e.g. one long unbroken token) rather than eating the whole string."""
+    if not s:
+        return s
+    if left:
+        sp = s.find(" ")
+        return s[sp + 1:] if 0 <= sp < limit else s
+    sp = s.rfind(" ")
+    return s[:sp] if sp >= 0 and len(s) - sp <= limit else s
+
+
 def _extract_snippet(text, needle, span=180):
+    """A quote window around `needle` (or the start of `text` if no needle),
+    trimmed to whole words at both edges.
+
+    `verified.quote` is rendered verbatim to users in public/index.html,
+    wrapped in curly quotes — plain character-slicing regularly cut a word in
+    half at either edge (e.g. "...This means that Appendix F d"), which reads
+    as broken rather than abridged. Trimming to the nearest word boundary
+    fixes the display without touching what is actually asserted: the
+    key_substring / also_requires check runs against the full fetched text,
+    not against this snippet.
+    """
     if not text:
         return ""
     if not needle:
-        return text[:span]
+        return _trim_word_boundary(text[:span], left=False).strip()
     idx = text.lower().find(needle.lower())
     if idx < 0:
-        return text[:span]
+        return _trim_word_boundary(text[:span], left=False).strip()
     start = max(0, idx - 80)
-    return text[start: idx + len(needle) + 120].strip()
+    end = idx + len(needle) + 120
+    raw = text[start:end]
+    if start > 0:
+        raw = _trim_word_boundary(raw, left=True)
+    if end < len(text):
+        raw = _trim_word_boundary(raw, left=False)
+    return raw.strip()
 
 
 def reverify_all(run_id):

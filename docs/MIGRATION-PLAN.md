@@ -316,6 +316,55 @@ updates, and a weekly compliance guarantee should not rest on winning that race.
   was always a separate question — `AI-CODER-ANSWERS.md` §E/Q43 — and the
   smallest path to a paid pilot still does not touch it.
 
+### 2.0b — Stan's first pass shipped a display defect — CONFIRMED, FIXED 2026-09-07
+
+`functions/verify_register_scheduled.py` had never run against production
+before Stan's Grok Bot VM proved the egress path in §2.0a. Its output had
+therefore never been reviewed. Stan's first weekly pass (commit `490edda`,
+2026-09-03) went straight to `main` and Netlify auto-deployed it — despite
+the commit message reading "Branch only — not main," the branches had already
+converged, and the register that reached production was unreviewed.
+
+**Found:** `_extract_snippet()` sliced a fixed character window around each
+matched substring with no word-boundary trimming. `verified.quote` is
+rendered verbatim to users, wrapped in curly quotes (`public/index.html:1502`).
+Every one of the 60 entries Stan wrote had a quote truncated mid-word at one
+or both edges — e.g. `"...This means that Appendix F d"` — live on
+`plumber-cherny.netlify.app` for licensed plumbers to read.
+
+**Not a correctness bug.** Diffed `d35f1a5` → the pre-fix `HEAD`: `value`,
+`claim`, `key_substring`, `also_requires`, `source_url` were byte-identical
+across all 60 entries. Only `verified.on`, `verified.by_agent` and
+`verified.quote` had changed — the underlying facts were never wrong, only the
+displayed excerpt.
+
+**Fix:** added `_trim_word_boundary()` and rewrote `_extract_snippet()` to
+back off to the nearest space within 40 chars of each edge, on both the
+needle-anchored branch and the no-needle (`unverified`) branch. Verified with
+targeted unit cases (a realistic mid-word cut position on both edges) and by
+regenerating the live register: ran `reverify_all()` against a copy of
+`register.json` from this machine's own working egress (same network class as
+the "Walter home" row in §2.0a — AU residential, BPC passes), confirmed
+60/60 verified with zero substantive-field diffs and zero mid-word-truncated
+quotes on manual sampling, then re-ran both gates against the adopted result:
+`--offline` exit 0, `--live` exit 0, `PUBLISH GATE PASSED`.
+
+**This is the first live instance of the gap named in §2.7**: nothing
+currently sits between the agent's output and the served register. Stan's
+"Offline publish gate passed" (per the commit message) is not the same claim
+as "a human looked at the output" — the offline gate only checks structure and
+domains, not quote quality, because quote quality was never something a gate
+could check. Worth a cheap regression test before the next unattended run:
+assert no `verified.quote` starts or ends with a lowercase letter directly
+abutting the string boundary with no preceding/following space in the source
+text — imperfect, but it would have caught this.
+
+**Cadence and the single point of failure it depends on** are now recorded in
+[`STAN-GROKBOT-MOAT.md`](STAN-GROKBOT-MOAT.md) §6: Mondays, 5:00 PM Melbourne
+time, manually pasted — not yet a real unattended schedule. §6a there is an
+open item to confirm the 2026-09-07 5pm run actually happened; check it next
+session.
+
 ### 2.1 — Stabilise the trust system
 
 Before payments, before Bolt. The app must stop implying freshness it cannot

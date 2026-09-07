@@ -121,7 +121,67 @@ without the wrapper. Do not skip URLs.
 
 ---
 
-## 6. Related
+## 6. Current operating cadence — manual, weekly, Monday 5pm Melbourne
+
+**As of 2026-09-07, this is a manually paste-triggered run, not an unattended
+schedule.** Nothing on Stan's VM currently fires itself — Walter pastes the job
+in §5, once a week.
+
+- **Cadence: Mondays, 5:00 PM Melbourne time (AEST/AEDT).** Chosen by Walter,
+  not derived from anything in this repo.
+- Coincidentally close to the *never-executed* Netlify cron this replaces —
+  `netlify.toml`'s `schedule = "0 7 * * 1"` is Monday 07:00 UTC, i.e. Monday
+  5pm AEST / 6pm AEDT. The original design intent and Stan's actual cadence
+  land on the same slot.
+- **First real pass: 2026-09-03** (Thursday, off-cycle — the initial proof run
+  from the egress test, not yet on the Monday slot). `last_run.on` in the
+  register will show the real date each week.
+- **This is a placeholder cadence for a pre-paid product**, not a commitment.
+  Once there are paying customers, weekly may not be enough fidelity for
+  what they're paying for — a rule can change any day, and "checked last
+  Monday" is a weaker claim than a subscriber may expect from "$9/month
+  maintained service" (`MIGRATION-PLAN.md` §2.4). Revisit cadence once real
+  usage data exists (`MIGRATION-PLAN.md` §2.9, the paid pilot) — daily, or
+  on-demand-plus-weekly, are both plausible upgrades and both cost is the
+  same paste job run more often, not new engineering.
+- **Until the schedule is truly unattended** (§2.2's blocked GitHub Actions
+  path, or Stan's VM running its own cron rather than being pasted into),
+  every week depends on Walter remembering to paste the job. That is a
+  single point of failure worth naming plainly rather than obscuring behind
+  "Stan verifies weekly" language — it is closer to "Stan verifies when
+  asked, currently asked weekly."
+
+---
+
+## 6a. Open — verify next Monday's run actually happened
+
+Written 2026-09-07 (Monday), ~2:30pm AEST — **before** the 5pm slot this note
+describes. Nothing below is evidence of anything; it is a placeholder to
+check against, deliberately written ahead of the event it's checking.
+
+**Check next session, when Walter is back at his desk:** did the 2026-09-07
+5pm run happen?
+
+```bash
+python3 -c "import json;print(json.dumps(json.load(open('register.json'))['last_run'],indent=2))"
+```
+
+- If `last_run.on` reads **2026-09-07**: it ran. Confirm `counts` is
+  `{verified: 60, unverified: 0, unreachable: 0}` (or investigate any
+  `unreachable`/`unverified` entries per `REPEATABLE-VALIDATION.md` §9), and
+  confirm it reached both `register.json` and `public/register.json` and
+  matches what `plumber-cherny.netlify.app/register.json` serves.
+- If `last_run.on` still reads **2026-09-03**: the Monday run did not happen —
+  most likely because nobody pasted the job (see the single-point-of-failure
+  note in §6 above). Not a code defect; a process gap. Flag it back to
+  Walter rather than silently treating stale data as current.
+
+Delete this subsection once the check is done and its outcome is folded into
+§6 (or into a "missed run" note if it didn't happen).
+
+---
+
+## 7. Related
 
 - Sequence: [`MIGRATION-PLAN.md`](MIGRATION-PLAN.md) §2.0a
 - Host move: [`BOLT-MIGRATION-BRIEF.md`](BOLT-MIGRATION-BRIEF.md)

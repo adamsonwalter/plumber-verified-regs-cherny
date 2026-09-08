@@ -156,3 +156,34 @@ def file_lock(target: str, *, timeout: float = 30.0, poll: float = 0.2) -> Itera
             with contextlib.suppress(OSError):
                 _msvcrt.locking(handle.fileno(), _msvcrt.LK_UNLCK, 1)
         handle.close()
+
+
+# --------------------------------------------------------------------------- #
+# Register versioning
+# --------------------------------------------------------------------------- #
+def bump_version(reg, kind, *, on=None):
+    """Advance the register to a version no earlier publish can collide with.
+
+    `register_version` used to be `"<date>-<kind>"`, which is a date stamp
+    wearing a version's clothes: two publishes on the same day produce the
+    identical string. That is not hypothetical — on 2026-09-07 a scheduled
+    agent pass and a quote-fix republish both emitted "2026-09-07-agent" for
+    two materially different registers, and the served site was
+    indistinguishable from the repo by version alone.
+
+    It matters beyond confusing a reader. public/index.html keys BOTH its
+    offline cache (`saveCache`) and its "what's new" diff (`computeChanges`)
+    on this value, so a same-day republish looked unchanged to a returning
+    visitor.
+
+    So: a monotonic `register_serial` is the real identity, and
+    `register_version` carries it as a suffix so it stays human-readable in
+    Settings while remaining unique and ordered. Mutates `reg`; returns the new
+    version string.
+    """
+    import datetime as _dt
+    serial = reg.get("register_serial")
+    serial = serial + 1 if isinstance(serial, int) and serial > 0 else 1
+    reg["register_serial"] = serial
+    reg["register_version"] = f"{on or _dt.date.today().isoformat()}-{kind}.{serial}"
+    return reg["register_version"]

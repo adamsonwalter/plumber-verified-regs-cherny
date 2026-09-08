@@ -86,7 +86,7 @@ def main():
     else:
         reg["entries"].append(entry)
         action = "added"
-    reg["register_version"] = f"{TODAY}-dbca"
+    fsutil.bump_version(reg, "dbca", on=TODAY)
     reg["generated_on"] = TODAY
 
     fsutil.atomic_write_json("register.json", reg)

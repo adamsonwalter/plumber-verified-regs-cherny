@@ -349,7 +349,7 @@ def reverify_all(run_id):
 
     reg["last_agent_run"] = _today()
     reg["last_run_id"] = run_id
-    reg["register_version"] = f"{_today()}-agent"
+    fsutil.bump_version(reg, "agent", on=_today())
     # Register-level summary of the most recent pass, so a reader (or the app)
     # can state when the register was last checked and how it came out without
     # walking all 59 entries.

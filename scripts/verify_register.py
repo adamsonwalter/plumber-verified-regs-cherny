@@ -247,6 +247,19 @@ def check_structure(entries):
     return failures
 
 
+def check_version_serial(reg):
+    """register_version must carry a monotonic serial, so no two publishes
+    can share a version string. See fsutil.bump_version for why."""
+    serial = reg.get("register_serial")
+    version = reg.get("register_version") or ""
+    if not isinstance(serial, int) or isinstance(serial, bool) or serial < 1:
+        return f"register_serial must be a positive integer (got {serial!r})"
+    if not version.endswith(f".{serial}"):
+        return (f"register_version {version!r} does not end with its "
+                f"register_serial ({serial}) — they must agree")
+    return None
+
+
 def check_also_requires(entries):
     """also_requires, when present, must be a list of non-empty strings."""
     failures = []
@@ -377,6 +390,15 @@ def main(argv=None):
         hard_failures.append("non-official source domains present")
     else:
         log("(4) domain: every source URL resolves to an official gov.au/abcb domain")
+
+    # ---- (1c) version identity ----
+    ver_fail = check_version_serial(register)
+    if ver_fail:
+        log(f"STRUCTURE: {ver_fail}", "FAIL")
+        hard_failures.append("register version/serial mismatch")
+    else:
+        log(f"(1c) version: {register.get('register_version')} "
+            f"(serial {register.get('register_serial')})")
 
     # ---- (1b) also_requires shape ----
     ar_fail = check_also_requires(entries)

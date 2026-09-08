@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "register_version": "2026-09-08-agent",
+  "register_version": "2026-09-08-agent.1",
   "generated_on": "2026-08-28",
   "generated_by_agent": "build-agent-2026-07-31",
   "description": "Verified Victorian plumbing & roofing regulatory register. Each value is a verbatim or directly-quotable fact from the cited authoritative government / regulator / standards-body page, confirmed by a live fetch on the date in verified.on.",
@@ -2018,5 +2018,6 @@
     },
     "moved": [],
     "note": "Currency of the published text on official pages this run. Not a compliance determination."
-  }
+  },
+  "register_serial": 1
 }

@@ -177,7 +177,7 @@ def main():
             by_id[eid] = entry
             added += 1
 
-    reg["register_version"] = f"{TODAY}-pointers"
+    fsutil.bump_version(reg, "pointers", on=TODAY)
     reg["generated_on"] = TODAY
     fsutil.atomic_write_json(reg_path, reg)
     fsutil.atomic_write_json("public/register.json", reg)

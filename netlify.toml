@@ -1,13 +1,17 @@
 # Netlify configuration for the Verified Plumbing & Roofing Regulations Register.
 #
-# Architecture: a static single page (public/) whose sole source of truth is a
-# git-committed register.json, plus a scheduled Python function that re-verifies
-# every source URL on the platform's own scheduler and proposes an updated
-# register (committed back if a publish token is configured).
+# Architecture: a Vite + React app whose sole source of truth is a git-committed
+# register.json. Stan (an external Grok Bot VM) re-verifies every source URL
+# weekly and pushes the updated register to GitHub; Netlify auto-deploys it.
+# Bolt edits the app and auto-commits to GitHub but never publishes — Netlify is
+# the production surface precisely because it publishes without a human click.
 
 [build]
-  # The published site is the static public/ directory.
-  publish = "public"
+  # The published site is Vite's build output. public/ is Vite's publicDir, so
+  # everything in it — register.json, icons, manifest, admin/ — is copied into
+  # dist/ verbatim at build. Stan keeps writing public/register.json exactly as
+  # before and it still serves at /register.json.
+  publish = "dist"
 
   # Redirect /admin to /admin/index.html (sign-in gated dashboard).
   # Other paths under /admin/ are served directly by the file system.
@@ -26,11 +30,16 @@
   # in the weekly scheduled agent below. Whether it passes from the functions
   # runtime is UNPROVEN — no scheduled run has ever completed. See
   # docs/AI-CODER-ANSWERS.md.
-  command = "python3 scripts/verify_register.py --offline"
+  # Gate the register FIRST, then build the app. If the register is malformed the
+  # deploy fails before anything is compiled, so a bad register can never ship.
+  command = "python3 scripts/verify_register.py --offline && npm run build"
 
 [build.environment]
-  # Pin the Python runtime the scheduled function runs on.
+  # Python runs the register gate at build time. (Netlify BUILD images ship
+  # Python; Netlify FUNCTIONS never did — that distinction has confused this
+  # project before.)
   PYTHON_VERSION = "3.12"
+  NODE_VERSION = "22"
 
 # ----------------------------------------------------------------------------
 # Scheduled re-verification agent (capability b).

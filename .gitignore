@@ -29,3 +29,7 @@ register.proposed.*.json
 # Fetch artefacts from scripts/add_standard_pointers.py (re-fetched on each run)
 scripts/_bpc/
 .env
+
+# Node build output and dependencies (Vite app, from the Bolt migration)
+node_modules/
+dist/

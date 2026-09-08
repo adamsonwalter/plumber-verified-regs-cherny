@@ -1,5 +1,7 @@
-import { StrictMode, useEffect, useMemo, useState } from 'react'
+import { StrictMode, useCallback, useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { supabase } from './supabaseClient'
+import { useJobs, JobsScreen, JobDetailScreen, AddToJobModal } from './jobs'
 import './styles.css'
 
 const JOBS = [
@@ -26,9 +28,12 @@ const OBLIGATION_LABELS = {
   product: 'Product',
 }
 
-function readSaved() {
+const LOCAL_SAVES_KEY = 'plumber-regs-saved'
+const MIGRATED_KEY = 'plumber-regs-saves-migrated'
+
+function readLocalSaved() {
   try {
-    return JSON.parse(localStorage.getItem('plumber-regs-saved') || '[]')
+    return JSON.parse(localStorage.getItem(LOCAL_SAVES_KEY) || '[]')
   } catch {
     return []
   }
@@ -59,6 +64,13 @@ function Icon({ name, size = 20 }) {
     close: <><path d="m6 6 12 12M18 6 6 18" /></>,
     back: <path d="m15 18-6-6 6-6" />,
     check: <path d="m5 12 4 4L19 6" />,
+    user: <><circle cx="12" cy="8" r="4" /><path d="M5.5 21a6.5 6.5 0 0 1 13 0" /></>,
+    logout: <path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3M10 17l-5-5 5-5M5 12h12" />,
+    folder: <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />,
+    plus: <path d="M12 5v14M5 12h14" />,
+    trash: <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />,
+    lock: <><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>,
+    mail: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></>,
   }
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>
 }
@@ -71,8 +83,64 @@ function App() {
   const [obligations, setObligations] = useState([])
   const [jurisdictions, setJurisdictions] = useState([])
   const [selectedEntry, setSelectedEntry] = useState(null)
-  const [savedIds, setSavedIds] = useState(readSaved)
+  const [savedIds, setSavedIds] = useState(readLocalSaved)
   const [error, setError] = useState('')
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [authView, setAuthView] = useState(null)
+  const [authError, setAuthError] = useState('')
+  const [authBusy, setAuthBusy] = useState(false)
+  const [authMessage, setAuthMessage] = useState('')
+  const [savesLoading, setSavesLoading] = useState(false)
+  const [activeJob, setActiveJob] = useState(null)
+  const [showAddToJob, setShowAddToJob] = useState(false)
+  const { jobs, jobItems, jobsLoading, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob } = useJobs(session)
+
+  useEffect(() => {
+    let mounted = true
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      if (mounted) { setSession(s); setAuthLoading(false) }
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+      (async () => {
+        if (!mounted) return
+        setSession(s)
+        setAuthLoading(false)
+        if (event === 'PASSWORD_RECOVERY') setAuthView('new-password')
+        if (s?.user) {
+          setSavesLoading(true)
+          await migrateLocalSaves(s.user.id)
+          await loadRemoteSaves(setSavedIds)
+          setSavesLoading(false)
+        } else {
+          setSavedIds(readLocalSaved())
+        }
+      })()
+    })
+    return () => { mounted = false; subscription.unsubscribe() }
+  }, [])
+
+  async function migrateLocalSaves(userId) {
+    try {
+      const migrated = localStorage.getItem(MIGRATED_KEY)
+      if (migrated) return
+      const local = readLocalSaved()
+      if (!local.length) { localStorage.setItem(MIGRATED_KEY, '1'); return }
+      const rows = local.map((entryId) => ({ user_id: userId, entry_id: entryId }))
+      const { error: upsertError } = await supabase.from('saves').upsert(rows, { onConflict: 'user_id,entry_id', ignoreDuplicates: true })
+      if (upsertError) throw upsertError
+      localStorage.removeItem(LOCAL_SAVES_KEY)
+      localStorage.setItem(MIGRATED_KEY, '1')
+    } catch {
+      // Migration is best-effort; local saves are preserved if it fails
+    }
+  }
+
+  async function loadRemoteSaves(setter) {
+    const { data, error: loadError } = await supabase.from('saves').select('entry_id').order('created_at', { ascending: false })
+    if (loadError) return
+    setter((data || []).map((row) => row.entry_id))
+  }
 
   useEffect(() => {
     fetch('/register.json')
@@ -85,16 +153,18 @@ function App() {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('plumber-regs-saved', JSON.stringify(savedIds))
-  }, [savedIds])
+    if (!session) {
+      localStorage.setItem(LOCAL_SAVES_KEY, JSON.stringify(savedIds))
+    }
+  }, [savedIds, session])
 
   useEffect(() => {
     const sync = (event) => {
-      if (event.key === 'plumber-regs-saved') setSavedIds(readSaved())
+      if (!session && event.key === LOCAL_SAVES_KEY) setSavedIds(readLocalSaved())
     }
     window.addEventListener('storage', sync)
     return () => window.removeEventListener('storage', sync)
-  }, [])
+  }, [session])
 
   const entries = register?.entries || []
   const filteredEntries = useMemo(() => {
@@ -111,33 +181,83 @@ function App() {
 
   const savedEntries = entries.filter((entry) => savedIds.includes(entry.id))
 
-  function startSearch(value = query) {
+  const startSearch = useCallback((value = query) => {
     setQuery(value)
     setSelectedJob(null)
     setActiveScreen('results')
-  }
+  }, [query])
 
-  function chooseJob(job) {
+  const chooseJob = useCallback((job) => {
     setSelectedJob(job)
     setQuery('')
     setObligations([])
     setJurisdictions([])
     setActiveScreen('results')
-  }
+  }, [])
 
-  function toggleSaved(id) {
-    setSavedIds((current) => current.includes(id) ? current.filter((savedId) => savedId !== id) : [...current, id])
-  }
+  const toggleSaved = useCallback(async (id) => {
+    if (session) {
+      const isSaved = savedIds.includes(id)
+      setSavedIds((current) => isSaved ? current.filter((savedId) => savedId !== id) : [...current, id])
+      if (isSaved) {
+        await supabase.from('saves').delete().eq('entry_id', id)
+      } else {
+        await supabase.from('saves').insert({ entry_id: id })
+      }
+    } else {
+      setSavedIds((current) => current.includes(id) ? current.filter((savedId) => savedId !== id) : [...current, id])
+    }
+  }, [session, savedIds])
 
-  function clearFilters() {
+  const clearFilters = useCallback(() => {
     setQuery('')
     setSelectedJob(null)
     setObligations([])
     setJurisdictions([])
+  }, [])
+
+  async function handleAuthSubmit(email, password, mode, confirmPassword = '') {
+    setAuthBusy(true)
+    setAuthError('')
+    setAuthMessage('')
+    try {
+      if (mode === 'signup') {
+        const { error: signUpError } = await supabase.auth.signUp({ email, password })
+        if (signUpError) throw signUpError
+        setAuthMessage('Account created. You are now signed in.')
+        setAuthView(null)
+      } else if (mode === 'signin') {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+        if (signInError) throw signInError
+        setAuthView(null)
+      } else if (mode === 'reset') {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin })
+        if (resetError) throw resetError
+        setAuthMessage('Password reset link sent. Check your email.')
+      } else if (mode === 'new-password') {
+        if (password.length < 6) throw new Error('Password must be at least 6 characters.')
+        if (password !== confirmPassword) throw new Error('Passwords do not match.')
+        const { error: updateError } = await supabase.auth.updateUser({ password })
+        if (updateError) throw updateError
+        setAuthMessage('Your password has been updated.')
+        setAuthView(null)
+      }
+    } catch (err) {
+      setAuthError(err.message || 'Something went wrong. Please try again.')
+    } finally {
+      setAuthBusy(false)
+    }
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+    setActiveScreen('find')
+    clearFilters()
   }
 
   if (error) return <main className="loading error-state"><div className="brand-mark">PR</div><h1>Something went wrong</h1><p>{error}</p></main>
   if (!register) return <main className="loading"><div className="brand-mark">PR</div><p>Loading verified register…</p></main>
+  if (authLoading) return <main className="loading"><div className="brand-mark">PR</div><p>Loading…</p></main>
 
   return <div className="app-shell">
     <aside className="sidebar">
@@ -146,30 +266,94 @@ function App() {
       <nav className="side-nav" aria-label="Main navigation">
         <NavButton active={activeScreen === 'find' || activeScreen === 'results'} onClick={() => { setActiveScreen('find'); clearFilters() }} icon="search" label="Find a reg" />
         <NavButton active={activeScreen === 'saved'} onClick={() => setActiveScreen('saved')} icon="bookmark" label="Saved" count={savedEntries.length} />
+        <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} />
         <NavButton active={activeScreen === 'settings'} onClick={() => setActiveScreen('settings')} icon="settings" label="Settings" />
       </nav>
+      <div className="sidebar-auth">
+        {session ? (
+          <div className="auth-user">
+            <div className="auth-email">{session.user.email}</div>
+            <button className="auth-signout" onClick={handleSignOut}><Icon name="logout" size={16} /> Sign out</button>
+          </div>
+        ) : (
+          <div className="auth-guest">
+            <button className="auth-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}><Icon name="user" size={16} /> Sign in</button>
+            <button className="auth-signup" onClick={() => { setAuthView('signup'); setAuthError(''); setAuthMessage('') }}>Create account</button>
+          </div>
+        )}
+      </div>
       <div className="sidebar-footer">Built for licensed trades<br /><span>Victoria · Register {register.register_version}</span></div>
     </aside>
 
     <main className="main-content">
-      <header className="mobile-header"><div className="brand-mark">PR</div><div className="mobile-status"><span className="trust-dot" /> Current register</div></header>
+      <header className="mobile-header">
+        <div className="brand-mark">PR</div>
+        <div className="mobile-status">
+          {session ? <span className="user-chip"><Icon name="user" size={14} /> {session.user.email}</span> : <button className="mobile-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}>Sign in</button>}
+        </div>
+      </header>
       {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} />}
       {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} />}
-      {activeScreen === 'saved' && <SavedScreen entries={savedEntries} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} />}
-      {activeScreen === 'settings' && <SettingsScreen register={register} />}
+      {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} />}
+      {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
+      {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} />}
+      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
     </main>
 
     <nav className="mobile-nav" aria-label="Mobile navigation">
       <NavButton active={activeScreen === 'find' || activeScreen === 'results'} onClick={() => { setActiveScreen('find'); clearFilters() }} icon="search" label="Find" />
       <NavButton active={activeScreen === 'saved'} onClick={() => setActiveScreen('saved')} icon="bookmark" label="Saved" count={savedEntries.length} />
+      <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} />
       <NavButton active={activeScreen === 'settings'} onClick={() => setActiveScreen('settings')} icon="settings" label="Settings" />
     </nav>
-    {selectedEntry && <DetailModal entry={selectedEntry} saved={savedIds.includes(selectedEntry.id)} onClose={() => setSelectedEntry(null)} onToggleSaved={() => toggleSaved(selectedEntry.id)} />}
+    {selectedEntry && <DetailModal entry={selectedEntry} saved={savedIds.includes(selectedEntry.id)} onClose={() => setSelectedEntry(null)} onToggleSaved={() => toggleSaved(selectedEntry.id)} session={session} onAddToJob={() => setShowAddToJob(true)} />}
+    {showAddToJob && selectedEntry && <AddToJobModal entry={selectedEntry} jobs={jobs} jobItems={jobItems} onClose={() => setShowAddToJob(false)} onAdd={addRegToJob} onCreateNew={createJob} />}
+    {authView && <AuthModal mode={authView} setMode={setAuthView} onSubmit={handleAuthSubmit} onClose={() => { setAuthView(null); setAuthError(''); setAuthMessage('') }} error={authError} busy={authBusy} message={authMessage} />}
   </div>
 }
 
 function NavButton({ active, onClick, icon, label, count }) {
   return <button className={`nav-button ${active ? 'active' : ''}`} onClick={onClick}><span className="nav-icon"><Icon name={icon} size={19} />{count ? <b>{count}</b> : null}</span><span>{label}</span></button>
+}
+
+function AuthModal({ mode, setMode, onSubmit, onClose, error, busy, message }) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+
+  function handleSubmit(event) {
+    event.preventDefault()
+    onSubmit(email, password, mode, confirmPassword)
+  }
+
+  const titles = { signup: 'Create account', signin: 'Sign in', reset: 'Reset password', 'new-password': 'Set new password' }
+
+  return <div className="modal-backdrop" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose() }}>
+    <section className="detail-modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div className="modal-handle" />
+      <div className="modal-header">
+        <span className="type-badge">{titles[mode]}</span>
+        <button className="close-button" onClick={onClose} aria-label="Close"><Icon name="close" size={20} /></button>
+      </div>
+      <h1 id="auth-title" className="auth-title">{titles[mode]}</h1>
+      {mode === 'reset' ? <p className="auth-subtitle">Enter your email and we'll send you a link to set a new password.</p> : mode === 'new-password' ? <p className="auth-subtitle">Choose a new password for your account.</p> : <p className="auth-subtitle">Use your email and a password to {mode === 'signup' ? 'create an account' : 'sign in'}. The register stays free to browse either way.</p>}
+      {message && <div className="auth-message">{message}</div>}
+      {error && <div className="auth-error">{error}</div>}
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <label className="auth-field"><span>Email</span><div className="auth-input-wrap"><Icon name="mail" size={17} /><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" /></div></label>
+        {mode !== 'reset' && <label className="auth-field"><span>Password</span><div className="auth-input-wrap"><Icon name="lock" size={17} /><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" required autoComplete={mode === 'signup' || mode === 'new-password' ? 'new-password' : 'current-password'} /></div></label>}
+        {mode === 'new-password' && <label className="auth-field"><span>Confirm password</span><div className="auth-input-wrap"><Icon name="lock" size={17} /><input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Enter it again" required autoComplete="new-password" /></div></label>}
+        <button type="submit" className="auth-submit" disabled={busy}>{busy ? 'Please wait…' : titles[mode]}</button>
+      </form>
+      <div className="auth-links">
+        {mode === 'signin' && <button onClick={() => { setMode('signup'); }}>No account? Create one</button>}
+        {mode === 'signin' && <button onClick={() => { setMode('reset'); }}>Forgot password?</button>}
+        {mode === 'signup' && <button onClick={() => { setMode('signin'); }}>Already have an account? Sign in</button>}
+        {mode === 'reset' && <button onClick={() => { setMode('signin'); }}>Back to sign in</button>}
+        {mode === 'new-password' && <button onClick={() => { setMode('signin'); }}>Back to sign in</button>}
+      </div>
+    </section>
+  </div>
 }
 
 function FindScreen({ entries, query, setQuery, startSearch, chooseJob }) {
@@ -205,28 +389,56 @@ function RegCard({ entry, onOpen, saved, onToggleSaved }) {
   return <article className="reg-card" onClick={() => onOpen(entry)}><div className="card-top"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{meta}</span><button className={`save-button ${saved ? 'saved' : ''}`} onClick={(event) => { event.stopPropagation(); onToggleSaved(entry.id) }} aria-label={saved ? 'Remove from saved' : 'Save regulation'}><Icon name="bookmark" size={18} /></button></div><h2>{entry.ui?.title || entry.claim}</h2><p className="card-value">{entry.value}</p><div className="card-bottom"><span className={`status ${trust.kind}`}><span className="status-dot" />{trust.message}</span><span className="card-ref">{entry.ui?.ref}</span></div></article>
 }
 
-function SavedScreen({ entries, onOpen, savedIds, toggleSaved }) {
-  return <section className="screen saved-screen"><div className="eyebrow">YOUR DEVICE</div><h1>Saved regulations</h1><p className="intro">Keep the rules you return to on the job within reach.</p>{entries.length ? <div className="results-list">{entries.map((entry) => <RegCard key={entry.id} entry={entry} onOpen={onOpen} saved={savedIds.includes(entry.id)} onToggleSaved={toggleSaved} />)}</div> : <div className="empty-state saved-empty"><div className="empty-icon"><Icon name="bookmark" size={28} /></div><h2>Nothing saved yet</h2><p>Tap the bookmark on any regulation to keep it here.</p></div>}</section>
+function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, session, savesLoading }) {
+  const entryMap = useMemo(() => new Map(allEntries.map((e) => [e.id, e])), [allEntries])
+  const removedIds = savedIds.filter((id) => !entryMap.has(id))
+
+  return <section className="screen saved-screen">
+    <div className="eyebrow">{session ? 'SYNCED TO YOUR ACCOUNT' : 'YOUR DEVICE'}</div>
+    <h1>Saved regulations</h1>
+    <p className="intro">{session ? 'Your saved regs follow you to any device you sign in on.' : 'Sign in to sync your saved regs across devices. They are stored on this device for now.'}</p>
+    {savesLoading && <p className="saves-loading">Loading your saves…</p>}
+    {entries.length ? <div className="results-list">{entries.map((entry) => <RegCard key={entry.id} entry={entry} onOpen={onOpen} saved={savedIds.includes(entry.id)} onToggleSaved={toggleSaved} />)}</div> : !savesLoading && <div className="empty-state saved-empty"><div className="empty-icon"><Icon name="bookmark" size={28} /></div><h2>Nothing saved yet</h2><p>Tap the bookmark on any regulation to keep it here.</p></div>}
+    {removedIds.length > 0 && <div className="removed-saves"><h3>No longer in the register</h3>{removedIds.map((id) => <div key={id} className="removed-row"><span>{id}</span><button onClick={() => toggleSaved(id)}>Remove</button></div>)}</div>}
+  </section>
 }
 
-function SettingsScreen({ register }) {
-  return <section className="screen settings-screen"><div className="eyebrow">REGISTER INFO</div><h1>Settings</h1><p className="intro">The register is read-only in this app. It is refreshed by a separate source-checking process.</p><div className="settings-card"><SettingRow label="Register version" value={register.register_version} /><SettingRow label="Entries" value={`${register.entries.length} regulations`} /><SettingRow label="Last checked" value={formatDate(register.last_run?.on || register.last_agent_run)} /><SettingRow label="Check result" value={`${register.last_run?.counts?.verified || 0} verified`} good /></div><div className="settings-callout"><span className="trust-dot" /><div><strong>Weekly source checks</strong><p>Every entry keeps its own status. A changed or unreachable source is shown as a warning, never as current.</p></div></div></section>
+function SettingsScreen({ register, session, onSignOut, onShowAuth }) {
+  return <section className="screen settings-screen">
+    <div className="eyebrow">REGISTER INFO</div>
+    <h1>Settings</h1>
+    <p className="intro">The register is read-only in this app. It is refreshed by a separate source-checking process.</p>
+    <div className="settings-card">
+      <SettingRow label="Register version" value={register.register_version} />
+      <SettingRow label="Entries" value={`${register.entries.length} regulations`} />
+      <SettingRow label="Last checked" value={formatDate(register.last_run?.on || register.last_agent_run)} />
+      <SettingRow label="Check result" value={`${register.last_run?.counts?.verified || 0} verified`} good />
+    </div>
+    <div className="settings-card" style={{ marginTop: '18px' }}>
+      {session ? (
+        <div className="setting-row setting-account">
+          <div className="account-info"><span className="account-label">Signed in as</span><strong>{session.user.email}</strong></div>
+          <button className="auth-signout" onClick={onSignOut}><Icon name="logout" size={16} /> Sign out</button>
+        </div>
+      ) : (
+        <div className="setting-row setting-account">
+          <div className="account-info"><span className="account-label">Account</span><strong>Not signed in</strong><small>Sign in to sync saved regs across devices</small></div>
+          <div className="account-actions"><button className="auth-signin" onClick={() => onShowAuth('signin')}><Icon name="user" size={16} /> Sign in</button><button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button></div>
+        </div>
+      )}
+    </div>
+    <div className="settings-callout"><span className="trust-dot" /><div><strong>Weekly source checks</strong><p>Every entry keeps its own status. A changed or unreachable source is shown as a warning, never as current.</p></div></div>
+  </section>
 }
 
 function SettingRow({ label, value, good }) { return <div className="setting-row"><span>{label}</span><strong className={good ? 'good' : ''}>{value}</strong></div> }
 
-function DetailModal({ entry, saved, onClose, onToggleSaved }) {
+function DetailModal({ entry, saved, onClose, onToggleSaved, session, onAddToJob }) {
   const trust = trustFor(entry)
   const source = entry.human_url || entry.source_url
-  return <div className="modal-backdrop" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose() }}><section className="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><div className="modal-handle" /><div className="modal-header"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{OBLIGATION_LABELS[entry.ui?.obligation] || entry.ui?.obligation || 'Other'}</span><button className="close-button" onClick={onClose} aria-label="Close"><Icon name="close" size={20} /></button></div><h1 id="detail-title">{entry.ui?.title || entry.claim}</h1><div className={`trust-panel ${trust.kind}`}><span className="status-dot" /><div><strong>{trust.kind === 'verified' ? 'Verified source' : trust.label}</strong><p>{trust.message}</p>{trust.kind !== 'verified' && entry.remedial_note ? <small>{entry.remedial_note}</small> : null}</div></div><div className="detail-grid"><div><span className="detail-label">Value</span><p className="detail-value">{entry.value}</p></div><div><span className="detail-label">Where to find it</span><p className="detail-value detail-ref">{entry.ui?.ref}<br /><span>{entry.ui?.doc}</span></p></div></div>{trust.kind === 'verified' && entry.verified?.quote ? <div className="quote-block"><span className="detail-label">Supporting quote</span><blockquote>“{entry.verified.quote}”</blockquote></div> : null}<div className="detail-date"><span>Last confirmed</span><strong>{trust.kind === 'verified' ? formatDate(entry.verified?.on) : 'Not confirmed as current'}</strong></div><div className="modal-actions"><button className={`modal-save ${saved ? 'saved' : ''}`} onClick={onToggleSaved}><Icon name="bookmark" size={18} />{saved ? 'Saved' : 'Save'}</button><a className="source-link" href={source} target="_blank" rel="noopener noreferrer">Open government source <Icon name="external" size={16} /></a></div></section></div>
+  return <div className="modal-backdrop" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose() }}><section className="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><div className="modal-handle" /><div className="modal-header"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{OBLIGATION_LABELS[entry.ui?.obligation] || entry.ui?.obligation || 'Other'}</span><button className="close-button" onClick={onClose} aria-label="Close"><Icon name="close" size={20} /></button></div><h1 id="detail-title">{entry.ui?.title || entry.claim}</h1><div className={`trust-panel ${trust.kind}`}><span className="status-dot" /><div><strong>{trust.kind === 'verified' ? 'Verified source' : trust.label}</strong><p>{trust.message}</p>{trust.kind !== 'verified' && entry.remedial_note ? <small>{entry.remedial_note}</small> : null}</div></div><div className="detail-grid"><div><span className="detail-label">Value</span><p className="detail-value">{entry.value}</p></div><div><span className="detail-label">Where to find it</span><p className="detail-value detail-ref">{entry.ui?.ref}<br /><span>{entry.ui?.doc}</span></p></div></div>{trust.kind === 'verified' && entry.verified?.quote ? <div className="quote-block"><span className="detail-label">Supporting quote</span><blockquote>“{entry.verified.quote}”</blockquote></div> : null}<div className="detail-date"><span>Last confirmed</span><strong>{trust.kind === 'verified' ? formatDate(entry.verified?.on) : 'Not confirmed as current'}</strong></div><div className="modal-actions">{session && <button className="modal-save job-add-btn" onClick={onAddToJob}><Icon name="folder" size={18} />Add to job</button>}<button className={`modal-save ${saved ? 'saved' : ''}`} onClick={onToggleSaved}><Icon name="bookmark" size={18} />{saved ? 'Saved' : 'Save'}</button><a className="source-link" href={source} target="_blank" rel="noopener noreferrer">Open government source <Icon name="external" size={16} /></a></div></section></div>
 }
 
-export default App
-
-// main.jsx is the Vite entry named in index.html. It previously only defined and
-// exported App, so nothing ever rendered: the module loaded, react loaded,
-// react-dom was never imported, #root stayed empty and no error was raised —
-// a silent blank page.
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

@@ -18,6 +18,7 @@
   --rust-soft: #f5e5dc;
   --blue: #346c88;
   --blue-soft: #e3eff4;
+  --red: #b54545;
 }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; background: #eef3f1; }
@@ -178,4 +179,124 @@ blockquote { margin: 10px 0 0; padding: 14px 16px; border-left: 3px solid var(--
   .mobile-nav .nav-button { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 4px; font-size: 9px; }
   .mobile-nav .nav-button.active { background: transparent; color: var(--sea); }
 }
+/* ---- auth (sidebar) ---- */
+.sidebar-auth { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+.auth-user { display: flex; flex-direction: column; gap: 10px; }
+.auth-email { font-size: 11px; color: var(--muted); font-weight: 600; word-break: break-all; line-height: 1.4; }
+.auth-signout { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 8px; padding: 8px 12px; font-size: 11px; font-weight: 600; transition: .2s; }
+.auth-signout:hover { border-color: #c4966f; color: var(--rust); }
+.auth-guest { display: flex; flex-direction: column; gap: 7px; }
+.auth-signin { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--sea); background: var(--sea); color: white; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 700; transition: .2s; }
+.auth-signin:hover { background: #0d3a47; }
+.auth-signup { border: 1px solid var(--line); background: white; color: var(--sea); border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 700; transition: .2s; }
+.auth-signup:hover { border-color: var(--sea); background: var(--sea-soft); }
+
+/* ---- mobile header auth ---- */
+.mobile-status { display: flex; align-items: center; gap: 8px; }
+.user-chip { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mobile-signin { border: 1px solid var(--sea); background: var(--sea); color: white; border-radius: 7px; padding: 7px 14px; font-size: 11px; font-weight: 700; }
+
+/* ---- auth modal ---- */
+.auth-modal { max-width: 440px; }
+.auth-title { font-size: 24px !important; }
+.auth-subtitle { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 10px; }
+.auth-form { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; }
+.auth-field { display: flex; flex-direction: column; gap: 7px; }
+.auth-field > span { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.auth-input-wrap { display: flex; align-items: center; gap: 10px; padding: 0 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); transition: .2s; }
+.auth-input-wrap:focus-within { border-color: var(--sea); background: white; box-shadow: 0 0 0 3px rgba(15, 76, 92, .12); }
+.auth-input-wrap svg { color: #8da2a1; flex: 0 0 auto; }
+.auth-input-wrap input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; padding: 12px 0; color: var(--ink); font-size: 14px; }
+.auth-submit { margin-top: 6px; padding: 13px; border: 0; border-radius: 10px; background: var(--sea); color: white; font-size: 13px; font-weight: 700; transition: .2s; }
+.auth-submit:hover { background: #0d3a47; }
+.auth-submit:disabled { opacity: .6; cursor: wait; }
+.auth-links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
+.auth-links button { border: 0; background: transparent; color: var(--sea); font-size: 11px; font-weight: 600; padding: 0; cursor: pointer; }
+.auth-links button:hover { text-decoration: underline; }
+.auth-message { margin-top: 14px; padding: 11px 13px; border-radius: 9px; background: var(--green-soft); color: var(--green); font-size: 12px; font-weight: 600; }
+.auth-error { margin-top: 14px; padding: 11px 13px; border-radius: 9px; background: #fbeee8; color: #955a33; font-size: 12px; font-weight: 600; }
+
+/* ---- settings account row ---- */
+.setting-account { align-items: center; }
+.account-info { display: flex; flex-direction: column; gap: 3px; }
+.account-label { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+.account-info strong { font-size: 13px; }
+.account-info small { color: var(--muted); font-size: 10px; font-weight: 500; }
+.account-actions { display: flex; gap: 7px; flex-shrink: 0; }
+.setting-account .auth-signin, .setting-account .auth-signout { padding: 8px 12px; font-size: 11px; }
+.setting-account .auth-signup { padding: 8px 12px; font-size: 11px; }
+
+/* ---- saved screen ---- */
+.saves-loading { color: var(--muted); font-size: 12px; margin-top: 16px; }
+.removed-saves { margin-top: 28px; padding: 16px; border: 1px solid var(--line); border-radius: 10px; background: #fbf6f0; }
+.removed-saves h3 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--rust); margin-bottom: 10px; }
+.removed-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid #f0e6d8; font-size: 12px; color: var(--muted); }
+.removed-row button { border: 1px solid var(--line); background: white; color: var(--rust); border-radius: 6px; padding: 5px 10px; font-size: 10px; font-weight: 600; }
+
+/* ---- jobs screen ---- */
+.jobs-screen h1 { font-size: 40px; }
+.jobs-screen .section-top { margin-bottom: 12px; }
+.add-job-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--sea); background: var(--sea); color: white; border-radius: 8px; padding: 9px 14px; font-size: 12px; font-weight: 700; }
+.add-job-btn:hover { background: #0d3a47; }
+.jobs-locked { margin-top: 30px; padding: 40px 30px; text-align: center; border: 1px solid var(--line); border-radius: 14px; background: white; }
+.locked-icon { width: 56px; height: 56px; display: grid; place-items: center; margin: 0 auto 15px; border-radius: 50%; color: var(--sea); background: var(--sea-soft); }
+.jobs-locked h2 { color: var(--ink); font-size: 18px; margin-bottom: 7px; }
+.jobs-locked p { color: var(--muted); font-size: 12px; line-height: 1.6; max-width: 360px; margin: 0 auto 18px; }
+.locked-actions { display: flex; gap: 8px; justify-content: center; }
+.locked-actions .auth-signin, .locked-actions .auth-signup { padding: 10px 16px; font-size: 12px; }
+.jobs-list { display: flex; flex-direction: column; gap: 9px; margin-top: 24px; }
+.job-row { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: white; cursor: pointer; transition: transform .2s, box-shadow .2s, border-color .2s; }
+.job-row:hover { transform: translateY(-2px); border-color: #aac5c1; box-shadow: 0 9px 22px rgba(24, 59, 60, .08); }
+.job-row-icon { color: var(--sea); display: grid; place-items: center; flex: 0 0 auto; }
+.job-row-info { flex: 1; min-width: 0; }
+.job-row-info h3 { font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+.job-row-info p { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.job-row-meta { display: flex; gap: 14px; align-items: center; margin-top: 7px; }
+.job-row-meta span { font-size: 10px; color: var(--muted); font-weight: 600; }
+.job-degraded { display: inline-flex; align-items: center; gap: 5px; color: #955a33 !important; }
+.job-row-arrow { color: #97abaa; flex: 0 0 auto; }
+
+/* ---- job create/edit card ---- */
+.job-create-card { margin-top: 18px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+.job-create-card h3 { font-size: 13px; color: var(--ink); margin-bottom: 14px; }
+.job-create-actions { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+.job-create-actions .auth-submit { flex: 0 0 auto; padding: 10px 18px; }
+.cancel-btn { border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 600; }
+.cancel-btn:hover { border-color: #c0cdc9; color: var(--ink); }
+.danger-btn { border: 0; background: transparent; color: var(--red); font-size: 11px; font-weight: 700; padding: 8px 0; cursor: pointer; }
+.danger-btn:hover { text-decoration: underline; }
+.confirm-delete { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.confirm-delete p { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+.confirm-actions { display: flex; gap: 12px; }
+.confirm-actions .danger-btn { border: 1px solid #e8c4b8; border-radius: 7px; padding: 8px 14px; background: #fbeee8; }
+
+/* ---- job detail screen ---- */
+.job-detail-screen .back-btn { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--sea); font-size: 12px; font-weight: 600; padding: 0 0 20px; cursor: pointer; }
+.job-detail-screen h1 { font-size: 34px; }
+.job-note-display { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.edit-job-btn { display: inline-grid; place-items: center; border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 8px; padding: 9px; }
+.edit-job-btn:hover { border-color: var(--sea); color: var(--sea); }
+
+/* ---- add to job modal ---- */
+.add-to-job-modal { max-width: 440px; }
+.add-to-job-list { display: flex; flex-direction: column; gap: 7px; margin-top: 18px; }
+.add-to-job-row { display: flex; align-items: center; gap: 11px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px; background: white; color: var(--ink); font-size: 13px; font-weight: 600; text-align: left; cursor: pointer; transition: .2s; }
+.add-to-job-row:hover { border-color: var(--sea); background: var(--sea-soft); }
+.add-to-job-row.already { opacity: .5; cursor: default; }
+.add-to-job-row.already:hover { border-color: var(--line); background: white; }
+.add-to-job-row small { margin-left: auto; color: var(--green); font-size: 10px; font-weight: 700; }
+.add-to-job-row.new { color: var(--sea); border-style: dashed; }
+.add-to-job-row.new:hover { background: var(--sea-soft); }
+
+/* ---- detail modal add-to-job button ---- */
+.modal-save.job-add-btn { color: var(--sea); border-color: var(--sea-soft); }
+.modal-save.job-add-btn:hover { background: var(--sea-soft); }
+
+@media (max-width: 760px) {
+  .jobs-screen h1 { font-size: 34px; }
+  .job-detail-screen h1 { font-size: 29px; }
+  .jobs-list { gap: 7px; }
+  .job-row { padding: 13px; }
+}
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }

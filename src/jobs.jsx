@@ -31,7 +31,7 @@ export function useJobs(session) {
   useEffect(() => { loadJobs() }, [session])
 
   async function createJob(name, note) {
-    const { data, error } = await supabase.from('jobs').insert({ name, note: note || null }).select().single()
+    const { data, error } = await supabase.rpc('create_job', { p_name: name, p_note: note || null })
     if (error) throw error
     setJobs((current) => [data, ...current])
     setJobItems((current) => ({ ...current, [data.id]: [] }))
@@ -117,33 +117,16 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
     </section>
   }
 
-  if (session && !subscription.isActive && !subscription.subLoading) {
-    return <section className="screen jobs-screen">
-      <div className="eyebrow">YOUR ACCOUNT</div>
-      <h1>Jobs</h1>
-      <p className="intro">Group saved regs into named jobs — "Bennett St reno" — so you can pull up exactly the rules you need for each project.</p>
-      <div className="jobs-locked upgrade-prompt">
-        <div className="locked-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg></div>
-        <h2>Unlock Jobs with a subscription</h2>
-        <p>Jobs let you group regs by project so you can pull up exactly the rules you need on site. Subscribe to unlock unlimited jobs.</p>
-        {subscription.checkoutError && <div className="auth-error">{subscription.checkoutError}</div>}
-        <div className="locked-actions">
-          <button className="checkout-btn" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>
-            {subscription.checkoutLoading ? 'Redirecting to checkout…' : 'Subscribe now'}
-          </button>
-        </div>
-        <p className="upgrade-fineprint">Secure payment via Stripe. Cancel any time.</p>
-      </div>
-    </section>
-  }
+  const canEdit = subscription.isActive
 
   return <section className="screen jobs-screen">
     <div className="eyebrow">YOUR ACCOUNT</div>
     <div className="section-top">
       <div><h1>Jobs</h1></div>
-      <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button>
+      {canEdit ? <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button> : <span className="read-only-badge">Read only</span>} 
     </div>
     <p className="intro">Group saved regs into named jobs so you can pull up exactly the rules you need for each project.</p>
+    {!subscription.subLoading && !canEdit && <div className="jobs-readonly-notice"><strong>Your subscription is not active.</strong> Existing jobs are still available to view. Resubscribe to create or edit jobs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div>}
 
     {showCreate && (
       <form className="job-create-card" onSubmit={handleCreate}>
@@ -186,7 +169,7 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
   </section>
 }
 
-export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, onOpenEntry, onRenameJob, onDeleteJob }) {
+export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, onOpenEntry, onRenameJob, onDeleteJob, readOnly = false }) {
   const [showEdit, setShowEdit] = useState(false)
   const [name, setName] = useState(job.name)
   const [note, setNote] = useState(job.note || '')
@@ -227,7 +210,7 @@ export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, o
     <button className="back-btn" onClick={onBack}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg> Jobs</button>
     <div className="section-top">
       <div><div className="eyebrow">JOB</div><h1>{job.name}</h1>{job.note && <p className="job-note-display">{job.note}</p>}</div>
-      <button className="edit-job-btn" onClick={() => { setName(job.name); setNote(job.note || ''); setShowEdit(!showEdit) }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg></button>
+      {!readOnly && <button className="edit-job-btn" onClick={() => { setName(job.name); setNote(job.note || ''); setShowEdit(!showEdit) }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg></button>}
     </div>
 
     {showEdit && (
@@ -263,15 +246,15 @@ export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, o
           : { kind: 'warning', message: entry.remedial_note || 'Source changed or not re-checked' }
         const meta = { technical: 'Technical', licensing: 'Licensing', documentation: 'Documentation', whs: 'WHS', product: 'Product' }[entry.ui?.obligation] || 'Other'
         return <article key={item.id || item.entry_id} className="reg-card" onClick={() => onOpenEntry(entry)}>
-          <div className="card-top"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{meta}</span><button className="save-button" onClick={(e) => { e.stopPropagation(); onRemoveReg(job.id, item.entry_id) }} aria-label="Remove from job"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" /></svg></button></div>
+          <div className="card-top"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{meta}</span>{!readOnly && <button className="save-button" onClick={(e) => { e.stopPropagation(); onRemoveReg(job.id, item.entry_id) }} aria-label="Remove from job"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" /></svg></button>}</div>
           <h2>{entry.ui?.title || entry.claim}</h2>
           <p className="card-value">{entry.value}</p>
           <div className="card-bottom"><span className={`status ${trust.kind}`}><span className="status-dot" />{trust.message}</span><span className="card-ref">{entry.ui?.ref}</span></div>
         </article>
       })}
-      {liveItems.length === 0 && !showEdit && <div className="empty-state saved-empty"><h2>No regs in this job yet</h2><p>Open a regulation and use "Add to job" to put it here.</p></div>}
+      {liveItems.length === 0 && !showEdit && <div className="empty-state saved-empty"><h2>No regs in this job yet</h2><p>{readOnly ? 'This job has no current regulations.' : 'Open a regulation and use "Add to job" to put it here.'}</p></div>}
     </div>
-    {removedIds.length > 0 && <div className="removed-saves"><h3>No longer in the register</h3>{removedIds.map((id) => <div key={id} className="removed-row"><span>{id}</span><button onClick={() => onRemoveReg(job.id, id)}>Remove</button></div>)}</div>}
+    {removedIds.length > 0 && <div className="removed-saves"><h3>No longer in the register</h3>{removedIds.map((id) => <div key={id} className="removed-row"><span>{id}</span>{!readOnly && <button onClick={() => onRemoveReg(job.id, id)}>Remove</button>}</div>)}</div>}
   </section>
 }
 

@@ -312,7 +312,7 @@ function App() {
       {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} />}
       {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} />}
       {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
-      {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} />}
+      {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} readOnly={!subscription.isActive} />}
       {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
     </main>
 
@@ -322,7 +322,7 @@ function App() {
       {authAvailable ? <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} /> : null}
       <NavButton active={activeScreen === 'settings'} onClick={() => setActiveScreen('settings')} icon="settings" label="Settings" />
     </nav>
-    {selectedEntry && <DetailModal entry={selectedEntry} saved={savedIds.includes(selectedEntry.id)} onClose={() => setSelectedEntry(null)} onToggleSaved={() => toggleSaved(selectedEntry.id)} session={session} onAddToJob={() => setShowAddToJob(true)} />}
+    {selectedEntry && <DetailModal entry={selectedEntry} saved={savedIds.includes(selectedEntry.id)} onClose={() => setSelectedEntry(null)} onToggleSaved={() => toggleSaved(selectedEntry.id)} session={session} canManageJobs={subscription.isActive} onAddToJob={() => setShowAddToJob(true)} />}
     {showAddToJob && selectedEntry && <AddToJobModal entry={selectedEntry} jobs={jobs} jobItems={jobItems} onClose={() => setShowAddToJob(false)} onAdd={addRegToJob} onCreateNew={createJob} />}
     {authView && <AuthModal mode={authView} setMode={setAuthView} onSubmit={handleAuthSubmit} onClose={() => { setAuthView(null); setAuthError(''); setAuthMessage('') }} error={authError} busy={authBusy} message={authMessage} />}
   </div>
@@ -427,7 +427,7 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
 }
 
 function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription }) {
-  const subStatus = subscription.isActive ? 'Active' : subscription.subLoading ? 'Checking…' : 'No subscription'
+  const subStatus = subscription.subLoading ? 'Checking…' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Lapsed' : 'No subscription'
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
     <h1>Settings</h1>
@@ -456,9 +456,18 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
           <strong className={subscription.isActive ? 'good' : ''}>{subStatus}</strong>
         </div>
       )}
+      {session && subscription.isActive && (
+        <div className="subscription-cta">
+          <p>{subscription.cancelAtPeriodEnd ? `Your access remains active until ${formatDate(subscription.periodEnd)}.` : 'Manage billing, payment method, or cancellation in Stripe.'}</p>
+          {subscription.portalError && <div className="auth-error">{subscription.portalError}</div>}
+          <button className="checkout-btn secondary" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>
+            {subscription.portalLoading ? 'Opening…' : 'Manage subscription'}
+          </button>
+        </div>
+      )}
       {session && !subscription.isActive && !subscription.subLoading && (
         <div className="subscription-cta">
-          <p>Unlock Jobs to group regs by project.</p>
+          <p>{subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Your jobs are retained and available to read. Resubscribe to edit them.' : 'Unlock Jobs to group regs by project.'}</p>
           {subscription.checkoutError && <div className="auth-error">{subscription.checkoutError}</div>}
           <button className="checkout-btn" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>
             {subscription.checkoutLoading ? 'Redirecting…' : 'Subscribe now'}
@@ -472,10 +481,18 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
 
 function SettingRow({ label, value, good }) { return <div className="setting-row"><span>{label}</span><strong className={good ? 'good' : ''}>{value}</strong></div> }
 
-function DetailModal({ entry, saved, onClose, onToggleSaved, session, onAddToJob }) {
+function DetailModal({ entry, saved, onClose, onToggleSaved, session, canManageJobs, onAddToJob }) {
+  const [sourceOverlay, setSourceOverlay] = useState(false)
   const trust = trustFor(entry)
   const source = entry.human_url || entry.source_url
-  return <div className="modal-backdrop" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose() }}><section className="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><div className="modal-handle" /><div className="modal-header"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{OBLIGATION_LABELS[entry.ui?.obligation] || entry.ui?.obligation || 'Other'}</span><button className="close-button" onClick={onClose} aria-label="Close"><Icon name="close" size={20} /></button></div><h1 id="detail-title">{entry.ui?.title || entry.claim}</h1><div className={`trust-panel ${trust.kind}`}><span className="status-dot" /><div><strong>{trust.kind === 'verified' ? 'Verified source' : trust.label}</strong><p>{trust.message}</p>{trust.kind !== 'verified' && entry.remedial_note ? <small>{entry.remedial_note}</small> : null}</div></div><div className="detail-grid"><div><span className="detail-label">Value</span><p className="detail-value">{entry.value}</p></div><div><span className="detail-label">Where to find it</span><p className="detail-value detail-ref">{entry.ui?.ref}<br /><span>{entry.ui?.doc}</span></p></div></div>{trust.kind === 'verified' && entry.verified?.quote ? <div className="quote-block"><span className="detail-label">Supporting quote</span><blockquote>“{entry.verified.quote}”</blockquote></div> : null}<div className="detail-date"><span>Last confirmed</span><strong>{trust.kind === 'verified' ? formatDate(entry.verified?.on) : 'Not confirmed as current'}</strong></div><div className="modal-actions">{session && <button className="modal-save job-add-btn" onClick={onAddToJob}><Icon name="folder" size={18} />Add to job</button>}<button className={`modal-save ${saved ? 'saved' : ''}`} onClick={onToggleSaved}><Icon name="bookmark" size={18} />{saved ? 'Saved' : 'Save'}</button><a className="source-link" href={source} target="_blank" rel="noopener noreferrer">Open government source <Icon name="external" size={16} /></a></div></section></div>
+  const isStandalone = typeof navigator !== 'undefined' && navigator.standalone === true
+  const openSource = (event) => {
+    if (isStandalone) {
+      event.preventDefault()
+      setSourceOverlay(true)
+    }
+  }
+  return <div className="modal-backdrop" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose() }}><section className="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><div className="modal-handle" /><div className="modal-header"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{OBLIGATION_LABELS[entry.ui?.obligation] || entry.ui?.obligation || 'Other'}</span><button className="close-button" onClick={onClose} aria-label="Close"><Icon name="close" size={20} /></button></div><h1 id="detail-title">{entry.ui?.title || entry.claim}</h1><div className={`trust-panel ${trust.kind}`}><span className="status-dot" /><div><strong>{trust.kind === 'verified' ? 'Verified source' : trust.label}</strong><p>{trust.message}</p>{trust.kind !== 'verified' && entry.remedial_note ? <small>{entry.remedial_note}</small> : null}</div></div><div className="detail-grid"><div><span className="detail-label">Value</span><p className="detail-value">{entry.value}</p></div><div><span className="detail-label">Where to find it</span><p className="detail-value detail-ref">{entry.ui?.ref}<br /><span>{entry.ui?.doc}</span></p></div></div>{trust.kind === 'verified' && entry.verified?.quote ? <div className="quote-block"><span className="detail-label">Supporting quote</span><blockquote>“{entry.verified.quote}”</blockquote></div> : null}<div className="detail-date"><span>Last confirmed</span><strong>{trust.kind === 'verified' ? formatDate(entry.verified?.on) : 'Not confirmed as current'}</strong></div><div className="modal-actions">{session && canManageJobs && <button className="modal-save job-add-btn" onClick={onAddToJob}><Icon name="folder" size={18} />Add to job</button>}<button className={`modal-save ${saved ? 'saved' : ''}`} onClick={onToggleSaved}><Icon name="bookmark" size={18} />{saved ? 'Saved' : 'Save'}</button><a className="source-link" href={source} target="_blank" rel="noopener noreferrer" onClick={openSource}>Open government source <Icon name="external" size={16} /></a></div>{sourceOverlay && <div className="source-overlay" role="dialog" aria-label="Government source"><div className="source-overlay-card"><button className="close-button" onClick={() => setSourceOverlay(false)} aria-label="Close source overlay"><Icon name="close" size={20} /></button><h2>Open government source</h2><p>The source will open outside the app. Return here when you are done.</p><a className="checkout-btn" href={source} target="_blank" rel="noopener noreferrer">Open source <Icon name="external" size={16} /></a></div></div>}</section></div>
 }
 
 createRoot(document.getElementById('root')).render(

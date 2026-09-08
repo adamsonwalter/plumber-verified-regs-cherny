@@ -305,6 +305,11 @@ blockquote { margin: 10px 0 0; padding: 14px 16px; border-left: 3px solid var(--
 .checkout-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 9px; padding: 12px 22px; background: var(--green); color: white; font-size: 13px; font-weight: 700; transition: .2s; }
 .checkout-btn:hover { background: #245543; }
 .checkout-btn:disabled { opacity: .6; cursor: wait; }
+.checkout-btn.secondary { background: var(--ink); }
+.checkout-btn.secondary:hover { background: #263a3c; }
+.read-only-badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 7px 11px; background: #f2eee8; color: var(--muted); font-size: 11px; font-weight: 700; }
+.jobs-readonly-notice { margin: 18px 0; padding: 14px 16px; border: 1px solid #ead9c6; border-radius: 10px; background: #fff8ef; color: #76543a; font-size: 12px; line-height: 1.5; }
+.inline-checkout { border: 0; padding: 0; background: transparent; color: var(--green); font: inherit; font-weight: 700; text-decoration: underline; }
 .upgrade-prompt .upgrade-fineprint { margin-top: 14px; font-size: 10px; color: var(--muted); font-weight: 500; }
 .subscription-row { border-top: 1px solid #edf2f0; }
 .subscription-cta { padding: 16px 20px; border-top: 1px solid #edf2f0; }
@@ -313,3 +318,9 @@ blockquote { margin: 10px 0 0; padding: 14px 16px; border-left: 3px solid var(--
 .checkout-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding: 14px 20px; text-align: center; font-size: 13px; font-weight: 600; animation: rise .22s ease-out; }
 .checkout-banner.success { background: var(--green-soft); color: var(--green); }
 .checkout-banner.cancelled { background: #fbefe5; color: #955a33; }
+.source-overlay { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(26, 43, 45, .44); }
+.source-overlay-card { position: relative; width: min(100%, 360px); padding: 28px 24px 24px; border-radius: 14px; background: var(--paper); box-shadow: 0 18px 48px rgba(20, 40, 42, .2); }
+.source-overlay-card .close-button { position: absolute; top: 12px; right: 12px; }
+.source-overlay-card h2 { margin-bottom: 8px; font-size: 20px; }
+.source-overlay-card p { margin-bottom: 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.source-overlay-card .checkout-btn { width: 100%; }

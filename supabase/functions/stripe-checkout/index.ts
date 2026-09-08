@@ -4,6 +4,11 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
+
+// Server-side price — the client never decides what it is charged.
+// Falls back to VITE_STRIPE_PRICE_ID for backwards compatibility but
+// STRIPE_PRICE_ID is the authoritative server secret.
+const SERVER_PRICE_ID = Deno.env.get('STRIPE_PRICE_ID') || Deno.env.get('VITE_STRIPE_PRICE_ID') || '';
 const stripe = new Stripe(stripeSecret, {
   appInfo: {
     name: 'Bolt Integration',
@@ -43,13 +48,12 @@ Deno.serve(async (req) => {
       return corsResponse({ error: 'Method not allowed' }, 405);
     }
 
-    const { price_id, success_url, cancel_url, mode } = await req.json();
+    const { success_url, cancel_url, mode } = await req.json();
 
     const error = validateParameters(
-      { price_id, success_url, cancel_url, mode },
+      { success_url, cancel_url, mode },
       {
         cancel_url: 'string',
-        price_id: 'string',
         success_url: 'string',
         mode: { values: ['payment', 'subscription'] },
       },
@@ -57,6 +61,11 @@ Deno.serve(async (req) => {
 
     if (error) {
       return corsResponse({ error }, 400);
+    }
+
+    if (!SERVER_PRICE_ID) {
+      console.error('No STRIPE_PRICE_ID configured on the server');
+      return corsResponse({ error: 'Payment is not configured' }, 500);
     }
 
     const authHeader = req.headers.get('Authorization')!;
@@ -183,7 +192,7 @@ Deno.serve(async (req) => {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: price_id,
+          price: SERVER_PRICE_ID,
           quantity: 1,
         },
       ],

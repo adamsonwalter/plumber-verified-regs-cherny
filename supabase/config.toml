@@ -3,3 +3,6 @@ verify_jwt = true
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.stripe-portal]
+verify_jwt = true

@@ -9,9 +9,21 @@ Branch: `bolt-app-v1`. Do not work on `main`; `main` is the live site.
 
 ## Where things stand
 
-The app builds and renders. It loads all 60 entries from `/register.json`, has
-job shortcuts, search, filters, saved regs, detail modals and settings. That
-part works — do not rebuild it.
+Steps 1, 2, 3 and 5 are done. Accounts, database-backed saves and jobs all
+exist; the register renders 60 entries with search, filters and detail views.
+**Do not rebuild any of it.**
+
+Two fixes were made afterwards that you must not undo:
+
+- `supabaseClient.js` exports **`authAvailable`** and never throws. It used to
+  call `createClient` with undefined config at module load, which threw before
+  React mounted and turned missing database config into a blank page for the
+  whole product — including the free register, which needs no database at all.
+  Every account entry point is now hidden behind that flag. Keep it that way:
+  any new account or subscription UI must also be gated on `authAvailable`.
+- The four search shortcuts are **job *types*** (`JOB_TYPES`, heading "Start
+  with a job type"). "Jobs" now means only the user's own saved collections.
+  They previously shared the word on one screen.
 
 **One thing you got wrong last time, so you know the standard:** you reported
 "the production bundle compiled successfully" and stopped, but the preview was
@@ -137,7 +149,8 @@ This is the reason accounts are worth having, so give it room.
 **Goal:** jobs and cross-device saves are a paid feature; browsing the register
 stays free.
 
-- Stripe via Bolt. One paid plan, monthly.
+- Stripe is now **configured** for this project — this step is no longer
+  blocked. One paid plan, monthly.
 - **Entitlement is checked server-side.** A client-side check is decorative —
   anyone can bypass it. The server decides whether a user may create jobs.
 - Free, signed-out: full register, browser-local saves

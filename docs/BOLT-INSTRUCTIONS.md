@@ -9,7 +9,9 @@ Branch: `bolt-app-v1`. Do not work on `main`; `main` is the live site.
 
 ## Where things stand
 
-Steps 1, 2, 3 and 5 are done. Accounts, database-backed saves and jobs all
+Steps 1, 2, 3 and 5 are built but were never exercised — the account,
+password-reset and cross-device flows have not been observed working. Step 4 is
+part-built. Accounts, database-backed saves and jobs all
 exist; the register renders 60 entries with search, filters and detail views.
 **Do not rebuild any of it.**
 
@@ -153,6 +155,8 @@ stays free.
   blocked. One paid plan, monthly.
 - **Entitlement is checked server-side.** A client-side check is decorative —
   anyone can bypass it. The server decides whether a user may create jobs.
+- **The server decides the price, not the browser.** Whatever a client sends
+  must not be able to determine what it is charged or which plan it gets.
 - Free, signed-out: full register, browser-local saves
 - Free, signed-in: full register, saves synced across devices
 - Paid: jobs
@@ -162,6 +166,10 @@ stays free.
   resubscribe. Deleting a tradesperson's job records because a card expired
   would be indefensible.
 - Show current plan and a way to cancel in Settings
+
+Checkout and the payment webhook are built and deployed. **None of the
+behaviour below has been observed by anyone.** Until it has, this step is not
+done — see the standard at the top of this document.
 
 **Verify with Stripe test cards:**
 - A free signed-in user cannot create a job, and is told why, clearly

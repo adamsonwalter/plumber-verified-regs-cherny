@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { StrictMode, useEffect, useMemo, useState } from 'react'
+import { createRoot } from 'react-dom/client'
 import './styles.css'
 
 const JOBS = [
@@ -221,3 +222,13 @@ function DetailModal({ entry, saved, onClose, onToggleSaved }) {
 }
 
 export default App
+
+// main.jsx is the Vite entry named in index.html. It previously only defined and
+// exported App, so nothing ever rendered: the module loaded, react loaded,
+// react-dom was never imported, #root stayed empty and no error was raised —
+// a silent blank page.
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+)

@@ -1,10 +1,10 @@
 import { StrictMode, useCallback, useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { supabase } from './supabaseClient'
+import { supabase, authAvailable } from './supabaseClient'
 import { useJobs, JobsScreen, JobDetailScreen, AddToJobModal } from './jobs'
 import './styles.css'
 
-const JOBS = [
+const JOB_TYPES = [
   { id: 'reno', label: 'Residential Reno', icon: 'RR', tasks: ['water-supply', 'sanitary-drainage', 'heated-water'], tone: 'sand' },
   { id: 'new-build', label: 'New Build', icon: 'NB', tasks: ['water-supply', 'sanitary-drainage', 'roofing-stormwater', 'heated-water', 'backflow'], tone: 'sea' },
   { id: 'gas-hot-water', label: 'Gas + Hot Water', icon: 'GH', tasks: ['gasfitting', 'heated-water'], tone: 'rust' },
@@ -266,7 +266,7 @@ function App() {
       <nav className="side-nav" aria-label="Main navigation">
         <NavButton active={activeScreen === 'find' || activeScreen === 'results'} onClick={() => { setActiveScreen('find'); clearFilters() }} icon="search" label="Find a reg" />
         <NavButton active={activeScreen === 'saved'} onClick={() => setActiveScreen('saved')} icon="bookmark" label="Saved" count={savedEntries.length} />
-        <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} />
+        {authAvailable ? <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} /> : null}
         <NavButton active={activeScreen === 'settings'} onClick={() => setActiveScreen('settings')} icon="settings" label="Settings" />
       </nav>
       <div className="sidebar-auth">
@@ -277,8 +277,10 @@ function App() {
           </div>
         ) : (
           <div className="auth-guest">
+            {authAvailable ? <>
             <button className="auth-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}><Icon name="user" size={16} /> Sign in</button>
             <button className="auth-signup" onClick={() => { setAuthView('signup'); setAuthError(''); setAuthMessage('') }}>Create account</button>
+            </> : null}
           </div>
         )}
       </div>
@@ -289,7 +291,7 @@ function App() {
       <header className="mobile-header">
         <div className="brand-mark">PR</div>
         <div className="mobile-status">
-          {session ? <span className="user-chip"><Icon name="user" size={14} /> {session.user.email}</span> : <button className="mobile-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}>Sign in</button>}
+          {session ? <span className="user-chip"><Icon name="user" size={14} /> {session.user.email}</span> : (authAvailable ? <button className="mobile-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}>Sign in</button> : null)}
         </div>
       </header>
       {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} />}
@@ -303,7 +305,7 @@ function App() {
     <nav className="mobile-nav" aria-label="Mobile navigation">
       <NavButton active={activeScreen === 'find' || activeScreen === 'results'} onClick={() => { setActiveScreen('find'); clearFilters() }} icon="search" label="Find" />
       <NavButton active={activeScreen === 'saved'} onClick={() => setActiveScreen('saved')} icon="bookmark" label="Saved" count={savedEntries.length} />
-      <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} />
+      {authAvailable ? <NavButton active={activeScreen === 'jobs' || activeScreen === 'job-detail'} onClick={() => { setActiveScreen('jobs'); setActiveJob(null) }} icon="folder" label="Jobs" count={session ? jobs.length : 0} /> : null}
       <NavButton active={activeScreen === 'settings'} onClick={() => setActiveScreen('settings')} icon="settings" label="Settings" />
     </nav>
     {selectedEntry && <DetailModal entry={selectedEntry} saved={savedIds.includes(selectedEntry.id)} onClose={() => setSelectedEntry(null)} onToggleSaved={() => toggleSaved(selectedEntry.id)} session={session} onAddToJob={() => setShowAddToJob(true)} />}
@@ -364,8 +366,8 @@ function FindScreen({ entries, query, setQuery, startSearch, chooseJob }) {
     <form className="hero-search" onSubmit={(event) => { event.preventDefault(); startSearch() }}>
       <Icon name="search" size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a clause, standard or task" aria-label="Search regulations" /><button type="submit">Search</button>
     </form>
-    <div className="quick-heading"><span>Start with a job</span><span>{entries.length} verified entries</span></div>
-    <div className="job-grid">{JOBS.map((job) => <button className={`job-card ${job.tone}`} key={job.id} onClick={() => chooseJob(job)}><span className="job-icon">{job.icon}</span><span className="job-label">{job.label}</span><span className="job-arrow"><Icon name="arrow" size={17} /></span></button>)}</div>
+    <div className="quick-heading"><span>Start with a job type</span><span>{entries.length} verified entries</span></div>
+    <div className="job-grid">{JOB_TYPES.map((job) => <button className={`job-card ${job.tone}`} key={job.id} onClick={() => chooseJob(job)}><span className="job-icon">{job.icon}</span><span className="job-label">{job.label}</span><span className="job-arrow"><Icon name="arrow" size={17} /></span></button>)}</div>
     <div className="field-note"><span className="note-line" /><div><strong>Trust the status, not the colour.</strong><p>Only entries marked Verified have passed their latest source check. Warnings mean you should open the government page before relying on the value.</p></div></div>
   </section>
 }
@@ -423,7 +425,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth }) {
       ) : (
         <div className="setting-row setting-account">
           <div className="account-info"><span className="account-label">Account</span><strong>Not signed in</strong><small>Sign in to sync saved regs across devices</small></div>
-          <div className="account-actions"><button className="auth-signin" onClick={() => onShowAuth('signin')}><Icon name="user" size={16} /> Sign in</button><button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button></div>
+          {authAvailable ? <div className="account-actions"><button className="auth-signin" onClick={() => onShowAuth('signin')}><Icon name="user" size={16} /> Sign in</button><button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button></div> : <small>Account features are unavailable in this build.</small>}
         </div>
       )}
     </div>

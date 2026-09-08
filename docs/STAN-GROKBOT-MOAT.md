@@ -119,6 +119,54 @@ If Auto-review holds a wrapper (time, redirects), re-run the same script
 without the wrapper. Do not skip URLs.
 ```
 
+### Changing what the gate enforces — a two-party change
+
+Stan and this repo are **two independent writers to `main`**. Stan runs from a
+checkout he pulled; the publish gate runs in Netlify's build. So any change to
+*what the gate enforces* is not a code change — it is a coordinated change
+across both, and getting the order wrong wedges production.
+
+**The failure mode, hit for real on 2026-09-08.** The register version scheme
+changed here (`register_version` gained a mandatory monotonic
+`register_serial`), and the gate was tightened to reject a register without
+one. Stan published `e996d6b` from a checkout predating that change, so his
+register arrived with no serial. Left alone that would have blocked **every**
+subsequent Netlify build, freezing the live site on stale data — a stuck state,
+not a soft failure, because the gate refuses the register already on `main`.
+
+**The sequence that works** (proven end-to-end 2026-09-08):
+
+1. **Land code, gate and data in one commit.** Never a commit where the gate
+   would reject the register sitting beside it. When a schema change needs
+   existing data migrated, seed it in the same commit — here, Stan's live
+   register was taken as-is and given `register_serial: 1`, keeping *his* date
+   and run attribution, since the content was his verification and only the
+   identity scheme was new.
+2. **Tell Stan four things explicitly**: the SHA to pull, what changed, what
+   breaks if he does not, and the exact error he would see. Not "please pull".
+3. **Stan pulls, runs, publishes** from that checkout.
+4. **Verify independently.** Read the register from `origin/main` *and* the
+   live URL yourself. A report of success is not the evidence; the served
+   artefact is.
+
+**Worked example — the version-serial change**
+
+| Step | Evidence |
+|---|---|
+| Code + gate + seeded data | `399b292`, register `2026-09-08-agent.1`, serial 1 |
+| Stan pulled to that SHA and ran | 60 / 0 / 0, offline gate exit 0, both files identical |
+| Stan published | `b3dac12`, register `2026-09-08-agent.2`, **serial 2** |
+| Independently confirmed | `origin/main` = `b3dac12`; version ends with its serial; `last_run` `agent-2026-09-08-l-1788834901`; live URL serving `2026-09-08-agent.2` |
+
+The serial stepping `1 -> 2` **through Stan's own agent path** is the proof that
+mattered — unit-testing the bump helper and running the gate locally proves the
+code, not the circuit.
+
+Stan then added a **pre-push check** that refuses a push when serial and version
+disagree. That is the right shape: it moves the gate's rule ahead of the commit,
+so a rejected register never reaches `main` to block builds in the first place.
+Prefer this for future gate rules — enforce at Stan's push as well as at build.
+
 ---
 
 ## 6. Current operating cadence — manual, weekly, Monday 5pm Melbourne
@@ -153,31 +201,27 @@ in §5, once a week.
 
 ---
 
-## 6a. Open — verify next Monday's run actually happened
+## 6a. Resolved — the 2026-09-07 run did happen
 
-Written 2026-09-07 (Monday), ~2:30pm AEST — **before** the 5pm slot this note
-describes. Nothing below is evidence of anything; it is a placeholder to
-check against, deliberately written ahead of the event it's checking.
+This subsection was a placeholder written before the 5pm slot it was checking.
+Outcome, folded in and the placeholder retired:
 
-**Check next session, when Walter is back at his desk:** did the 2026-09-07
-5pm run happen?
+- **2026-09-07 ran.** Published as `a25ab4d`, `last_run.on` 2026-09-07,
+  60 / 0 / 0, reaching both register files and the served site.
+- **One trap worth remembering when reading commit times.** The commit is
+  stamped `2026-09-07T07:07:17+00:00` — that is **UTC**, i.e. 17:07 AEST, the
+  5pm slot exactly as intended. Read with a local-time formatter it looks like
+  07:07 and invites a false "the scheduler fired at the wrong time" conclusion.
+  It did not. Always read these with an explicit offset (`--date=iso-strict`).
+- **2026-09-08 also ran** (twice, deliberately: `e996d6b` then `b3dac12` after
+  the version-serial change), so the cadence is now demonstrated across
+  consecutive days rather than a single sample.
 
-```bash
-python3 -c "import json;print(json.dumps(json.load(open('register.json'))['last_run'],indent=2))"
-```
-
-- If `last_run.on` reads **2026-09-07**: it ran. Confirm `counts` is
-  `{verified: 60, unverified: 0, unreachable: 0}` (or investigate any
-  `unreachable`/`unverified` entries per `REPEATABLE-VALIDATION.md` §9), and
-  confirm it reached both `register.json` and `public/register.json` and
-  matches what `plumber-cherny.netlify.app/register.json` serves.
-- If `last_run.on` still reads **2026-09-03**: the Monday run did not happen —
-  most likely because nobody pasted the job (see the single-point-of-failure
-  note in §6 above). Not a code defect; a process gap. Flag it back to
-  Walter rather than silently treating stale data as current.
-
-Delete this subsection once the check is done and its outcome is folded into
-§6 (or into a "missed run" note if it didn't happen).
+The cron is `0 7 * * 1` — 07:00 UTC Monday, 17:00 AEST the same Monday, so the
+UTC-derived `last_run.on` matches the Australian day. It would only drift if a
+run moved past 14:00 UTC, where the two calendar days diverge and an entry could
+be stamped a day behind what a Victorian plumber sees. Worth checking before
+anyone reschedules it.
 
 ---
 

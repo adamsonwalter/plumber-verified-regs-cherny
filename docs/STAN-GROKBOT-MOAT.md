@@ -220,8 +220,14 @@ Outcome, folded in and the placeholder retired:
 The cron is `0 7 * * 1` — 07:00 UTC Monday, 17:00 AEST the same Monday, so the
 UTC-derived `last_run.on` matches the Australian day. It would only drift if a
 run moved past 14:00 UTC, where the two calendar days diverge and an entry could
-be stamped a day behind what a Victorian plumber sees. Worth checking before
-anyone reschedules it.
+be stamped a day behind what a Victorian plumber sees.
+
+**Guarded on both sides as of 2026-09-08.** Stan has pinned Monday 07:00 UTC in
+his weekly clock and will warn before accepting any reschedule past 14:00 UTC,
+rather than silently shifting the stamp a day. So this is not merely a note to
+remember — there is a live check on his end. If the slot ever does need to move,
+the fix is to derive `last_run.on` from Melbourne time rather than UTC, not to
+accept the drift.
 
 ---
 

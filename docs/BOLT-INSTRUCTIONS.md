@@ -81,9 +81,10 @@ reach a second device. Move them into Bolt Database.
 
 - A saved row is `{ user_id, entry_id, created_at }`. **Entry id only** — see
   the rule above.
-- Row-level security: a user can read and write only their own rows. Verify
-  this by signing in as a second user and confirming you cannot see the first
-  user's saves.
+- A user can read and write only their own saves, and that must be **enforced
+  by the database itself, not by the client**. A check that only exists in the
+  app is bypassable. Verify by signing in as a second user and confirming you
+  cannot see the first user's saves.
 - The Saved screen reads the current register and shows current status for each
   saved id. If a saved entry has since gone `unverified`, the Saved screen must
   show that warning.
@@ -120,7 +121,7 @@ This is the reason accounts are worth having, so give it room.
 - The job view shows each reg's current status, same rules as everywhere else —
   a job containing a degraded reg must show that plainly, because that is
   exactly when a plumber needs to know
-- Same row-level security as saves
+- Same database-enforced ownership as saves — a user reaches only their own jobs
 
 **Verify:**
 - Create two jobs, put overlapping regs in both, confirm both read correctly

@@ -28,3 +28,4 @@ register.proposed.*.json
 
 # Fetch artefacts from scripts/add_standard_pointers.py (re-fetched on each run)
 scripts/_bpc/
+.env

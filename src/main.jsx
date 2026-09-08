@@ -2,6 +2,7 @@ import { StrictMode, useCallback, useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { supabase, authAvailable } from './supabaseClient'
 import { useJobs, JobsScreen, JobDetailScreen, AddToJobModal } from './jobs'
+import { useSubscription } from './useSubscription'
 import './styles.css'
 
 const JOB_TYPES = [
@@ -95,13 +96,25 @@ function App() {
   const [activeJob, setActiveJob] = useState(null)
   const [showAddToJob, setShowAddToJob] = useState(false)
   const { jobs, jobItems, jobsLoading, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob } = useJobs(session)
+  const subscription = useSubscription(session)
+  const [checkoutStatus, setCheckoutStatus] = useState(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const status = params.get('checkout')
+    if (status === 'success' || status === 'cancelled') {
+      setCheckoutStatus(status)
+      window.history.replaceState({}, '', window.location.pathname)
+      if (status === 'success') subscription.reload()
+    }
+  }, [])
 
   useEffect(() => {
     let mounted = true
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       if (mounted) { setSession(s); setAuthLoading(false) }
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((event, s) => {
       (async () => {
         if (!mounted) return
         setSession(s)
@@ -117,7 +130,7 @@ function App() {
         }
       })()
     })
-    return () => { mounted = false; subscription.unsubscribe() }
+    return () => { mounted = false; authSub.unsubscribe() }
   }, [])
 
   async function migrateLocalSaves(userId) {
@@ -288,6 +301,7 @@ function App() {
     </aside>
 
     <main className="main-content">
+      {checkoutStatus && <CheckoutBanner status={checkoutStatus} />}
       <header className="mobile-header">
         <div className="brand-mark">PR</div>
         <div className="mobile-status">
@@ -297,9 +311,9 @@ function App() {
       {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} />}
       {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} />}
       {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} />}
-      {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
+      {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
       {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} />}
-      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
+      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
     </main>
 
     <nav className="mobile-nav" aria-label="Mobile navigation">
@@ -312,6 +326,13 @@ function App() {
     {showAddToJob && selectedEntry && <AddToJobModal entry={selectedEntry} jobs={jobs} jobItems={jobItems} onClose={() => setShowAddToJob(false)} onAdd={addRegToJob} onCreateNew={createJob} />}
     {authView && <AuthModal mode={authView} setMode={setAuthView} onSubmit={handleAuthSubmit} onClose={() => { setAuthView(null); setAuthError(''); setAuthMessage('') }} error={authError} busy={authBusy} message={authMessage} />}
   </div>
+}
+
+function CheckoutBanner({ status }) {
+  const [show, setShow] = useState(true)
+  useEffect(() => { const t = setTimeout(() => setShow(false), 6000); return () => clearTimeout(t) }, [])
+  if (!show) return null
+  return <div className={`checkout-banner ${status}`}>{status === 'success' ? 'Payment successful — your subscription is now active.' : 'Checkout was cancelled. You can try again any time.'}</div>
 }
 
 function NavButton({ active, onClick, icon, label, count }) {
@@ -405,7 +426,8 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
   </section>
 }
 
-function SettingsScreen({ register, session, onSignOut, onShowAuth }) {
+function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription }) {
+  const subStatus = subscription.isActive ? 'Active' : subscription.subLoading ? 'Checking…' : 'No subscription'
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
     <h1>Settings</h1>
@@ -426,6 +448,21 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth }) {
         <div className="setting-row setting-account">
           <div className="account-info"><span className="account-label">Account</span><strong>Not signed in</strong><small>Sign in to sync saved regs across devices</small></div>
           {authAvailable ? <div className="account-actions"><button className="auth-signin" onClick={() => onShowAuth('signin')}><Icon name="user" size={16} /> Sign in</button><button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button></div> : <small>Account features are unavailable in this build.</small>}
+        </div>
+      )}
+      {session && (
+        <div className="setting-row subscription-row">
+          <span>Subscription</span>
+          <strong className={subscription.isActive ? 'good' : ''}>{subStatus}</strong>
+        </div>
+      )}
+      {session && !subscription.isActive && !subscription.subLoading && (
+        <div className="subscription-cta">
+          <p>Unlock Jobs to group regs by project.</p>
+          {subscription.checkoutError && <div className="auth-error">{subscription.checkoutError}</div>}
+          <button className="checkout-btn" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>
+            {subscription.checkoutLoading ? 'Redirecting…' : 'Subscribe now'}
+          </button>
         </div>
       )}
     </div>

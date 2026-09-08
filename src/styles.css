@@ -300,3 +300,16 @@ blockquote { margin: 10px 0 0; padding: 14px 16px; border-left: 3px solid var(--
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+/* ---- subscription / checkout ---- */
+.checkout-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 9px; padding: 12px 22px; background: var(--green); color: white; font-size: 13px; font-weight: 700; transition: .2s; }
+.checkout-btn:hover { background: #245543; }
+.checkout-btn:disabled { opacity: .6; cursor: wait; }
+.upgrade-prompt .upgrade-fineprint { margin-top: 14px; font-size: 10px; color: var(--muted); font-weight: 500; }
+.subscription-row { border-top: 1px solid #edf2f0; }
+.subscription-cta { padding: 16px 20px; border-top: 1px solid #edf2f0; }
+.subscription-cta p { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.subscription-cta .auth-error { margin-top: 0; margin-bottom: 12px; }
+.checkout-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding: 14px 20px; text-align: center; font-size: 13px; font-weight: 600; animation: rise .22s ease-out; }
+.checkout-banner.success { background: var(--green-soft); color: var(--green); }
+.checkout-banner.cancelled { background: #fbefe5; color: #955a33; }

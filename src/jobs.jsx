@@ -78,7 +78,7 @@ export function useJobs(session) {
   return { jobs, jobItems, jobsLoading, loadJobs, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob }
 }
 
-export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob, session, onShowAuth }) {
+export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob, session, onShowAuth, subscription }) {
   const [showCreate, setShowCreate] = useState(false)
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
@@ -113,6 +113,26 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
           <button className="auth-signin" onClick={() => onShowAuth('signin')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M5.5 21a6.5 6.5 0 0 1 13 0" /></svg> Sign in</button>
           <button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button>
         </div>
+      </div>
+    </section>
+  }
+
+  if (session && !subscription.isActive && !subscription.subLoading) {
+    return <section className="screen jobs-screen">
+      <div className="eyebrow">YOUR ACCOUNT</div>
+      <h1>Jobs</h1>
+      <p className="intro">Group saved regs into named jobs — "Bennett St reno" — so you can pull up exactly the rules you need for each project.</p>
+      <div className="jobs-locked upgrade-prompt">
+        <div className="locked-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg></div>
+        <h2>Unlock Jobs with a subscription</h2>
+        <p>Jobs let you group regs by project so you can pull up exactly the rules you need on site. Subscribe to unlock unlimited jobs.</p>
+        {subscription.checkoutError && <div className="auth-error">{subscription.checkoutError}</div>}
+        <div className="locked-actions">
+          <button className="checkout-btn" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>
+            {subscription.checkoutLoading ? 'Redirecting to checkout…' : 'Subscribe now'}
+          </button>
+        </div>
+        <p className="upgrade-fineprint">Secure payment via Stripe. Cancel any time.</p>
       </div>
     </section>
   }

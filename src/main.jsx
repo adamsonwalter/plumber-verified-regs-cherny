@@ -135,15 +135,16 @@ function App() {
 
   async function migrateLocalSaves(userId) {
     try {
-      const migrated = localStorage.getItem(MIGRATED_KEY)
+      const migratedKey = `${MIGRATED_KEY}:${userId}`
+      const migrated = localStorage.getItem(migratedKey)
       if (migrated) return
       const local = readLocalSaved()
-      if (!local.length) { localStorage.setItem(MIGRATED_KEY, '1'); return }
+      if (!local.length) { localStorage.setItem(migratedKey, '1'); return }
       const rows = local.map((entryId) => ({ user_id: userId, entry_id: entryId }))
       const { error: upsertError } = await supabase.from('saves').upsert(rows, { onConflict: 'user_id,entry_id', ignoreDuplicates: true })
       if (upsertError) throw upsertError
       localStorage.removeItem(LOCAL_SAVES_KEY)
-      localStorage.setItem(MIGRATED_KEY, '1')
+      localStorage.setItem(migratedKey, '1')
     } catch {
       // Migration is best-effort; local saves are preserved if it fails
     }

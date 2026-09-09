@@ -352,6 +352,63 @@ register **MUST** be wrapped in `fsutil.file_lock`. Don't go back to
 
 ---
 
+## 10. Stripe subscription checkout & coupons — gotchas found during acceptance testing
+
+Found while manually running the Group C (payment) rows of the acceptance test
+plan at the bottom of `TEST-AND-VERIFICATION-LOG.md`, on 2026-09-09. All three
+are in `supabase/functions/stripe-checkout/index.ts`. Stripe changes its API
+surface over time — **re-verify against the current Stripe docs before relying
+on any of this**, don't just trust this note.
+
+### Coupon field didn't appear at all
+
+Stripe Checkout only shows a promo-code entry field when the session is
+created with `allow_promotion_codes: true`. It defaults to off/hidden — there
+is no dashboard-side toggle that substitutes for this. Now set in the
+`stripe.checkout.sessions.create()` call.
+
+### "This code is invalid" even though the coupon exists and is valid
+
+**Coupon** and **Promotion code** are different Stripe objects. A Coupon
+(`Product catalogue → Coupons → <name>`) is the internal discount definition —
+it has no customer-facing string of its own. The code a customer types into
+Checkout must be a **Promotion code**, a separate object that wraps a coupon
+and carries the literal string. Typing the coupon's *name* (e.g. `HEATHZERO`)
+into Checkout will always say invalid if no Promotion code object referencing
+it exists yet. Fix is dashboard-side, not code: on the coupon's page, use
+**Create promotion code** (or the `···` menu) to mint one — you can reuse the
+coupon's name as the code string.
+
+### A card was still required even for a 100%-off, $0-due-today coupon
+
+Checkout's default (`payment_method_collection: 'always'`) collects a payment
+method regardless of amount due. Setting `payment_method_collection:
+'if_required'` (subscription mode only) skips collecting a card when the
+session's total due today is $0 — e.g. a fully-covering coupon or a free
+trial. Now set alongside `allow_promotion_codes`.
+
+**Caveat worth re-checking before relying on this long-term:** if a customer
+signs up with `if_required` and no card is ever collected, and the coupon's
+`duration` is `once` or `repeating` (not `forever`), the *next* invoice after
+the discount stops will have no payment method on file and can fail to
+collect. Confirm coupon duration matches the "no card" UX before shipping —
+`forever` coupons are the safe case, `once`/`repeating` ones are not.
+
+### Redemption counting is per-application, not per-billing-cycle
+
+`max_redemptions` on a coupon counts how many times it has been **applied** —
+once per customer/subscription it's attached to — regardless of `duration`.
+A `once` coupon still only consumes 1 redemption even though it's applied to
+one invoice; a `forever` coupon consumes 1 redemption even though it discounts
+every renewal for the life of that subscription. Both direct coupon
+application and promotion-code redemption count against the same limit. So
+`max_redemptions: 50` means 50 distinct applications (50 different customers,
+or fewer customers redeeming/re-applying multiple times), never "50 billing
+events." Verified against Stripe's own docs, 2026-09-09:
+[Coupons and promotion codes — Redemption limits](https://docs.stripe.com/billing/subscriptions/coupons#redemption-limits).
+
+---
+
 ## TL;DR for the next AI coder
 
 1. Write fetch/verify logic in **Python with `requests`**, one **`Session`

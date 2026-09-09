@@ -200,6 +200,7 @@ Deno.serve(async (req) => {
       success_url,
       cancel_url,
       allow_promotion_codes: true,
+      payment_method_collection: 'if_required',
     });
 
     console.log(`Created checkout session ${session.id} for customer ${customerId}`);

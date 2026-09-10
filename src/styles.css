@@ -54,6 +54,11 @@ h1 em { color: var(--sand); font-style: normal; }
 .hero-search svg, .results-search svg { color: var(--sea); flex: 0 0 auto; }
 .hero-search input, .results-search input { min-width: 0; flex: 1; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 14px; }
 .hero-search input::placeholder, .results-search input::placeholder { color: #8aa0a0; }
+/* The inputs clear their own outline (above), so the wrapper carries the focus
+   ring — the same treatment .auth-input-wrap already gets. Without this the
+   register's two search fields were the only focusable controls on the app
+   with no visible focus state at all (WCAG 2.4.7). */
+.hero-search:focus-within, .results-search:focus-within { border-color: var(--sea); box-shadow: 0 0 0 3px rgba(15, 76, 92, .12); }
 .hero-search button { border: 0; border-radius: 9px; padding: 12px 20px; background: var(--sea); color: white; font-size: 12px; font-weight: 700; }
 .quick-heading { max-width: 670px; display: flex; justify-content: space-between; align-items: center; margin: 54px 0 15px; color: var(--ink); font-size: 12px; font-weight: 700; }
 .quick-heading span:last-child { color: var(--muted); font-size: 11px; font-weight: 500; }

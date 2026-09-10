@@ -140,8 +140,16 @@ hardened:
       ~2.6:1 (below the 3:1 WCAG floor for UI controls) and the search field sat
       at 1.12:1 against the page, effectively invisible; now 6.85:1 / 7.9:1 and a
       9.8:1 edge (`d41af18`). Trust-warning bands measure 4.56–7.85:1.
-- [ ] **Full accessibility pass** — contrast is done; screen-reader labels,
-      focus order, and keyboard navigation remain untested.
+- [~] **Full accessibility pass** — contrast is done. Focus order on the home
+      screen is correct (Sign in → search field → Search → task cards) and every
+      button carries a visible focus ring. One real defect found and fixed: the
+      register's two search fields (`.hero-search input`, `.results-search
+      input`) set `outline: 0` at `styles.css:55`, and unlike `.auth-input-wrap`
+      no wrapper carried a `:focus-within` ring — so they were the only
+      focusable controls in the app with **no visible focus state at all**
+      (WCAG 2.4.7). Both wrappers now take the same ring the auth form uses;
+      measured 9.5:1 border against white. Screen-reader labels and full
+      keyboard activation remain untested — see the note on tooling below.
 
 - [x] **`scripts/build_register.py` neutralised.** Regeneration was rejected as
       incoherent, not merely stale: `register.json` carries agent-written
@@ -305,6 +313,32 @@ forgive.
 
 G4 is the only reason the PWA shell exists, and it behaves differently from a
 browser tab, so it must be checked from the Home Screen icon.
+
+## A note on what the browser tooling could and could not do
+
+The rows above were split by hand between "needs a person" and "was only ever
+labelled a browser test". That split is honest, but a second limit turned up
+while running it, and it is worth recording so the next person does not
+rediscover it:
+
+**The browser pane in this session can render and read, but cannot inject
+input.** Screenshots, DOM reads, computed styles, stylesheet inspection and
+JS-dispatched clicks all work — which is enough to prove counts, filter logic,
+structure, styling and focus order, and it is how A1, G1, G2 and the focus
+defect above were established. But `computer` clicks time out after 30 s
+regardless of window focus, and injected keystrokes arrive at the page with an
+empty `key`, so the browser never synthesises the click a real Enter would.
+
+The practical consequence: rows that turn on *real* pointer or key input —
+tap targets, hit-testing, overlapping elements, keyboard activation, G5's
+thumb reach — cannot be driven from here and genuinely need a person or a
+proper driver (Playwright). Do not read a passing structural check as proof
+that a control is tappable.
+
+One near-miss worth recording: the empty-`key` behaviour initially looked like
+an app bug (task cards ignoring Enter). It is not — the cards are plain
+buttons outside any form, and a real Enter activates them. The fault was the
+harness. Instrument before believing a negative.
 
 ## When this is done
 

@@ -226,7 +226,7 @@ is a fail, not a pass.
 | A1 | Load the preview signed out | Register lists 60 entries, fully browsable | **PASS** — 60 entries, browse + filter + search all work signed out (local dev, 375×812, 2026-09-10) |
 | A2 | Sign up as **A** | Account created, you land signed in | **PASS** — account created via the real form (by Walter), lands signed in, email in sidebar |
 | A3 | Reload the page | Still signed in | **PASS** — session survives reload, sidebar still shows the account |
-| A4 | Sign out | Register still loads and is fully usable | |
+| A4 | Sign out | Register still loads and is fully usable | **PASS** — register, search, filters and Saved all work signed out |
 | A5 | Request a password reset for **A** | Email arrives | **PASS** — Supabase reset email received (observed by Walter, 2026-09-10) |
 | A6 | Follow the link, set a new password | New password signs in; **old one does not** | |
 
@@ -249,10 +249,10 @@ it as failed and check the mail settings rather than waiting.
 | # | Do this | Expect | Result |
 |---|---|---|---|
 | C1 | As **A** (unsubscribed), open Jobs | Upgrade prompt, no "New job" button | **PASS after a fix** — originally showed the *lapsed* copy to a never-subscribed user ("Your subscription is not active … Resubscribe", plus a "Read only" badge). Now shows "Jobs are a paid feature … Subscribe". No "New job" button in either case |
-| C2 | Click Subscribe, pay with `4242…` | Return to app; Jobs unlocks **without a manual refresh** | |
-| C3 | Check Stripe dashboard | Subscription active for A's email | |
-| C4 | Check the `stripe_subscriptions` table | One row, status `active` | |
-| C5 | Retry from a fresh account with `4000…0002` | Declined cleanly, told why, no access granted | |
+| C2 | Click Subscribe, pay with `4242…` | Return to app; Jobs unlocks **without a manual refresh** | **PASS** — paid with the 100%-off code `HEATHFREE`, **no card collected**; Jobs unlocked on return with no manual refresh (observed by Walter) |
+| C3 | Check Stripe dashboard | Subscription active for A's email | **PASS** — one active subscription against the account's email, A$0.00/month, invoice `19G22SFR-0001` paid |
+| C4 | Check the `stripe_subscriptions` table | One row, status `active` | **PASS** — one row, `subscription_status: active`, `cancel_at_period_end: false`, `payment_method_last4: null` (no card, as expected on a $0 checkout) |
+| C5 | Retry from a fresh account with `4000…0002` | Declined cleanly, told why, no access granted | **NOT RUN** — needs a card number, and the account is in live mode. Defer until Stripe is switched to test keys |
 
 C2 is the whole payment mechanism in one line: it only passes if the webhook
 fired, matched the customer to the user, and the app re-read the status. If
@@ -265,8 +265,8 @@ Run as subscribed **A**.
 
 | # | Do this | Expect | Result |
 |---|---|---|---|
-| D1 | Create two jobs, put the same reg in both | Both read correctly | |
-| D2 | Rename one; delete the other | The shared reg survives in the remaining job | |
+| D1 | Create two jobs, put the same reg in both | Both read correctly | **PASS** — observed by Walter |
+| D2 | Rename one; delete the other | The shared reg survives in the remaining job | **PASS** — renamed job kept the shared reg after the other was deleted (observed by Walter) |
 | D3 | Put a degraded entry in a job | The job view flags it **without opening it** | |
 | D4 | As **B**, look for A's jobs | None visible | |
 
@@ -279,7 +279,7 @@ be done through the UI — the UI is the thing being bypassed.
 |---|---|---|---|
 | E1 | As free signed-in **B**, call the jobs API directly with B's token | **Rejected** | **PASS** — HTTP 403, `42501 new row violates row-level security policy for table "jobs"` (run as the unsubscribed account) |
 | E2 | As free signed-in **B**, call the `create_job` function directly | **Rejected** | **PASS** — HTTP 403, same policy. Note `create_job` is SECURITY INVOKER since `20260908080632`, so E1 and E2 exercise the same policy by two paths |
-| E3 | Repeat E1 as subscribed **A** | Succeeds | |
+| E3 | Repeat E1 as subscribed **A** | Succeeds | **PASS** — RPC 200, direct insert 201, both as the same account that was refused 403 while unsubscribed. Probe jobs deleted (204) |
 
 If E1 succeeds, the paywall is cosmetic and anyone can take the paid feature for
 free. E3 is not optional: a rule that blocks everyone is not entitlement, it is
@@ -292,7 +292,7 @@ Do not wait a month. Cancel in the Stripe dashboard to force each state.
 | # | Do this | Expect | Result |
 |---|---|---|---|
 | F1 | Cancel at period end | Jobs stay fully editable until the period ends | |
-| F2 | Settings | Shows the plan and that it ends, with a way to manage it | |
+| F2 | Settings | Shows the plan and that it ends, with a way to manage it | **PARTIAL** — "Manage subscription" opens the Stripe billing portal showing the plan, next billing date and invoice history. The *ends* half is untested until F1 runs |
 | F3 | Cancel immediately | Existing jobs **still readable**, marked read only | |
 | F4 | Try to create or edit a job while lapsed | Blocked in the UI **and** by the API (repeat E1) | |
 | F5 | Resubscribe | Everything comes back, nothing was lost | |
@@ -314,7 +314,7 @@ forgive.
 G4 is the only reason the PWA shell exists, and it behaves differently from a
 browser tab, so it must be checked from the Home Screen icon.
 
-### Three defects found while running the interactive rows
+### Four defects found while running the interactive rows
 
 Both were found by driving the app with real clicks and keystrokes, and both
 are fixed:
@@ -337,6 +337,18 @@ are fixed:
    already available — a user with no history has no row, so `status` is
    absent. Never-subscribed now reads "Jobs are a paid feature … **Subscribe**"
    with no read-only badge; the lapsed copy is unchanged.
+
+4. **Signed-out saves and account saves could bleed into each other.** The
+   signed-out buffer was mirrored from React state by an effect that fired on
+   every change where `session` was falsy — including the instant of signing
+   out, before `savedIds` had been reset. An account's saves could therefore be
+   captured into the device buffer and reappear as though they had always been
+   local, including regs the account no longer held. Reported by Walter as "one
+   remains and it's the local buffer"; confirmed on disk (`saves` held SAN-STD
+   and RS-STANDARD while the buffer held a stale WATER-STD). The buffer is now
+   written only by the one deliberate signed-out save action. Verified: signed
+   out with two account saves present, the buffer stayed empty and Saved
+   correctly read "Nothing saved yet".
 
 Still open on the dialogs, not fixed here: no focus trap and no focus restore
 to the element that opened them.
@@ -365,6 +377,22 @@ One near-miss worth recording: the empty-`key` behaviour initially looked like
 an app bug (task cards ignoring Enter). It is not — the cards are plain
 buttons outside any form, and a real Enter activates them. The fault was the
 harness. Instrument before believing a negative.
+
+## Two things to follow up
+
+- **Stripe is in LIVE mode, not test.** Checkout redirects to a `cs_live_`
+  session on Digital Investor Pty Ltd. The `HEATHFREE` coupon is 100% off with
+  duration **forever** (confirmed in the billing portal: the 10 Oct–10 Nov
+  period already shows −A$9.00, total A$0.00), so the live subscription created
+  during testing will not start charging. But C5 and all of F cycle real
+  subscription states on a real merchant account — switch the three Supabase
+  functions to `sk_test_` keys, a test-mode price, a test-mode webhook secret
+  and a test-mode promo code before running them.
+- **No email arrived on signup.** Stripe recorded a paid A$0.00 invoice but no
+  receipt or welcome mail was observed. Check Stripe's customer-email settings
+  (Settings → Customer emails; successful-payment receipts are often off by
+  default, and $0 invoices may be excluded regardless). Decide whether a
+  free-tier subscriber should get anything at all.
 
 ## When this is done
 

@@ -168,12 +168,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!session) {
-      localStorage.setItem(LOCAL_SAVES_KEY, JSON.stringify(savedIds))
-    }
-  }, [savedIds, session])
-
-  useEffect(() => {
     const sync = (event) => {
       if (!session && event.key === LOCAL_SAVES_KEY) setSavedIds(readLocalSaved())
     }
@@ -220,7 +214,15 @@ function App() {
         await supabase.from('saves').insert({ entry_id: id })
       }
     } else {
-      setSavedIds((current) => current.includes(id) ? current.filter((savedId) => savedId !== id) : [...current, id])
+      // Write the buffer here, from this one deliberate action, rather than
+      // mirroring `savedIds` from an effect. The effect version fired on every
+      // change where `session` was falsy — including the instant of signing
+      // out, before `savedIds` had been reset — so an account's saves could be
+      // captured into the signed-out buffer and reappear as though they were
+      // local. That is how a reg the account no longer held kept showing up.
+      const next = savedIds.includes(id) ? savedIds.filter((savedId) => savedId !== id) : [...savedIds, id]
+      setSavedIds(next)
+      localStorage.setItem(LOCAL_SAVES_KEY, JSON.stringify(next))
     }
   }, [session, savedIds])
 

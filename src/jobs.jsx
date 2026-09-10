@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabaseClient'
+import { useEscapeToClose } from './useEscapeToClose'
 
 export function useJobs(session) {
   const [jobs, setJobs] = useState([])
@@ -259,6 +260,7 @@ export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, o
 }
 
 export function AddToJobModal({ entry, jobs, jobItems, onClose, onAdd, onCreateNew }) {
+  useEscapeToClose(onClose)
   const [showNew, setShowNew] = useState(false)
   const [name, setName] = useState('')
   const [busy, setBusy] = useState(false)

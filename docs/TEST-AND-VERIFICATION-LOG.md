@@ -238,7 +238,7 @@ it as failed and check the mail settings rather than waiting.
 
 | # | Do this | Expect | Result |
 |---|---|---|---|
-| B1 | Signed out, save two regs | They appear on Saved | |
+| B1 | Signed out, save two regs | They appear on Saved | **PASS** — both appear on Saved, nav badge reads 2, and they survive a reload (real clicks, Chrome, 2026-09-10) |
 | B2 | Sign in as **A** | Those two are adopted into the account, once, no duplicates | |
 | B3 | Save a third; sign out and back in | All three present | |
 | B4 | Open a *different browser*, sign in as **A** | The same three are there | |
@@ -306,13 +306,30 @@ forgive.
 | # | Do this | Expect | Result |
 |---|---|---|---|
 | G1 | Count entries on the register | 60, and Settings shows the register version | **PASS** — "60 regulations", version `2026-09-08-agent.2`, check result "60 verified" |
-| G2 | Combine filters across Level, Type, Task | OR within an axis, AND across them; chips toggle off | **PASS** — task ResReno = 46/60 (AND across axes); Victoria 45, Federal 1, both 46 (OR within axis); Federal+Documentation = 1; chips toggle off |
-| G3 | Open a reg's detail | Quote shown; source opens in a **new tab** | |
+| G2 | Combine filters across Level, Type, Task | OR within an axis, AND across them; chips toggle off; re-run with real clicks in Chrome, same numbers | **PASS** — task ResReno = 46/60 (AND across axes); Victoria 45, Federal 1, both 46 (OR within axis); Federal+Documentation = 1; chips toggle off |
+| G3 | Open a reg's detail | Quote shown; source opens in a **new tab** | **PASS** — detail shows value, where-to-find-it, verified date and the verbatim supporting quote; "Open government source" opened the live BPC page in a **new tab** with the app tab intact |
 | G4 | Install to iPhone Home Screen, open from there | A source link opens as a **dismissible overlay** that returns you to the app | |
 | G5 | Phone, outdoors | Readable; every control reachable with a thumb | |
 
 G4 is the only reason the PWA shell exists, and it behaves differently from a
 browser tab, so it must be checked from the Home Screen icon.
+
+### Two defects found while running the interactive rows
+
+Both were found by driving the app with real clicks and keystrokes, and both
+are fixed:
+
+1. **No visible focus ring on either search field** (above).
+2. **Modals ignored Escape.** All three — the reg detail, the auth form and
+   add-to-job — are `role="dialog" aria-modal="true"`, and the ARIA dialog
+   pattern says Escape dismisses. None listened for it. Backdrop click and the
+   close button worked, so this was invisible to anyone testing with a mouse.
+   Fixed with a shared `useEscapeToClose` hook (its own module — `main.jsx`
+   already imports from `jobs.jsx`, so importing back would have made the cycle
+   real). Verified open → Escape → closed.
+
+Still open on the dialogs, not fixed here: no focus trap and no focus restore
+to the element that opened them.
 
 ## A note on what the browser tooling could and could not do
 
@@ -321,19 +338,18 @@ labelled a browser test". That split is honest, but a second limit turned up
 while running it, and it is worth recording so the next person does not
 rediscover it:
 
-**The browser pane in this session can render and read, but cannot inject
-input.** Screenshots, DOM reads, computed styles, stylesheet inspection and
-JS-dispatched clicks all work — which is enough to prove counts, filter logic,
-structure, styling and focus order, and it is how A1, G1, G2 and the focus
-defect above were established. But `computer` clicks time out after 30 s
-regardless of window focus, and injected keystrokes arrive at the page with an
-empty `key`, so the browser never synthesises the click a real Enter would.
+**Use Chrome, not the built-in browser pane.** In the pane, `computer` clicks
+time out after 30 s regardless of window focus, and injected keystrokes reach
+the page with an empty `key`, so the browser never synthesises the click a real
+Enter would. Reads work fine there — screenshots, DOM, computed styles — which
+is enough for counts, filter logic and styling, but not for anything
+interactive.
 
-The practical consequence: rows that turn on *real* pointer or key input —
-tap targets, hit-testing, overlapping elements, keyboard activation, G5's
-thumb reach — cannot be driven from here and genuinely need a person or a
-proper driver (Playwright). Do not read a passing structural check as proof
-that a control is tappable.
+Driving the same app through Chrome works completely: real coordinate clicks,
+real keystrokes, new-tab behaviour, multi-tab state. Every interactive row
+recorded above (B1, G2, G3, both defects) was run that way. Note that
+ref-based clicks (`ref_N` from `find`) reported success without activating the
+element — use screenshot coordinates.
 
 One near-miss worth recording: the empty-`key` behaviour initially looked like
 an app bug (task cards ignoring Enter). It is not — the cards are plain

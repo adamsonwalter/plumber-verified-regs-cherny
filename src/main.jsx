@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { supabase, authAvailable } from './supabaseClient'
 import { useJobs, JobsScreen, JobDetailScreen, AddToJobModal } from './jobs'
 import { useSubscription } from './useSubscription'
+import { useEscapeToClose } from './useEscapeToClose'
 import './styles.css'
 
 const JOB_TYPES = [
@@ -341,6 +342,7 @@ function NavButton({ active, onClick, icon, label, count }) {
 }
 
 function AuthModal({ mode, setMode, onSubmit, onClose, error, busy, message }) {
+  useEscapeToClose(onClose)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -483,6 +485,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
 function SettingRow({ label, value, good }) { return <div className="setting-row"><span>{label}</span><strong className={good ? 'good' : ''}>{value}</strong></div> }
 
 function DetailModal({ entry, saved, onClose, onToggleSaved, session, canManageJobs, onAddToJob }) {
+  useEscapeToClose(onClose)
   const [sourceOverlay, setSourceOverlay] = useState(false)
   const trust = trustFor(entry)
   const source = entry.human_url || entry.source_url

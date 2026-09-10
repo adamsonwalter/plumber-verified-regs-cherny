@@ -308,7 +308,7 @@ function App() {
           </div>
         )}
       </div>
-      <div className="sidebar-footer">Built for licensed trades<br /><span>Victoria · Register {register.register_version}</span></div>
+      <div className="sidebar-footer">Victoria<br /><span>Register {register.register_version}</span></div>
     </aside>
 
     <main className="main-content">
@@ -395,13 +395,13 @@ function FindScreen({ entries, query, setQuery, startSearch, chooseJob }) {
   return <section className="screen find-screen">
     <div className="eyebrow">FIELD REGISTER / VICTORIA</div>
     <h1>Find a regulation<br /><em>before you start.</em></h1>
-    <p className="intro">Search the verified register for the rule behind the work. Each result shows exactly when its source was last checked.</p>
+    <p className="intro">Search for the rule that covers the job. Each result shows when its source was last checked.</p>
     <form className="hero-search" onSubmit={(event) => { event.preventDefault(); startSearch() }}>
       <Icon name="search" size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a clause, standard or task" aria-label="Search regulations" /><button type="submit">Search</button>
     </form>
-    <div className="quick-heading"><span>Start with a job type</span><span>{entries.length} verified entries</span></div>
+    <div className="quick-heading"><span>Start with a job type</span><span>{entries.length} verified regs</span></div>
     <div className="job-grid">{JOB_TYPES.map((job) => <button className={`job-card ${job.tone}`} key={job.id} onClick={() => chooseJob(job)}><span className="job-icon">{job.icon}</span><span className="job-label">{job.label}</span><span className="job-arrow"><Icon name="arrow" size={17} /></span></button>)}</div>
-    <div className="field-note"><span className="note-line" /><div><strong>Trust the status, not the colour.</strong><p>Only entries marked Verified have passed their latest source check. Warnings mean you should open the government page before relying on the value.</p></div></div>
+    <div className="field-note"><span className="note-line" /><div><strong>How to read a result</strong><p>Every entry shows when its source was last checked. If we could not confirm it, you get a warning instead of a date. Open the government page before you rely on it.</p></div></div>
   </section>
 }
 
@@ -431,9 +431,9 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
   return <section className="screen saved-screen">
     <div className="eyebrow">{session ? 'SYNCED TO YOUR ACCOUNT' : 'YOUR DEVICE'}</div>
     <h1>Saved regulations</h1>
-    <p className="intro">{session ? 'Your saved regs follow you to any device you sign in on.' : 'Sign in to sync your saved regs across devices. They are stored on this device for now.'}</p>
+    <p className="intro">{session ? 'Your saved regs follow you to any device you sign in on.' : 'Saved on this device. Sign in and they follow you to any device.'}</p>
     {savesLoading && <p className="saves-loading">Loading your saves…</p>}
-    {entries.length ? <div className="results-list">{entries.map((entry) => <RegCard key={entry.id} entry={entry} onOpen={onOpen} saved={savedIds.includes(entry.id)} onToggleSaved={toggleSaved} />)}</div> : !savesLoading && <div className="empty-state saved-empty"><div className="empty-icon"><Icon name="bookmark" size={28} /></div><h2>Nothing saved yet</h2><p>Tap the bookmark on any regulation to keep it here.</p></div>}
+    {entries.length ? <div className="results-list">{entries.map((entry) => <RegCard key={entry.id} entry={entry} onOpen={onOpen} saved={savedIds.includes(entry.id)} onToggleSaved={toggleSaved} />)}</div> : !savesLoading && <div className="empty-state saved-empty"><div className="empty-icon"><Icon name="bookmark" size={28} /></div><h2>Nothing saved yet</h2><p>Tap the bookmark on any reg to keep it here.</p></div>}
     {removedIds.length > 0 && <div className="removed-saves"><h3>No longer in the register</h3>{removedIds.map((id) => <div key={id} className="removed-row"><span>{id}</span><button onClick={() => toggleSaved(id)}>Remove</button></div>)}</div>}
   </section>
 }
@@ -443,10 +443,10 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
     <h1>Settings</h1>
-    <p className="intro">The register is read-only in this app. It is refreshed by a separate source-checking process.</p>
+    <p className="intro">You cannot edit the register here. Every source is re-checked weekly and the results are published back to the app.</p>
     <div className="settings-card">
       <SettingRow label="Register version" value={register.register_version} />
-      <SettingRow label="Entries" value={`${register.entries.length} regulations`} />
+      <SettingRow label="Regs" value={`${register.entries.length}`} />
       <SettingRow label="Last checked" value={formatDate(register.last_run?.on || register.last_agent_run)} />
       <SettingRow label="Check result" value={`${register.last_run?.counts?.verified || 0} verified`} good />
     </div>
@@ -458,7 +458,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
         </div>
       ) : (
         <div className="setting-row setting-account">
-          <div className="account-info"><span className="account-label">Account</span><strong>Not signed in</strong><small>Sign in to sync saved regs across devices</small></div>
+          <div className="account-info"><span className="account-label">Account</span><strong>Not signed in</strong><small>Sign in and your saved regs follow you to any device</small></div>
           {authAvailable ? <div className="account-actions"><button className="auth-signin" onClick={() => onShowAuth('signin')}><Icon name="user" size={16} /> Sign in</button><button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button></div> : <small>Account features are unavailable in this build.</small>}
         </div>
       )}
@@ -487,7 +487,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
         </div>
       )}
     </div>
-    <div className="settings-callout"><span className="trust-dot" /><div><strong>Weekly source checks</strong><p>Every entry keeps its own status. A changed or unreachable source is shown as a warning, never as current.</p></div></div>
+    <div className="settings-callout"><span className="trust-dot" /><div><strong>Weekly source checks</strong><p>Each entry is checked on its own. If a source changes or goes offline, that entry shows a warning.</p></div></div>
   </section>
 }
 

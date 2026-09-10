@@ -105,11 +105,11 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
     return <section className="screen jobs-screen">
       <div className="eyebrow">YOUR ACCOUNT</div>
       <h1>Jobs</h1>
-      <p className="intro">Group saved regs into named jobs — "Bennett St reno" — so you can pull up exactly the rules you need for each project.</p>
+      <p className="intro">Group your saved regs by job, so you can pull up just the rules for one site.</p>
       <div className="jobs-locked">
         <div className="locked-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg></div>
         <h2>Sign in to use Jobs</h2>
-        <p>Jobs are a paid feature. Create an account or sign in to start grouping regs by project.</p>
+        <p>Jobs are a paid feature. Create an account or sign in to start grouping your regs by job.</p>
         <div className="locked-actions">
           <button className="auth-signin" onClick={() => onShowAuth('signin')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M5.5 21a6.5 6.5 0 0 1 13 0" /></svg> Sign in</button>
           <button className="auth-signup" onClick={() => onShowAuth('signup')}>Create account</button>
@@ -132,8 +132,8 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
       <div><h1>Jobs</h1></div>
       {canEdit ? <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button> : everSubscribed ? <span className="read-only-badge">Read only</span> : null} 
     </div>
-    <p className="intro">Group saved regs into named jobs so you can pull up exactly the rules you need for each project.</p>
-    {!subscription.subLoading && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your subscription is not active.</strong> Existing jobs are still available to view. Resubscribe to create or edit jobs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs into named jobs and pull up exactly the rules each project needs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
+    <p className="intro">Group your saved regs by job, so you can pull up just the rules for one site.</p>
+    {!subscription.subLoading && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your subscription is not active.</strong> Existing jobs are still available to view. Resubscribe to create or edit jobs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
 
     {showCreate && (
       <form className="job-create-card" onSubmit={handleCreate}>
@@ -149,7 +149,7 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
     )}
 
     {jobs.length === 0 && !showCreate ? (
-      <div className="empty-state saved-empty"><div className="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></svg></div><h2>No jobs yet</h2><p>Create a job to start grouping regs by project.</p></div>
+      <div className="empty-state saved-empty"><div className="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></svg></div><h2>No jobs yet</h2><p>Create a job to start grouping your regs.</p></div>
     ) : (
       <div className="jobs-list">
         {jobs.map((job) => {

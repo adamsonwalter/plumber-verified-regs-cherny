@@ -314,7 +314,7 @@ forgive.
 G4 is the only reason the PWA shell exists, and it behaves differently from a
 browser tab, so it must be checked from the Home Screen icon.
 
-### Five defects found while running the interactive rows
+### Six defects found while running the interactive rows
 
 Both were found by driving the app with real clicks and keystrokes, and both
 are fixed:
@@ -359,6 +359,15 @@ are fixed:
    stay green. Now derived from the entry statuses, and the text changes as well
    as the colour ("1 source needs review"), so the meaning does not rest on
    colour alone.
+
+6. **No way back from the results screen on a phone.** Reported by Walter from
+   the branch deploy on an iPhone: tap a job type, and there is no obvious exit.
+   On desktop the sidebar is always there, which is why this never showed up in
+   testing. On a phone the only ways out were a small "Reset" text link, which
+   does not read as "back", and the "Find" tab, which is already highlighted, so
+   it looks like where you already are. The job detail screen already had a
+   proper back control; the results screen now uses the same one, at a 44 px
+   tap target.
 
 Still open on the dialogs, not fixed here: no focus trap and no focus restore
 to the element that opened them.

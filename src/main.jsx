@@ -320,7 +320,7 @@ function App() {
         </div>
       </header>
       {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} />}
-      {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} />}
+      {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} onBack={() => { setActiveScreen('find'); clearFilters() }} />}
       {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} />}
       {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
       {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} readOnly={!subscription.isActive} />}
@@ -405,10 +405,11 @@ function FindScreen({ entries, query, setQuery, startSearch, chooseJob }) {
   </section>
 }
 
-function ResultsScreen({ entries, total, query, setQuery, selectedJob, obligations, setObligations, jurisdictions, setJurisdictions, clearFilters, onOpen, savedIds, toggleSaved }) {
+function ResultsScreen({ entries, total, query, setQuery, selectedJob, obligations, setObligations, jurisdictions, setJurisdictions, clearFilters, onOpen, savedIds, toggleSaved, onBack }) {
   function toggle(value, setter) { setter((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value]) }
   const hasFilters = query || selectedJob || obligations.length || jurisdictions.length
   return <section className="screen results-screen">
+    <button className="back-btn" onClick={onBack}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg> Find a reg</button>
     <div className="section-top"><div><div className="eyebrow">REGISTER SEARCH</div><h1>{selectedJob ? selectedJob.label : 'Matching regulations'}</h1></div><button className="reset-button" onClick={clearFilters}>Reset</button></div>
     <div className="results-search"><Icon name="search" size={19} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Filter these results" /></div>
     <div className="filter-section"><span className="filter-label">Type</span><div className="filter-scroll">{Object.entries(OBLIGATION_LABELS).map(([value, label]) => <button key={value} className={`filter-chip ${obligations.includes(value) ? 'active' : ''}`} onClick={() => toggle(value, setObligations)}>{label}</button>)}</div></div>

@@ -280,7 +280,9 @@ blockquote { margin: 10px 0 0; padding: 14px 16px; border-left: 3px solid var(--
 .confirm-actions .danger-btn { border: 1px solid #e8c4b8; border-radius: 7px; padding: 8px 14px; background: #fbeee8; }
 
 /* ---- job detail screen ---- */
-.job-detail-screen .back-btn { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--sea); font-size: 12px; font-weight: 600; padding: 0 0 20px; cursor: pointer; }
+.job-detail-screen .back-btn, .results-screen .back-btn { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--sea); font-size: 12px; font-weight: 600; padding: 0 0 20px; cursor: pointer; }
+/* A back control on a phone has to be thumb-sized, not text-sized. */
+.results-screen .back-btn { min-height: 44px; padding: 0 8px 12px 0; margin-left: -8px; }
 .job-detail-screen h1 { font-size: 34px; }
 .job-note-display { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 .edit-job-btn { display: inline-grid; place-items: center; border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 8px; padding: 9px; }

@@ -119,15 +119,21 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
   }
 
   const canEdit = subscription.isActive
+  // A user who has never subscribed has no row at all, so `status` is absent.
+  // Without this distinction both states shared the lapsed copy, and the very
+  // first thing a prospective customer read was "Your subscription is not
+  // active … Resubscribe" — an error message about a subscription they never
+  // had, on the screen where we are asking them to buy one.
+  const everSubscribed = Boolean(subscription.status)
 
   return <section className="screen jobs-screen">
     <div className="eyebrow">YOUR ACCOUNT</div>
     <div className="section-top">
       <div><h1>Jobs</h1></div>
-      {canEdit ? <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button> : <span className="read-only-badge">Read only</span>} 
+      {canEdit ? <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button> : everSubscribed ? <span className="read-only-badge">Read only</span> : null} 
     </div>
     <p className="intro">Group saved regs into named jobs so you can pull up exactly the rules you need for each project.</p>
-    {!subscription.subLoading && !canEdit && <div className="jobs-readonly-notice"><strong>Your subscription is not active.</strong> Existing jobs are still available to view. Resubscribe to create or edit jobs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div>}
+    {!subscription.subLoading && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your subscription is not active.</strong> Existing jobs are still available to view. Resubscribe to create or edit jobs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs into named jobs and pull up exactly the rules each project needs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
 
     {showCreate && (
       <form className="job-create-card" onSubmit={handleCreate}>

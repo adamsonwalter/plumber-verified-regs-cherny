@@ -224,8 +224,8 @@ is a fail, not a pass.
 | # | Do this | Expect | Result |
 |---|---|---|---|
 | A1 | Load the preview signed out | Register lists 60 entries, fully browsable | **PASS** — 60 entries, browse + filter + search all work signed out (local dev, 375×812, 2026-09-10) |
-| A2 | Sign up as **A** | Account created, you land signed in | |
-| A3 | Reload the page | Still signed in | |
+| A2 | Sign up as **A** | Account created, you land signed in | **PASS** — account created via the real form (by Walter), lands signed in, email in sidebar |
+| A3 | Reload the page | Still signed in | **PASS** — session survives reload, sidebar still shows the account |
 | A4 | Sign out | Register still loads and is fully usable | |
 | A5 | Request a password reset for **A** | Email arrives | **PASS** — Supabase reset email received (observed by Walter, 2026-09-10) |
 | A6 | Follow the link, set a new password | New password signs in; **old one does not** | |
@@ -239,7 +239,7 @@ it as failed and check the mail settings rather than waiting.
 | # | Do this | Expect | Result |
 |---|---|---|---|
 | B1 | Signed out, save two regs | They appear on Saved | **PASS** — both appear on Saved, nav badge reads 2, and they survive a reload (real clicks, Chrome, 2026-09-10) |
-| B2 | Sign in as **A** | Those two are adopted into the account, once, no duplicates | |
+| B2 | Sign in as **A** | Those two are adopted into the account, once, no duplicates | **PASS** — heading flips to "Synced to your account"; `saves` holds exactly 2 rows (WATER-STD, SAN-STD), no duplicates |
 | B3 | Save a third; sign out and back in | All three present | |
 | B4 | Open a *different browser*, sign in as **A** | The same three are there | |
 | B5 | Sign in as **B** | **B** sees none of A's saves | |
@@ -248,7 +248,7 @@ it as failed and check the mail settings rather than waiting.
 
 | # | Do this | Expect | Result |
 |---|---|---|---|
-| C1 | As **A** (unsubscribed), open Jobs | Upgrade prompt, no "New job" button | |
+| C1 | As **A** (unsubscribed), open Jobs | Upgrade prompt, no "New job" button | **PASS after a fix** — originally showed the *lapsed* copy to a never-subscribed user ("Your subscription is not active … Resubscribe", plus a "Read only" badge). Now shows "Jobs are a paid feature … Subscribe". No "New job" button in either case |
 | C2 | Click Subscribe, pay with `4242…` | Return to app; Jobs unlocks **without a manual refresh** | |
 | C3 | Check Stripe dashboard | Subscription active for A's email | |
 | C4 | Check the `stripe_subscriptions` table | One row, status `active` | |
@@ -277,8 +277,8 @@ be done through the UI — the UI is the thing being bypassed.
 
 | # | Do this | Expect | Result |
 |---|---|---|---|
-| E1 | As free signed-in **B**, call the jobs API directly with B's token | **Rejected** | |
-| E2 | As free signed-in **B**, call the `create_job` function directly | **Rejected** | |
+| E1 | As free signed-in **B**, call the jobs API directly with B's token | **Rejected** | **PASS** — HTTP 403, `42501 new row violates row-level security policy for table "jobs"` (run as the unsubscribed account) |
+| E2 | As free signed-in **B**, call the `create_job` function directly | **Rejected** | **PASS** — HTTP 403, same policy. Note `create_job` is SECURITY INVOKER since `20260908080632`, so E1 and E2 exercise the same policy by two paths |
 | E3 | Repeat E1 as subscribed **A** | Succeeds | |
 
 If E1 succeeds, the paywall is cosmetic and anyone can take the paid feature for
@@ -314,7 +314,7 @@ forgive.
 G4 is the only reason the PWA shell exists, and it behaves differently from a
 browser tab, so it must be checked from the Home Screen icon.
 
-### Two defects found while running the interactive rows
+### Three defects found while running the interactive rows
 
 Both were found by driving the app with real clicks and keystrokes, and both
 are fixed:
@@ -327,6 +327,16 @@ are fixed:
    Fixed with a shared `useEscapeToClose` hook (its own module — `main.jsx`
    already imports from `jobs.jsx`, so importing back would have made the cycle
    real). Verified open → Escape → closed.
+
+3. **A never-subscribed user was shown the lapsed-customer copy.** `canEdit`
+   was the only branch, so someone who had never paid opened Jobs and read
+   "Your subscription is not active. Existing jobs are still available to view.
+   **Resubscribe** to create or edit jobs", next to a "Read only" badge over an
+   empty screen. That is an error message about a subscription they never had,
+   on the one screen where the product asks them to buy. The distinction was
+   already available — a user with no history has no row, so `status` is
+   absent. Never-subscribed now reads "Jobs are a paid feature … **Subscribe**"
+   with no read-only badge; the lapsed copy is unchanged.
 
 Still open on the dialogs, not fixed here: no focus trap and no focus restore
 to the element that opened them.

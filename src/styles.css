@@ -32,6 +32,10 @@ button { cursor: pointer; }
 .brand strong { display: block; font-size: 14px; letter-spacing: -.02em; }
 .brand span { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
 .trust-mini { display: flex; gap: 8px; align-items: center; padding: 11px 12px; border: 1px solid #cfe1d7; background: var(--green-soft); border-radius: 9px; color: var(--green); font-size: 11px; font-weight: 700; margin-bottom: 32px; }
+/* Same badge, told the truth. Colour alone must not carry the meaning, so the
+   text changes too — it names how many sources need review. */
+.trust-mini.warn { border-color: #e6c9a8; background: #fdf3e7; color: #8a4b12; }
+.trust-mini.warn .trust-dot { background: #b4610f; }
 .trust-dot { width: 7px; height: 7px; background: #3b906c; border-radius: 50%; display: inline-block; flex: 0 0 auto; box-shadow: 0 0 0 3px #c5e4d1; }
 .side-nav { display: grid; gap: 6px; }
 .nav-button { color: var(--muted); border: 0; background: transparent; border-radius: 10px; padding: 11px 12px; display: flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 600; text-align: left; transition: .2s ease; }

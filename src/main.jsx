@@ -190,6 +190,13 @@ function App() {
 
   const savedEntries = entries.filter((entry) => savedIds.includes(entry.id))
 
+  // The sidebar badge used to be the literal string "Source checks current"
+  // with a green dot, shown unconditionally. On a product whose whole promise
+  // is "we tell you when a source has moved", a status light that can only ever
+  // read OK is worse than no light: it actively asserts the thing it cannot
+  // know. Derive it, the way Settings already derives its counts.
+  const degradedCount = entries.filter((entry) => entry.status !== 'verified').length
+
   const startSearch = useCallback((value = query) => {
     setQuery(value)
     setSelectedJob(null)
@@ -279,7 +286,7 @@ function App() {
   return <div className="app-shell">
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark">PR</div><div><strong>VIC PlumberRegs</strong><span>Verified field register</span></div></div>
-      <div className="trust-mini"><span className="trust-dot" /> Source checks current</div>
+      <div className={`trust-mini ${degradedCount ? 'warn' : ''}`}><span className="trust-dot" /> {degradedCount ? `${degradedCount} source${degradedCount === 1 ? ' needs' : 's need'} review` : 'Source checks current'}</div>
       <nav className="side-nav" aria-label="Main navigation">
         <NavButton active={activeScreen === 'find' || activeScreen === 'results'} onClick={() => { setActiveScreen('find'); clearFilters() }} icon="search" label="Find a reg" />
         <NavButton active={activeScreen === 'saved'} onClick={() => setActiveScreen('saved')} icon="bookmark" label="Saved" count={savedEntries.length} />

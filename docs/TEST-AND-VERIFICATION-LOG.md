@@ -240,7 +240,7 @@ it as failed and check the mail settings rather than waiting.
 |---|---|---|---|
 | B1 | Signed out, save two regs | They appear on Saved | **PASS** — both appear on Saved, nav badge reads 2, and they survive a reload (real clicks, Chrome, 2026-09-10) |
 | B2 | Sign in as **A** | Those two are adopted into the account, once, no duplicates | **PASS** — heading flips to "Synced to your account"; `saves` holds exactly 2 rows (WATER-STD, SAN-STD), no duplicates |
-| B3 | Save a third; sign out and back in | All three present | |
+| B3 | Save a third; sign out and back in | All three present | **PASS** — all three returned, plus the job (observed by Walter) |
 | B4 | Open a *different browser*, sign in as **A** | The same three are there | |
 | B5 | Sign in as **B** | **B** sees none of A's saves | |
 
@@ -267,7 +267,7 @@ Run as subscribed **A**.
 |---|---|---|---|
 | D1 | Create two jobs, put the same reg in both | Both read correctly | **PASS** — observed by Walter |
 | D2 | Rename one; delete the other | The shared reg survives in the remaining job | **PASS** — renamed job kept the shared reg after the other was deleted (observed by Walter) |
-| D3 | Put a degraded entry in a job | The job view flags it **without opening it** | |
+| D3 | Put a degraded entry in a job | The job view flags it **without opening it** | **PASS** — with WATER-STD forced to `unverified` via a temporary fixture, the jobs list row read "2 regs · **Has warnings**" in amber. Register restored byte-identical afterwards (sha256 verified, offline gate passes) |
 | D4 | As **B**, look for A's jobs | None visible | |
 
 ## E — Entitlement is real, not decorative
@@ -314,7 +314,7 @@ forgive.
 G4 is the only reason the PWA shell exists, and it behaves differently from a
 browser tab, so it must be checked from the Home Screen icon.
 
-### Four defects found while running the interactive rows
+### Five defects found while running the interactive rows
 
 Both were found by driving the app with real clicks and keystrokes, and both
 are fixed:
@@ -349,6 +349,16 @@ are fixed:
    written only by the one deliberate signed-out save action. Verified: signed
    out with two account saves present, the buffer stayed empty and Saved
    correctly read "Nothing saved yet".
+
+5. **The sidebar's status badge could only ever say "current".** It was the
+   literal string "Source checks current" beside a green dot, rendered
+   unconditionally — no data behind it. On a product whose entire promise is
+   telling a tradesperson when a source has moved, a light that cannot report
+   anything but OK is worse than no light: it asserts the one thing it does not
+   know. Found by forcing an entry to `unverified` for D3 and watching the badge
+   stay green. Now derived from the entry statuses, and the text changes as well
+   as the colour ("1 source needs review"), so the meaning does not rest on
+   colour alone.
 
 Still open on the dialogs, not fixed here: no focus trap and no focus restore
 to the element that opened them.

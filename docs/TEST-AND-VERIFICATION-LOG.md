@@ -215,11 +215,11 @@ is a fail, not a pass.
 
 | # | Do this | Expect | Result |
 |---|---|---|---|
-| A1 | Load the preview signed out | Register lists 60 entries, fully browsable | |
+| A1 | Load the preview signed out | Register lists 60 entries, fully browsable | **PASS** — 60 entries, browse + filter + search all work signed out (local dev, 375×812, 2026-09-10) |
 | A2 | Sign up as **A** | Account created, you land signed in | |
 | A3 | Reload the page | Still signed in | |
 | A4 | Sign out | Register still loads and is fully usable | |
-| A5 | Request a password reset for **A** | Email arrives | |
+| A5 | Request a password reset for **A** | Email arrives | **PASS** — Supabase reset email received (observed by Walter, 2026-09-10) |
 | A6 | Follow the link, set a new password | New password signs in; **old one does not** | |
 
 A5 is the one most likely to fail quietly — a reset flow that never sends is
@@ -297,8 +297,8 @@ forgive.
 
 | # | Do this | Expect | Result |
 |---|---|---|---|
-| G1 | Count entries on the register | 60, and Settings shows the register version | |
-| G2 | Combine filters across Level, Type, Task | OR within an axis, AND across them; chips toggle off | |
+| G1 | Count entries on the register | 60, and Settings shows the register version | **PASS** — "60 regulations", version `2026-09-08-agent.2`, check result "60 verified" |
+| G2 | Combine filters across Level, Type, Task | OR within an axis, AND across them; chips toggle off | **PASS** — task ResReno = 46/60 (AND across axes); Victoria 45, Federal 1, both 46 (OR within axis); Federal+Documentation = 1; chips toggle off |
 | G3 | Open a reg's detail | Quote shown; source opens in a **new tab** | |
 | G4 | Install to iPhone Home Screen, open from there | A source link opens as a **dismissible overlay** that returns you to the app | |
 | G5 | Phone, outdoors | Readable; every control reachable with a thumb | |

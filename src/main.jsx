@@ -7,10 +7,10 @@ import { useEscapeToClose } from './useEscapeToClose'
 import './styles.css'
 
 const JOB_TYPES = [
-  { id: 'reno', label: 'Residential Reno', icon: 'RR', tasks: ['water-supply', 'sanitary-drainage', 'heated-water'], tone: 'sand' },
-  { id: 'new-build', label: 'New Build', icon: 'NB', tasks: ['water-supply', 'sanitary-drainage', 'roofing-stormwater', 'heated-water', 'backflow'], tone: 'sea' },
-  { id: 'gas-hot-water', label: 'Gas + Hot Water', icon: 'GH', tasks: ['gasfitting', 'heated-water'], tone: 'rust' },
-  { id: 'stormwater', label: 'Stormwater', icon: 'SW', tasks: ['roofing-stormwater'], tone: 'blue' },
+  { id: 'reno', label: 'Residential reno', icon: 'house', description: 'Water, drainage & hot water', tasks: ['water-supply', 'sanitary-drainage', 'heated-water'], tone: 'sand' },
+  { id: 'new-build', label: 'New build', icon: 'build', description: 'From rough-in to fit-off', tasks: ['water-supply', 'sanitary-drainage', 'roofing-stormwater', 'heated-water', 'backflow'], tone: 'sea' },
+  { id: 'gas-hot-water', label: 'Gas & hot water', icon: 'flame', description: 'Gasfitting & heated water', tasks: ['gasfitting', 'heated-water'], tone: 'rust' },
+  { id: 'stormwater', label: 'Stormwater', icon: 'rain', description: 'Roofing, gutters & drainage', tasks: ['roofing-stormwater'], tone: 'blue' },
 ]
 
 const TASK_LABELS = {
@@ -58,6 +58,10 @@ function trustFor(entry) {
 
 function Icon({ name, size = 20 }) {
   const paths = {
+    house: <><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7" /></>,
+    build: <><path d="M4 21V9l8-6 8 6v12M2 21h20M8 10h2m4 0h2M8 14h2m4 0h2M10 21v-3h4v3" /></>,
+    flame: <path d="M13 3c1 6-5 6-4 11-2-1-3-3-3-3-4 7 0 11 6 11 7 0 10-8 5-13 0 3-2 4-2 4 1-4-2-10-2-10Z" />,
+    rain: <><path d="m2 10 10-7 10 7M4 10h16M6 14l-1 3m7-3-1 3m7-3-1 3M8 20l-1 2m7-2-1 2" /></>,
     search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 5 5" /></>,
     bookmark: <path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4.4L5 21V4.5a1 1 0 0 1 1-1Z" />,
     settings: <><circle cx="12" cy="12" r="3" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" /></>,
@@ -314,7 +318,7 @@ function App() {
     <main className="main-content">
       {checkoutStatus && <CheckoutBanner status={checkoutStatus} />}
       <header className="mobile-header">
-        <div className="brand-mark">PR</div>
+        <div className="mobile-brand"><div className="brand-mark">PR</div><div><strong>PlumberRegs</strong><span>VICTORIA</span></div></div>
         <div className="mobile-status">
           {session ? <span className="user-chip"><Icon name="user" size={14} /> {session.user.email}</span> : (authAvailable ? <button className="mobile-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}>Sign in</button> : null)}
         </div>
@@ -347,7 +351,7 @@ function CheckoutBanner({ status }) {
 }
 
 function NavButton({ active, onClick, icon, label, count }) {
-  return <button className={`nav-button ${active ? 'active' : ''}`} onClick={onClick}><span className="nav-icon"><Icon name={icon} size={19} />{count ? <b>{count}</b> : null}</span><span>{label}</span></button>
+  return <button className={`nav-button ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined} onClick={onClick}><span className="nav-icon"><Icon name={icon} size={19} />{count ? <b>{count}</b> : null}</span><span>{label}</span></button>
 }
 
 function AuthModal({ mode, setMode, onSubmit, onClose, error, busy, message }) {
@@ -392,16 +396,18 @@ function AuthModal({ mode, setMode, onSubmit, onClose, error, busy, message }) {
 }
 
 function FindScreen({ entries, query, setQuery, startSearch, chooseJob }) {
+  const verifiedCount = entries.filter((entry) => entry.status === 'verified').length
   return <section className="screen find-screen">
-    <div className="eyebrow">FIELD REGISTER / VICTORIA</div>
-    <h1>Find a regulation<br /><em>before you start.</em></h1>
-    <p className="intro">Search for the rule that covers the job. Each result shows when its source was last checked.</p>
-    <form className="hero-search" onSubmit={(event) => { event.preventDefault(); startSearch() }}>
-      <Icon name="search" size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a clause, standard or task" aria-label="Search regulations" /><button type="submit">Search</button>
+    <div className="register-heading"><div className="eyebrow">THE FIELD REGISTER</div><span className="region-label">Victoria + Federal</span></div>
+    <h1>The right reg.<br /><em>Back to the job.</em></h1>
+    <p className="intro">Plumbing and roofing regulations, with the source to back them up.</p>
+    <form className="hero-search" role="search" onSubmit={(event) => { event.preventDefault(); startSearch() }}>
+      <Icon name="search" size={22} /><input type="search" enterKeyHint="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try hot water or AS/NZS 3500" aria-label="Search regulations" /><button type="submit" aria-label="Search regulations"><Icon name="arrow" size={22} /></button>
     </form>
-    <div className="quick-heading"><span>Start with a job type</span><span>{entries.length} verified regs</span></div>
-    <div className="job-grid">{JOB_TYPES.map((job) => <button className={`job-card ${job.tone}`} key={job.id} onClick={() => chooseJob(job)}><span className="job-icon">{job.icon}</span><span className="job-label">{job.label}</span><span className="job-arrow"><Icon name="arrow" size={17} /></span></button>)}</div>
-    <div className="field-note"><span className="note-line" /><div><strong>How to read a result</strong><p>Every entry shows when its source was last checked. If we could not confirm it, you get a warning instead of a date. Open the government page before you rely on it.</p></div></div>
+    <div className="quick-heading"><span>What’s the job?</span><button className="browse-all" onClick={startSearch}>All regulations <Icon name="arrow" size={16} /></button></div>
+    <div className="job-grid">{JOB_TYPES.map((job) => <button className={`job-card ${job.tone}`} key={job.id} onClick={() => chooseJob(job)}><span className="job-icon"><Icon name={job.icon} size={26} /></span><span className="job-copy"><span className="job-label">{job.label}</span><span className="job-description">{job.description}</span></span><span className="job-arrow"><Icon name="arrow" size={18} /></span></button>)}</div>
+    <div className="register-summary"><span><strong>{entries.length}</strong> regulations</span><span><span className="status-dot" />{verifiedCount} verified</span>{verifiedCount < entries.length && <span className="summary-warning">{entries.length - verifiedCount} need review</span>}</div>
+    <div className="field-note"><Icon name="check" size={20} /><div><strong>A source behind every result.</strong><p>Check the verification date, read the evidence and open the government source before you rely on a rule.</p></div></div>
   </section>
 }
 
@@ -411,9 +417,9 @@ function ResultsScreen({ entries, total, query, setQuery, selectedJob, obligatio
   return <section className="screen results-screen">
     <button className="back-btn" onClick={onBack}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg> Find a reg</button>
     <div className="section-top"><div><div className="eyebrow">REGISTER SEARCH</div><h1>{selectedJob ? selectedJob.label : 'Matching regulations'}</h1></div><button className="reset-button" onClick={clearFilters}>Reset</button></div>
-    <div className="results-search"><Icon name="search" size={19} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Filter these results" /></div>
-    <div className="filter-section"><span className="filter-label">Type</span><div className="filter-scroll">{Object.entries(OBLIGATION_LABELS).map(([value, label]) => <button key={value} className={`filter-chip ${obligations.includes(value) ? 'active' : ''}`} onClick={() => toggle(value, setObligations)}>{label}</button>)}</div></div>
-    <div className="filter-section"><span className="filter-label">Level</span><div className="filter-scroll">{['VIC', 'Federal'].map((value) => <button key={value} className={`filter-chip level ${jurisdictions.includes(value) ? 'active' : ''}`} onClick={() => toggle(value, setJurisdictions)}>{value === 'VIC' ? 'Victoria' : value}</button>)}</div></div>
+    <div className="results-search"><Icon name="search" size={19} /><input value={query} onChange={(event) => setQuery(event.target.value)} type="search" aria-label="Filter regulations" placeholder="Filter these results" /></div>
+    <div className="filter-section"><span className="filter-label">Type</span><div className="filter-scroll">{Object.entries(OBLIGATION_LABELS).map(([value, label]) => <button key={value} aria-pressed={obligations.includes(value)} className={`filter-chip ${obligations.includes(value) ? 'active' : ''}`} onClick={() => toggle(value, setObligations)}>{label}</button>)}</div></div>
+    <div className="filter-section"><span className="filter-label">Level</span><div className="filter-scroll">{['VIC', 'Federal'].map((value) => <button key={value} aria-pressed={jurisdictions.includes(value)} className={`filter-chip level ${jurisdictions.includes(value) ? 'active' : ''}`} onClick={() => toggle(value, setJurisdictions)}>{value === 'VIC' ? 'Victoria' : value}</button>)}</div></div>
     <div className="results-meta"><strong>{entries.length} {entries.length === 1 ? 'result' : 'results'}</strong><span>{hasFilters ? `of ${total} entries` : 'All register entries'}</span></div>
     <div className="results-list">{entries.length ? entries.map((entry) => <RegCard key={entry.id} entry={entry} onOpen={onOpen} saved={savedIds.includes(entry.id)} onToggleSaved={toggleSaved} />) : <div className="empty-state"><div className="empty-number">0</div><h2>No matching regulations</h2><p>Try clearing a filter or searching another term.</p><button onClick={clearFilters}>Show all entries</button></div>}</div>
   </section>
@@ -422,7 +428,7 @@ function ResultsScreen({ entries, total, query, setQuery, selectedJob, obligatio
 function RegCard({ entry, onOpen, saved, onToggleSaved }) {
   const trust = trustFor(entry)
   const meta = OBLIGATION_LABELS[entry.ui?.obligation] || entry.ui?.obligation || 'Other'
-  return <article className="reg-card" onClick={() => onOpen(entry)}><div className="card-top"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{meta}</span><button className={`save-button ${saved ? 'saved' : ''}`} onClick={(event) => { event.stopPropagation(); onToggleSaved(entry.id) }} aria-label={saved ? 'Remove from saved' : 'Save regulation'}><Icon name="bookmark" size={18} /></button></div><h2>{entry.ui?.title || entry.claim}</h2><p className="card-value">{entry.value}</p><div className="card-bottom"><span className={`status ${trust.kind}`}><span className="status-dot" />{trust.message}</span><span className="card-ref">{entry.ui?.ref}</span></div></article>
+  return <article className="reg-card" onClick={() => onOpen(entry)}><div className="card-top"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{meta}</span><button className={`save-button ${saved ? 'saved' : ''}`} onClick={(event) => { event.stopPropagation(); onToggleSaved(entry.id) }} aria-label={saved ? 'Remove from saved' : 'Save regulation'}><Icon name="bookmark" size={18} /></button></div><h2><button className="reg-open" onClick={() => onOpen(entry)}>{entry.ui?.title || entry.claim}</button></h2><p className="card-value">{entry.value}</p><div className="card-bottom"><span className={`status ${trust.kind}`}><span className="status-dot" />{trust.message}</span><span className="card-ref">{entry.ui?.ref}</span></div></article>
 }
 
 function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, session, savesLoading }) {

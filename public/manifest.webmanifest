@@ -1,13 +1,13 @@
 {
-  "name": "VIC PlumberRegs — Verified Regulations",
+  "name": "VIC PlumberRegs \u2014 Verified Regulations",
   "short_name": "PlumberRegs",
   "description": "A live, verified register of the Victorian and Commonwealth regulations that govern licensed plumbing and roofing work.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f2f2f7",
-  "theme_color": "#f2f2f7",
+  "background_color": "#0F1214",
+  "theme_color": "#0F1214",
   "icons": [
     {
       "src": "/icons/icon-192.png",

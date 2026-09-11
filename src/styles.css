@@ -97,6 +97,8 @@ button { cursor: pointer; }
 .app-shell { min-height: 100vh; display: flex; }
 .sidebar { width: 264px; padding: 32px 22px 24px; background: var(--surface); border-right: 1px solid var(--line); display: flex; flex-direction: column; position: fixed; inset: 0 auto 0 0; z-index: 5; }
 .brand { display: flex; gap: 11px; align-items: center; margin-bottom: 32px; }
+.brand-button { border: 0; margin: 0; padding: 0; background: transparent; color: inherit; font: inherit; text-align: left; border-radius: 8px; }
+.brand-button:focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
 .brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: var(--sea); color: var(--on-signal); font-size: 12px; font-weight: 800; letter-spacing: .06em; }
 .brand strong { display: block; font-size: 14px; letter-spacing: -.02em; }
 .brand span { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
@@ -149,6 +151,7 @@ h1 em { color: var(--sand); font-style: normal; }
 .job-card.blue .job-icon { background: var(--plate-sw); }
 .job-label { max-width: 110px; font-size: 13px; line-height: 1.25; font-weight: 700; }
 .job-arrow { align-self: flex-end; opacity: .7; }
+.marketing-line { max-width: 535px; color: var(--ink-2); font-size: 13px; line-height: 1.6; margin-top: 10px; padding-left: 13px; border-left: 2px solid var(--signal); }
 .field-note { max-width: 670px; display: flex; gap: 13px; align-items: flex-start; margin-top: 62px; color: var(--muted); }
 .note-line { width: 3px; height: 45px; flex: 0 0 auto; border-radius: 3px; background: var(--sand); }
 .field-note strong { color: var(--ink); display: block; font-size: 11px; margin-bottom: 4px; }
@@ -201,6 +204,17 @@ h1 em { color: var(--sand); font-style: normal; }
 .settings-callout { max-width: 650px; display: flex; gap: 11px; margin-top: 18px; padding: 16px; border-radius: 10px; background: var(--green-soft); color: var(--green); }
 .settings-callout strong { display: block; color: var(--ok); font-size: 12px; margin-bottom: 4px; }
 .settings-callout p { color: var(--ok); font-size: 11px; line-height: 1.55; }
+.theme-toggle { display: flex; gap: 4px; padding: 4px; border-radius: 9px; background: var(--raised); }
+.theme-toggle button { flex: 1; border: 0; padding: 8px 10px; border-radius: 6px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 700; }
+.theme-toggle button.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.faq-item { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.faq-item:last-child { border-bottom: 0; }
+.faq-item summary { cursor: pointer; color: var(--ink); font-size: 13px; font-weight: 700; list-style: none; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before { content: '+'; display: inline-block; width: 16px; color: var(--signal); font-weight: 800; }
+.faq-item[open] summary::before { content: '–'; }
+.faq-item p { margin-top: 10px; padding-left: 16px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.support-link { display: inline-flex; align-items: center; gap: 7px; color: var(--signal); font-size: 12px; font-weight: 700; text-decoration: none; }
 .loading { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 13px; color: var(--muted); font-size: 12px; }
 .loading .brand-mark { margin-bottom: 5px; }
 .error-state h1 { font-size: 25px; }
@@ -413,6 +427,32 @@ blockquote { margin: 10px 0 0; padding: 14px 16px; border-left: 3px solid var(--
 :root { --bg: #111616; --surface: #1a2020; --raised: #232b2a; --line: #343e3b; --line-2: #57645e; --ink: #f5f4ef; --ink-2: #dce0d9; --ink-3: #b9c3ba; --signal: #ff8b51; --signal-hover: #ffa273; --signal-soft: #ff8b5114; --on-signal: #171b19; }
 @media (prefers-color-scheme: light) {
   :root { --bg: #f4f3ed; --surface: #fffefa; --raised: #eeeee6; --line: #d9ddd3; --line-2: #a2ada0; --ink: #202b26; --ink-2: #435046; --ink-3: #59655b; --signal: #a63d16; --signal-hover: #88300f; --signal-soft: #a63d160c; --on-signal: #fffefa; }
+}
+
+/* Manual theme override. An attribute selector outranks the media query above
+   regardless of source order, so a user's explicit choice always wins over
+   the system preference it would otherwise defer to. */
+:root[data-theme="dark"] {
+  --bg: #111616; --surface: #1a2020; --raised: #232b2a; --line: #343e3b; --line-2: #57645e;
+  --ink: #f5f4ef; --ink-2: #dce0d9; --ink-3: #b9c3ba;
+  --signal: #ff8b51; --signal-hover: #ffa273; --signal-soft: #ff8b5114; --on-signal: #171b19;
+  --ok: #41C486; --ok-soft: rgba(65, 196, 134, .14); --ok-line: rgba(65, 196, 134, .34);
+  --warn: #F2A93B; --warn-soft: rgba(242, 169, 59, .14); --warn-line: rgba(242, 169, 59, .40);
+  --stop: #FF5C5C; --stop-soft: rgba(255, 92, 92, .14); --stop-line: rgba(255, 92, 92, .40);
+  --lift: inset 0 1px 0 rgba(255, 255, 255, .055); --shadow: none;
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, .55); --backdrop: rgba(6, 9, 10, .66);
+  --focus: 0 0 0 3px rgba(255, 106, 31, .38);
+}
+:root[data-theme="light"] {
+  --bg: #f4f3ed; --surface: #fffefa; --raised: #eeeee6; --line: #d9ddd3; --line-2: #a2ada0;
+  --ink: #202b26; --ink-2: #435046; --ink-3: #59655b;
+  --signal: #a63d16; --signal-hover: #88300f; --signal-soft: #a63d160c; --on-signal: #fffefa;
+  --ok: #1D7A4F; --ok-soft: rgba(29, 122, 79, .10); --ok-line: rgba(29, 122, 79, .34);
+  --warn: #8A5A05; --warn-soft: rgba(138, 90, 5, .10); --warn-line: rgba(138, 90, 5, .34);
+  --stop: #C0322F; --stop-soft: rgba(192, 50, 47, .10); --stop-line: rgba(192, 50, 47, .34);
+  --lift: none; --shadow: 0 1px 2px rgba(14, 18, 20, .06), 0 8px 20px -8px rgba(14, 18, 20, .16);
+  --shadow-modal: 0 24px 64px -12px rgba(14, 18, 20, .28); --backdrop: rgba(14, 18, 20, .42);
+  --focus: 0 0 0 3px rgba(191, 58, 8, .28);
 }
 body { -webkit-font-smoothing: antialiased; }
 button, a, input { touch-action: manipulation; }

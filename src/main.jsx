@@ -32,6 +32,16 @@ const OBLIGATION_LABELS = {
 
 const LOCAL_SAVES_KEY = 'plumber-regs-saved'
 const MIGRATED_KEY = 'plumber-regs-saves-migrated'
+const THEME_KEY = 'plumber-regs-theme'
+const SUPPORT_EMAIL = 'walter@walteradamson.com'
+
+function readTheme() {
+  try {
+    return localStorage.getItem(THEME_KEY) || 'system'
+  } catch {
+    return 'system'
+  }
+}
 
 function readLocalSaved() {
   try {
@@ -100,9 +110,16 @@ function App() {
   const [savesLoading, setSavesLoading] = useState(false)
   const [activeJob, setActiveJob] = useState(null)
   const [showAddToJob, setShowAddToJob] = useState(false)
+  const [theme, setTheme] = useState(readTheme)
   const { jobs, jobItems, jobsLoading, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob } = useJobs(session)
   const subscription = useSubscription(session)
   const [checkoutStatus, setCheckoutStatus] = useState(null)
+
+  useEffect(() => {
+    if (theme === 'system') delete document.documentElement.dataset.theme
+    else document.documentElement.dataset.theme = theme
+    try { localStorage.setItem(THEME_KEY, theme) } catch { /* private browsing */ }
+  }, [theme])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -289,7 +306,7 @@ function App() {
 
   return <div className="app-shell">
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark">PR</div><div><strong>VIC PlumberRegs</strong><span>Verified field register</span></div></div>
+      <button className="brand brand-button" onClick={() => { setActiveScreen('find'); clearFilters() }} aria-label="Go to Find a reg"><div className="brand-mark">PR</div><div><strong>VIC PlumberRegs</strong><span>Verified field register</span></div></button>
       <div className={`trust-mini ${degradedCount ? 'warn' : ''}`}><span className="trust-dot" /> {degradedCount ? `${degradedCount} source${degradedCount === 1 ? ' needs' : 's need'} review` : 'Source checks current'}</div>
       <nav className="side-nav" aria-label="Main navigation">
         <NavButton active={activeScreen === 'find' || activeScreen === 'results'} onClick={() => { setActiveScreen('find'); clearFilters() }} icon="search" label="Find a reg" />
@@ -318,17 +335,17 @@ function App() {
     <main className="main-content">
       {checkoutStatus && <CheckoutBanner status={checkoutStatus} />}
       <header className="mobile-header">
-        <div className="mobile-brand"><div className="brand-mark">PR</div><div><strong>PlumberRegs</strong><span>VICTORIA</span></div></div>
+        <button className="mobile-brand brand-button" onClick={() => { setActiveScreen('find'); clearFilters() }} aria-label="Go to Find a reg"><div className="brand-mark">PR</div><div><strong>PlumberRegs</strong><span>VICTORIA</span></div></button>
         <div className="mobile-status">
           {session ? <span className="user-chip"><Icon name="user" size={14} /> {session.user.email}</span> : (authAvailable ? <button className="mobile-signin" onClick={() => { setAuthView('signin'); setAuthError(''); setAuthMessage('') }}>Sign in</button> : null)}
         </div>
       </header>
-      {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} />}
+      {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} session={session} />}
       {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} onBack={() => { setActiveScreen('find'); clearFilters() }} />}
       {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} />}
       {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
       {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} readOnly={!subscription.isActive} />}
-      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
+      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} theme={theme} setTheme={setTheme} />}
     </main>
 
     <nav className="mobile-nav" aria-label="Mobile navigation">
@@ -395,12 +412,13 @@ function AuthModal({ mode, setMode, onSubmit, onClose, error, busy, message }) {
   </div>
 }
 
-function FindScreen({ entries, query, setQuery, startSearch, chooseJob }) {
+function FindScreen({ entries, query, setQuery, startSearch, chooseJob, session }) {
   const verifiedCount = entries.filter((entry) => entry.status === 'verified').length
   return <section className="screen find-screen">
     <div className="register-heading"><div className="eyebrow">THE FIELD REGISTER</div><span className="region-label">Victoria + Federal</span></div>
     <h1>The right reg.<br /><em>Back to the job.</em></h1>
     <p className="intro">Plumbing and roofing regulations, with the source to back them up.</p>
+    {!session && <p className="marketing-line">Ever priced a job off a reg that had already changed? Every entry here carries a checked date and a link straight to the government source — including material automated tools are blocked from reaching.</p>}
     <form className="hero-search" role="search" onSubmit={(event) => { event.preventDefault(); startSearch() }}>
       <Icon name="search" size={22} /><input type="search" enterKeyHint="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try hot water or AS/NZS 3500" aria-label="Search regulations" /><button type="submit" aria-label="Search regulations"><Icon name="arrow" size={22} /></button>
     </form>
@@ -445,7 +463,7 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
   </section>
 }
 
-function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription }) {
+function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription, theme, setTheme }) {
   const subStatus = subscription.subLoading ? 'Checking…' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Lapsed' : 'No subscription'
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
@@ -456,6 +474,18 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
       <SettingRow label="Regs" value={`${register.entries.length}`} />
       <SettingRow label="Last checked" value={formatDate(register.last_run?.on || register.last_agent_run)} />
       <SettingRow label="Check result" value={`${register.last_run?.counts?.verified || 0} verified`} good />
+    </div>
+    <div className="settings-card" style={{ marginTop: '18px' }}>
+      <div className="setting-row">
+        <span>Appearance</span>
+        <div className="theme-toggle" role="group" aria-label="Theme">
+          {['system', 'light', 'dark'].map((option) => (
+            <button key={option} className={theme === option ? 'active' : ''} aria-pressed={theme === option} onClick={() => setTheme(option)}>
+              {option === 'system' ? 'System' : option === 'light' ? 'Light' : 'Dark'}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
     <div className="settings-card" style={{ marginTop: '18px' }}>
       {session ? (
@@ -495,6 +525,17 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
       )}
     </div>
     <div className="settings-callout"><span className="trust-dot" /><div><strong>Weekly source checks</strong><p>Each entry is checked on its own. If a source changes or goes offline, that entry shows a warning.</p></div></div>
+
+    <div className="eyebrow" style={{ marginTop: '36px' }}>SUPPORT</div>
+    <div className="settings-card">
+      <div className="setting-row">
+        <span>Found a problem, or a reg that looks wrong?</span>
+        <a className="support-link" href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('VIC PlumberRegs')}`}><Icon name="mail" size={15} /> Email support</a>
+      </div>
+      <div className="faq-item"><details><summary>How is a "verified" date worked out?</summary><p>Each entry's source page is checked on a weekly schedule against the value recorded here. If the value still matches, the entry is marked verified with that date. If it doesn't, or the page can't be reached, the entry shows a warning instead of a false "verified" tag.</p></details></div>
+      <div className="faq-item"><details><summary>Why does this exist instead of just searching the standard myself?</summary><p>You can always read the primary source — the link is on every entry. What's hard to do by hand is re-check every clause you rely on, every week, and notice the moment one changes. That's the part this register automates. Some of the underlying government content (BPC) blocks automated access entirely, so even that re-check has to be done deliberately, not scraped.</p></details></div>
+      <div className="faq-item"><details><summary>What if I disagree with a listed value?</summary><p>Open the entry and follow "Open government source" — that page is the actual authority, not this app. If you think the register has it wrong, email support with the entry and we'll re-check it.</p></details></div>
+    </div>
   </section>
 }
 

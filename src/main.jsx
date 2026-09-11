@@ -408,6 +408,7 @@ function AuthModal({ mode, setMode, onSubmit, onClose, error, busy, message }) {
         {mode === 'reset' && <button onClick={() => { setMode('signin'); }}>Back to sign in</button>}
         {mode === 'new-password' && <button onClick={() => { setMode('signin'); }}>Back to sign in</button>}
       </div>
+      {mode === 'signup' && <p className="auth-legal">By creating an account you agree to our <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</p>}
     </section>
   </div>
 }
@@ -535,6 +536,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
       <div className="faq-item"><details><summary>How is a "verified" date worked out?</summary><p>Each entry's source page is checked on a weekly schedule against the value recorded here. If the value still matches, the entry is marked verified with that date. If it doesn't, or the page can't be reached, the entry shows a warning instead of a false "verified" tag.</p></details></div>
       <div className="faq-item"><details><summary>Why does this exist instead of just searching the standard myself?</summary><p>You can always read the primary source — the link is on every entry. What's hard to do by hand is re-check every clause you rely on, every week, and notice the moment one changes. That's the part this register automates. Some of the underlying government content (BPC) blocks automated access entirely, so even that re-check has to be done deliberately, not scraped.</p></details></div>
       <div className="faq-item"><details><summary>What if I disagree with a listed value?</summary><p>Open the entry and follow "Open government source" — that page is the actual authority, not this app. If you think the register has it wrong, email support with the entry and we'll re-check it.</p></details></div>
+      <div className="setting-row"><span>How we handle your information</span><a className="support-link" href="/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></div>
     </div>
   </section>
 }

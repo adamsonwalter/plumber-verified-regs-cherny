@@ -178,9 +178,19 @@ email," rather than requiring new infrastructure.
 
 ## 4. Marketing consent and Privacy Policy
 
-Confirmed: **there is no Privacy Policy, Terms of Service, or consent
-checkbox anywhere in this codebase** — not a page, not a link, not a
-checkbox on the signup form (`AuthModal`, `src/main.jsx:357`).
+**Update 2026-09-12:** item 1 below is done — a short notice lives at
+`public/privacy.html` (Digital Investor Pty Ltd, ABN 86 006 254 566,
+privacy@digitalinvestor.com.au), linked from signup and Settings.
+Deliberately kept to three sentences: on review, a full APP-style policy
+document was judged disproportionate for a business at this scale and this
+list's own §1 finding that it likely qualifies for the small-business
+exemption — this is a voluntary, proportionate notice, not a claim of full
+Privacy Act coverage. Item 2 (consent checkbox) is still not built.
+
+Confirmed at the time this was written: **there was no Privacy Policy, Terms
+of Service, or consent checkbox anywhere in this codebase** — not a page,
+not a link, not a checkbox on the signup form (`AuthModal`,
+`src/main.jsx:357`).
 
 This matters now, specifically, because the intent to use collected emails
 for marketing (this app, and others) turns it from "nice to have" into a

@@ -491,7 +491,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
     <div className="settings-card" style={{ marginTop: '18px' }}>
       {session ? (
         <div className="setting-row setting-account">
-          <div className="account-info"><span className="account-label">Signed in as</span><strong>{session.user.email}</strong></div>
+          <div className="account-info"><span className="account-label">Signed in as</span><strong>{session.user.email}</strong>{subscription.isActive && <small>Signing out doesn't cancel billing — that's separate, below.</small>}</div>
           <button className="auth-signout" onClick={onSignOut}><Icon name="logout" size={16} /> Sign out</button>
         </div>
       ) : (
@@ -502,16 +502,16 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
       )}
       {session && (
         <div className="setting-row subscription-row">
-          <span>Subscription</span>
+          <span>Billing (Jobs)</span>
           <strong className={subscription.isActive ? 'good' : ''}>{subStatus}</strong>
         </div>
       )}
       {session && subscription.isActive && (
         <div className="subscription-cta">
-          <p>{subscription.cancelAtPeriodEnd ? `Your access remains active until ${formatDate(subscription.periodEnd)}.` : 'Manage billing, payment method, or cancellation in Stripe.'}</p>
+          <p>{subscription.cancelAtPeriodEnd ? `Your access remains active until ${formatDate(subscription.periodEnd)}.` : 'This is a separate billing subscription for Jobs — it has nothing to do with your account sign-in. Manage payment method or cancel it in Stripe.'}</p>
           {subscription.portalError && <div className="auth-error">{subscription.portalError}</div>}
           <button className="checkout-btn secondary" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>
-            {subscription.portalLoading ? 'Opening…' : 'Manage subscription'}
+            {subscription.portalLoading ? 'Opening…' : 'Manage billing'}
           </button>
         </div>
       )}

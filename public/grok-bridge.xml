@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Dial timeout="30" callerId="+61390721112">
+    <Sip>sip:+61390721112@sip.voice.x.ai;transport=tls</Sip>
+  </Dial>
+</Response>

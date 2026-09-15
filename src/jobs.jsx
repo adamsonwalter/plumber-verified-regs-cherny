@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabaseClient'
 import { useEscapeToClose } from './useEscapeToClose'
+import { JobRecord } from './JobRecord'
 
 export function useJobs(session) {
   const [jobs, setJobs] = useState([])
@@ -176,7 +177,7 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
   </section>
 }
 
-export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, onOpenEntry, onRenameJob, onDeleteJob, readOnly = false }) {
+export function JobDetailScreen({ job, items, allEntries, register, onBack, onRemoveReg, onOpenEntry, onRenameJob, onDeleteJob, readOnly = false }) {
   const [showEdit, setShowEdit] = useState(false)
   const [name, setName] = useState(job.name)
   const [note, setNote] = useState(job.note || '')
@@ -244,6 +245,8 @@ export function JobDetailScreen({ job, items, allEntries, onBack, onRemoveReg, o
     )}
 
     <div className="results-meta"><strong>{liveItems.length} {liveItems.length === 1 ? 'reg' : 'regs'}</strong>{removedIds.length > 0 && <span>{removedIds.length} no longer in register</span>}</div>
+    {liveItems.length > 0 && <button className="checkout-btn secondary job-record-btn" onClick={() => window.print()}>Download job record</button>}
+    <JobRecord job={job} entries={liveItems.map((item) => entryMap.get(item.entry_id))} register={register} />
     <div className="results-list">
       {liveItems.map((item) => {
         const entry = entryMap.get(item.entry_id)

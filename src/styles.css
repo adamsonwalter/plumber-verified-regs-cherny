@@ -587,3 +587,24 @@ button:active { transform: translateY(1px); }
   .hero-search input { font-size: 16px; }
   .job-card { padding: 12px; }
 }
+
+/* Job record: invisible on screen, the only thing on the page when printing.
+   Colours are fixed so a dark-theme session still prints black on white. */
+.job-record-btn { margin: 4px 0 16px; }
+.job-record { display: none; }
+@media print {
+  body > *:not(.job-record) { display: none !important; }
+  body { background: #fff !important; }
+  .job-record { display: block; color: #000; background: #fff; font: 11pt/1.45 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  .job-record h1 { font-size: 20pt; margin: 2pt 0 4pt; }
+  .job-record .jr-kicker { font-size: 9pt; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin: 0; }
+  .job-record .jr-note { margin: 0 0 6pt; }
+  .job-record .jr-meta { font-size: 9.5pt; margin: 0 0 14pt; padding-bottom: 8pt; border-bottom: 1.5pt solid #000; }
+  .job-record .jr-entry { break-inside: avoid; margin: 0 0 12pt; }
+  .job-record h2 { font-size: 12.5pt; margin: 0 0 4pt; }
+  .job-record table { border-collapse: collapse; width: 100%; }
+  .job-record th { text-align: left; vertical-align: top; width: 22%; padding: 2pt 8pt 2pt 0; font-weight: 700; }
+  .job-record td { padding: 2pt 0; }
+  .job-record .jr-url { word-break: break-all; }
+  .job-record footer { margin-top: 16pt; padding-top: 8pt; border-top: 1pt solid #000; font-size: 9pt; }
+}

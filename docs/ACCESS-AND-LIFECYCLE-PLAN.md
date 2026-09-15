@@ -10,6 +10,114 @@ Companions: `SPEC.md` (what the register itself promises), `LESSONS-LEARNED.md`.
 
 ---
 
+## 0. Decision record — 2026-09-15 (supersedes the recommendations in §1 and §2)
+
+Written after Walter's review of the tiers. §1–§4 below are kept as the
+original analysis; where this section disagrees with them, this section wins.
+
+### Precondition: the dates have to move
+
+Everything proposed here sells *freshness*. If the weekly re-check does not
+reach the live site, alerts never fire and dated records prove nothing.
+
+**Correction to the 2026-09-15 review:** the review said Monday's check did not
+run. That was wrong. Per the verification desk's own account, the desk clock
+fired on 2026-09-14 at 07:00 UTC, re-checked all 60 entries (60 verified), and
+wrote a local scratch register `2026-09-14-agent.3`. It never published: the
+push to `main` was rejected as non-fast-forward, and the desk rules correctly
+abort rather than force-push. So the live site still serves `2026-09-08-agent.2`
+(confirmed against `plumber-cherny.netlify.app/register.json` on 2026-09-15).
+
+The "never run on its own" line in `TEST-AND-VERIFICATION-LOG.md` refers to
+**Netlify's** scheduled function, which is a different, unused path. It remains
+true of that function and says nothing about the desk.
+
+What moved `main`: two Cursor PRs merged at 00:49–01:17 UTC on 2026-09-14 (add,
+then remove, a Grok bridge file). That was ~6 hours *before* the run, which
+points to the desk starting from a stale checkout rather than `main` moving
+mid-run. Neither commit touched `register.json`.
+
+**Proposed fix, for the desk owner to decide:** fetch at the start of the run,
+and if a push is rejected, fetch and rebase once; retry the push only if none of
+the incoming commits touch `register.json` / `public/register.json`. Otherwise
+keep the current abort. Unrelated commits to `main` should never be able to
+silently cancel a week's verification. Also add an alert when a run verifies
+but does not publish, since this failure was invisible from the live site.
+
+### The problem with the tiers as built
+
+The register is the value, and all of it is free: lookup, dates, quotes,
+source links, and saves. The only paid feature is Jobs, which as built is a
+folder. A folder is not worth a monthly fee, and a free account currently
+offers almost nothing a device can't, so there is little reason to sign up
+either.
+
+Locking the lookup is not the fix. The content is public government pages; a
+plumber turned away just bookmarks the BPC page. The free lookup is the shop
+window and the proof that the dates are real.
+
+### What people would pay for: being told when something changes
+
+Anyone can check a reg today. What they cannot do is notice that a reg they
+relied on three weeks ago has since changed. Only the weekly checker can, and
+only if it knows who to tell. That makes a job two things:
+
+- **A watch list** — the regs for one site, with an email if any of them change
+  while the job is open.
+- **A dated record** — a downloadable snapshot of each reg's status, date,
+  quote and source as checked, for the job file. It cannot be rebuilt later from
+  the free lookup, and it is what a plumber would want in a dispute with a
+  client or an inspector.
+
+### Proposed tiers
+
+| | Gets | Why it exists |
+|---|---|---|
+| **No login** | Full lookup, dates, quotes, source links. **No saves.** | Shop window and proof. Removing device saves also removes the local/account save split that caused a real bug (see the test log, defect 4). |
+| **Free account** | Saved regs on any device, plus a weekly "what changed in the register" email. | Collects an email with marketing consent (needs the §4 checkbox). Gives signing up a reason. |
+| **Paid** | Jobs as watch lists with change alerts, plus dated job records to download. | The only tier that tells *you* when *your* regs change, and gives you proof. |
+
+Caveat: at 60 entries, changes will be rare, so alerts will seldom fire. That
+argues for widening the register, not against the model.
+
+### Lifecycle on cancellation (replaces §2's recommendation)
+
+Access to the service and a customer's own records are different things.
+Keeping jobs readable forever after cancelling gives away the paid tier.
+
+- **Voluntary cancel:** full access to the end of the paid period, then locked.
+  Stripe's cancel-at-period-end already provides this.
+- **Failed card:** 7 days' grace while Stripe retries, then locked.
+- **Before lockout:** one-time "download your jobs" offer. Downloaded dated
+  records are the customer's to keep.
+- **After lockout:** jobs hidden (not deleted) for 90 days for win-back, then
+  hard-deleted. The user drops back to a free account.
+- The existing migrations' "readable forever" intent must be replaced, not
+  timer-patched (§2 already notes this).
+
+### Account vs subscription — what exists
+
+- **Separate, and working:** the Supabase account (`auth.users`) and billing
+  (`stripe_customers`, `stripe_subscriptions`) are different records. The
+  webhook re-syncs the full subscription from Stripe on any event carrying a
+  customer, so cancellations reach the database (assuming the Stripe endpoint
+  is subscribed to subscription events — not verified here). Cancelling billing
+  does not touch the account.
+- **Missing entirely:** there is no "close my account" path. `saves` and `jobs`
+  cascade on user deletion, but `stripe_customers.user_id` references
+  `auth.users` with no `ON DELETE` rule, so deleting a user who ever checked out
+  will likely be refused by the database. Deleting an account also does not
+  cancel the Stripe subscription. Needs a flow that cancels billing first, then
+  deletes the user.
+
+### Decisions, in order
+
+1. Make the weekly publish reliable (fix above), then confirm the live dates
+   move on the next Monday run.
+2. Adopt the three tiers above, or say which part to change.
+3. Confirm 7-day failed-card grace and 90-day retention.
+4. Build "close my account", cancelling billing at the same time.
+
 ## 1. What is actually free today
 
 There is no paywall on the register itself. As built:

@@ -99,7 +99,7 @@ function App() {
   const [obligations, setObligations] = useState([])
   const [jurisdictions, setJurisdictions] = useState([])
   const [selectedEntry, setSelectedEntry] = useState(null)
-  const [savedIds, setSavedIds] = useState(readLocalSaved)
+  const [savedIds, setSavedIds] = useState([])
   const [error, setError] = useState('')
   const [session, setSession] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
@@ -148,7 +148,7 @@ function App() {
           await loadRemoteSaves(setSavedIds)
           setSavesLoading(false)
         } else {
-          setSavedIds(readLocalSaved())
+          setSavedIds([])
         }
       })()
     })
@@ -187,14 +187,6 @@ function App() {
       .then(setRegister)
       .catch(() => setError('The register could not be loaded. Please try again.'))
   }, [])
-
-  useEffect(() => {
-    const sync = (event) => {
-      if (!session && event.key === LOCAL_SAVES_KEY) setSavedIds(readLocalSaved())
-    }
-    window.addEventListener('storage', sync)
-    return () => window.removeEventListener('storage', sync)
-  }, [session])
 
   const entries = register?.entries || []
   const filteredEntries = useMemo(() => {
@@ -242,15 +234,12 @@ function App() {
         await supabase.from('saves').insert({ entry_id: id })
       }
     } else {
-      // Write the buffer here, from this one deliberate action, rather than
-      // mirroring `savedIds` from an effect. The effect version fired on every
-      // change where `session` was falsy — including the instant of signing
-      // out, before `savedIds` had been reset — so an account's saves could be
-      // captured into the signed-out buffer and reappear as though they were
-      // local. That is how a reg the account no longer held kept showing up.
-      const next = savedIds.includes(id) ? savedIds.filter((savedId) => savedId !== id) : [...savedIds, id]
-      setSavedIds(next)
-      localStorage.setItem(LOCAL_SAVES_KEY, JSON.stringify(next))
+      // Saving needs a free account. Lookup stays open to everyone; keeping
+      // saves on the device as well made a free account pointless and split
+      // saves across two stores that could leak into each other.
+      setAuthError('')
+      setAuthMessage('Create a free account to save regs. They follow you to any device.')
+      setAuthView('signup')
     }
   }, [session, savedIds])
 
@@ -342,7 +331,7 @@ function App() {
       </header>
       {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} session={session} />}
       {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} onBack={() => { setActiveScreen('find'); clearFilters() }} />}
-      {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} />}
+      {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
       {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
       {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} readOnly={!subscription.isActive} />}
       {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} theme={theme} setTheme={setTheme} />}
@@ -450,14 +439,25 @@ function RegCard({ entry, onOpen, saved, onToggleSaved }) {
   return <article className="reg-card" onClick={() => onOpen(entry)}><div className="card-top"><span className={`type-badge ${entry.ui?.obligation || ''}`}>{meta}</span><button className={`save-button ${saved ? 'saved' : ''}`} onClick={(event) => { event.stopPropagation(); onToggleSaved(entry.id) }} aria-label={saved ? 'Remove from saved' : 'Save regulation'}><Icon name="bookmark" size={18} /></button></div><h2><button className="reg-open" onClick={() => onOpen(entry)}>{entry.ui?.title || entry.claim}</button></h2><p className="card-value">{entry.value}</p><div className="card-bottom"><span className={`status ${trust.kind}`}><span className="status-dot" />{trust.message}</span><span className="card-ref">{entry.ui?.ref}</span></div></article>
 }
 
-function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, session, savesLoading }) {
+function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, session, savesLoading, onShowAuth }) {
   const entryMap = useMemo(() => new Map(allEntries.map((e) => [e.id, e])), [allEntries])
   const removedIds = savedIds.filter((id) => !entryMap.has(id))
 
+  if (!session) {
+    const deviceCount = readLocalSaved().length
+    return <section className="screen saved-screen">
+      <div className="eyebrow">SAVED</div>
+      <h1>Saved regulations</h1>
+      <p className="intro">Create a free account to save regs. They follow you to any device.</p>
+      {deviceCount > 0 && <p className="intro"><strong>{deviceCount} {deviceCount === 1 ? 'reg is' : 'regs are'} saved on this device from before.</strong> Sign in or create an account and they move into it.</p>}
+      {authAvailable && <div className="account-actions"><button className="auth-signup" onClick={() => onShowAuth('signup')}>Create free account</button><button className="auth-signin" onClick={() => onShowAuth('signin')}><Icon name="user" size={16} /> Sign in</button></div>}
+    </section>
+  }
+
   return <section className="screen saved-screen">
-    <div className="eyebrow">{session ? 'SYNCED TO YOUR ACCOUNT' : 'YOUR DEVICE'}</div>
+    <div className="eyebrow">SYNCED TO YOUR ACCOUNT</div>
     <h1>Saved regulations</h1>
-    <p className="intro">{session ? 'Your saved regs follow you to any device you sign in on.' : 'Saved on this device. Sign in and they follow you to any device.'}</p>
+    <p className="intro">Your saved regs follow you to any device you sign in on.</p>
     {savesLoading && <p className="saves-loading">Loading your saves…</p>}
     {entries.length ? <div className="results-list">{entries.map((entry) => <RegCard key={entry.id} entry={entry} onOpen={onOpen} saved={savedIds.includes(entry.id)} onToggleSaved={toggleSaved} />)}</div> : !savesLoading && <div className="empty-state saved-empty"><div className="empty-icon"><Icon name="bookmark" size={28} /></div><h2>Nothing saved yet</h2><p>Tap the bookmark on any reg to keep it here.</p></div>}
     {removedIds.length > 0 && <div className="removed-saves"><h3>No longer in the register</h3>{removedIds.map((id) => <div key={id} className="removed-row"><span>{id}</span><button onClick={() => toggleSaved(id)}>Remove</button></div>)}</div>}

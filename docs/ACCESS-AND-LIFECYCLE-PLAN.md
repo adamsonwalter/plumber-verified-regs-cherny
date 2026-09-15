@@ -117,10 +117,10 @@ Keeping jobs readable forever after cancelling gives away the paid tier.
 | Weekly publish fix | Done by the verification desk; live register is `2026-09-15-agent.3`. Confirm next Monday's run publishes. |
 | No saves without an account | Built and verified on the dev server (`e8846e6`). |
 | Dated job record | Built and verified in Chrome against a real job (`c523e54`). Records the register as at printing, not per-job snapshots. |
-| Lock jobs after lapse, grace on failed card | App side built. Database side written as `supabase/migrations/20260915090000_lock_jobs_after_lapse.sql` — **not applied**; Bolt must apply it. Grace length is a Stripe setting (see below). |
-| Delete 90 days after lockout | Written as `20260915090100_purge_lapsed_jobs.sql` — **not applied**. Schedules itself only if pg_cron is installed; otherwise it says so. |
+| Lock jobs after lapse, grace on failed card | Applied by Bolt 2026-09-15. Verified against the live database as the subscribed test account: `has_jobs_access()` returns `true`, jobs are readable, and an anonymous caller is refused (42501). The locked state is still untested (needs a cancelled subscription). Grace length is a Stripe setting (see below). |
+| Delete 90 days after lockout | Applied by Bolt 2026-09-15. **Whether it is scheduled is unknown** — Bolt did not say if pg_cron was installed. Ask Bolt to run `select jobname, schedule from cron.job where jobname = 'purge-lapsed-jobs';` |
 | Change alerts and weekly digest email | On hold — Walter believes Bolt has email built in; check before choosing a provider. |
-| Close my account | Built. App panel verified in Chrome up to the final confirm (not pressed). Function `supabase/functions/delete-account` and migration `20260915090200_account_deletion_cascade.sql` are **not deployed or applied** — Bolt must do both. |
+| Close my account | Built, migration applied and function deployed by Bolt 2026-09-15. Verified live without deleting anything: with the user's token and no confirmation the function returns 400 "Confirmation required" (the guard in this repo's source, so the deployed code is current), and with no token it returns 401. A real close is still untested — use a throwaway account. |
 
 **Close account, as built:** Settings → Close account → confirm. The function
 cancels every live Stripe subscription immediately (no refund for the rest of
@@ -136,7 +136,7 @@ subscription**. The database treats `past_due` as the grace period, so if
 Stripe is left to keep a subscription past due for weeks, the grace lasts
 weeks.
 
-**To test after Bolt applies the migrations** (all states forced from the
+**Still to test** (migrations are applied) (all states forced from the
 Stripe dashboard on a test customer):
 1. Active: jobs visible and editable (unchanged).
 2. Cancel at period end: jobs still editable, and a banner gives the end date
@@ -146,6 +146,13 @@ Stripe dashboard on a test customer):
 4. Resubscribe: the same jobs come back.
 5. Past due (use a card that fails on renewal): jobs keep working and the
    "Update card" banner shows.
+
+**On Bolt's security-advisor note** that `has_jobs_access()` is callable by
+signed-in users: that is required, not a leak. Row-level policies run as the
+calling role, so `authenticated` must be able to execute a function the policies
+call; revoking it would make every Jobs query fail with permission denied. It
+only ever answers for the caller (`auth.uid()`), and anonymous callers are
+refused. Leave it.
 
 ### Decisions, in order
 

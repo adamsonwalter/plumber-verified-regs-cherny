@@ -608,3 +608,10 @@ button:active { transform: translateY(1px); }
   .job-record .jr-url { word-break: break-all; }
   .job-record footer { margin-top: 16pt; padding-top: 8pt; border-top: 1pt solid #000; font-size: 9pt; }
 }
+
+/* Close account sits last in Settings, apart from everything else. */
+.close-account { margin-top: 28px; padding: 16px 18px; display: grid; gap: 8px; font-size: 14px; }
+.close-account > strong { font-size: 14px; }
+.close-account p { margin: 0; }
+.close-account .danger-btn, .close-account .cancel-btn { justify-self: start; min-height: 44px; }
+.close-account .confirm-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }

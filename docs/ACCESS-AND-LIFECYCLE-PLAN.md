@@ -119,8 +119,16 @@ Keeping jobs readable forever after cancelling gives away the paid tier.
 | Dated job record | Built and verified in Chrome against a real job (`c523e54`). Records the register as at printing, not per-job snapshots. |
 | Lock jobs after lapse, grace on failed card | App side built. Database side written as `supabase/migrations/20260915090000_lock_jobs_after_lapse.sql` — **not applied**; Bolt must apply it. Grace length is a Stripe setting (see below). |
 | Delete 90 days after lockout | Written as `20260915090100_purge_lapsed_jobs.sql` — **not applied**. Schedules itself only if pg_cron is installed; otherwise it says so. |
-| Change alerts and weekly digest email | Not started. Needs an email provider decision. |
-| Close my account | Not started. |
+| Change alerts and weekly digest email | On hold — Walter believes Bolt has email built in; check before choosing a provider. |
+| Close my account | Built. App panel verified in Chrome up to the final confirm (not pressed). Function `supabase/functions/delete-account` and migration `20260915090200_account_deletion_cascade.sql` are **not deployed or applied** — Bolt must do both. |
+
+**Close account, as built:** Settings → Close account → confirm. The function
+cancels every live Stripe subscription immediately (no refund for the rest of
+the period — say so if that should change), and if Stripe refuses it stops
+without deleting anything. It then deletes the user, which cascades to saves,
+jobs, job items and the billing link. The Stripe customer and its invoices are
+kept. Test on a throwaway account: subscribe, close, then confirm in Stripe the
+subscription is cancelled and that the email can sign up again from scratch.
 
 **Stripe setting this depends on:** Billing → Revenue recovery → Retries.
 Finish retries within about 7 days, and when they fail, **cancel the

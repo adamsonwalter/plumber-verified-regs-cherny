@@ -4,6 +4,7 @@ import { supabase, authAvailable } from './supabaseClient'
 import { useJobs, JobsScreen, JobDetailScreen, AddToJobModal } from './jobs'
 import { useSubscription } from './useSubscription'
 import { useEscapeToClose } from './useEscapeToClose'
+import { CloseAccount } from './CloseAccount'
 import './styles.css'
 
 const JOB_TYPES = [
@@ -334,7 +335,7 @@ function App() {
       {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
       {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
       {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} register={register} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} readOnly={!subscription.isActive} />}
-      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} theme={theme} setTheme={setTheme} />}
+      {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onAccountClosed={async () => { await supabase.auth.signOut().catch(() => {}); setSavedIds([]); setActiveScreen('find'); clearFilters() }} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} theme={theme} setTheme={setTheme} />}
     </main>
 
     <nav className="mobile-nav" aria-label="Mobile navigation">
@@ -464,7 +465,7 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
   </section>
 }
 
-function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription, theme, setTheme }) {
+function SettingsScreen({ register, session, onSignOut, onAccountClosed, onShowAuth, subscription, theme, setTheme }) {
   const subStatus = subscription.subLoading ? 'Checking…' : subscription.isPastDue ? 'Payment failed' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status ? 'Locked' : 'No subscription'
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
@@ -538,6 +539,7 @@ function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription
       <div className="faq-item"><details><summary>What if I disagree with a listed value?</summary><p>Open the entry and follow "Open government source" — that page is the actual authority, not this app. If you think the register has it wrong, email support with the entry and we'll re-check it.</p></details></div>
       <div className="setting-row"><span>How we handle your information</span><a className="support-link" href="/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></div>
     </div>
+    {session && <CloseAccount hasBilling={subscription.isActive} onClosed={onAccountClosed} />}
   </section>
 }
 

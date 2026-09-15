@@ -110,6 +110,35 @@ Keeping jobs readable forever after cancelling gives away the paid tier.
   cancel the Stripe subscription. Needs a flow that cancels billing first, then
   deletes the user.
 
+### Build status (2026-09-15)
+
+| Item | State |
+|---|---|
+| Weekly publish fix | Done by the verification desk; live register is `2026-09-15-agent.3`. Confirm next Monday's run publishes. |
+| No saves without an account | Built and verified on the dev server (`e8846e6`). |
+| Dated job record | Built and verified in Chrome against a real job (`c523e54`). Records the register as at printing, not per-job snapshots. |
+| Lock jobs after lapse, grace on failed card | App side built. Database side written as `supabase/migrations/20260915090000_lock_jobs_after_lapse.sql` — **not applied**; Bolt must apply it. Grace length is a Stripe setting (see below). |
+| Delete 90 days after lockout | Written as `20260915090100_purge_lapsed_jobs.sql` — **not applied**. Schedules itself only if pg_cron is installed; otherwise it says so. |
+| Change alerts and weekly digest email | Not started. Needs an email provider decision. |
+| Close my account | Not started. |
+
+**Stripe setting this depends on:** Billing → Revenue recovery → Retries.
+Finish retries within about 7 days, and when they fail, **cancel the
+subscription**. The database treats `past_due` as the grace period, so if
+Stripe is left to keep a subscription past due for weeks, the grace lasts
+weeks.
+
+**To test after Bolt applies the migrations** (all states forced from the
+Stripe dashboard on a test customer):
+1. Active: jobs visible and editable (unchanged).
+2. Cancel at period end: jobs still editable, and a banner gives the end date
+   and says to download records.
+3. Cancel immediately: jobs list is empty, "Your jobs are locked" gives the
+   delete date; the API refuses a direct read of `jobs` (not only writes).
+4. Resubscribe: the same jobs come back.
+5. Past due (use a card that fails on renewal): jobs keep working and the
+   "Update card" banner shows.
+
 ### Decisions, in order
 
 1. Make the weekly publish reliable (fix above), then confirm the live dates

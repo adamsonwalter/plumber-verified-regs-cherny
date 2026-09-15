@@ -465,7 +465,7 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
 }
 
 function SettingsScreen({ register, session, onSignOut, onShowAuth, subscription, theme, setTheme }) {
-  const subStatus = subscription.subLoading ? 'Checking…' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Lapsed' : 'No subscription'
+  const subStatus = subscription.subLoading ? 'Checking…' : subscription.isPastDue ? 'Payment failed' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status ? 'Locked' : 'No subscription'
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
     <h1>Settings</h1>

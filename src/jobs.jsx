@@ -126,15 +126,21 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
   // active … Resubscribe" — an error message about a subscription they never
   // had, on the screen where we are asking them to buy one.
   const everSubscribed = Boolean(subscription.status)
+  const dateFmt = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
+  // Lapsed: jobs are hidden by the database, then deleted 90 days after the
+  // paid period ended (see 20260915090100_purge_lapsed_jobs.sql).
+  const purgeDate = subscription.periodEnd ? dateFmt.format(new Date(subscription.periodEnd.getTime() + 90 * 86400000)) : null
 
   return <section className="screen jobs-screen">
     <div className="eyebrow">YOUR ACCOUNT</div>
     <div className="section-top">
       <div><h1>Jobs</h1></div>
-      {canEdit ? <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button> : everSubscribed ? <span className="read-only-badge">Read only</span> : null} 
+      {canEdit ? <button className="add-job-btn" onClick={() => setShowCreate(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg> New job</button> : null} 
     </div>
     <p className="intro">Group your saved regs by job, so you can pull up just the rules for one site.</p>
-    {!subscription.subLoading && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your subscription is not active.</strong> Existing jobs are still available to view. Resubscribe to create or edit jobs. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
+    {!subscription.subLoading && subscription.isPastDue && <div className="jobs-readonly-notice"><strong>Your last payment didn't go through.</strong> Jobs keep working while Stripe retries your card. Update it so you don't lose access. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Update card'}</button></div>}
+    {!subscription.subLoading && canEdit && subscription.cancelAtPeriodEnd && subscription.periodEnd && <div className="jobs-readonly-notice"><strong>Jobs ends on {dateFmt.format(subscription.periodEnd)}.</strong> Download any job records you want to keep before then. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Keep Jobs'}</button></div>}
+    {!subscription.subLoading && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your jobs are locked.</strong> {purgeDate ? `Resubscribe by ${purgeDate} and they come back as you left them. After that they are deleted.` : 'Resubscribe and they come back as you left them.'} <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
 
     {showCreate && (
       <form className="job-create-card" onSubmit={handleCreate}>

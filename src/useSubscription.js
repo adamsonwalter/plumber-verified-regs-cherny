@@ -32,7 +32,10 @@ export function useSubscription(session) {
   useEffect(() => { loadSubscription() }, [loadSubscription])
 
   const status = subscription?.subscription_status
-  const isActive = status === 'active' || status === 'trialing'
+  // Access to Jobs. `past_due` is the grace period while Stripe retries a
+  // failed card — the same rule as has_jobs_access() in the database.
+  const isActive = status === 'active' || status === 'trialing' || status === 'past_due'
+  const isPastDue = status === 'past_due'
   const cancelAtPeriodEnd = Boolean(subscription?.cancel_at_period_end)
   const periodEnd = subscription?.current_period_end
     ? new Date(subscription.current_period_end * 1000)
@@ -115,6 +118,7 @@ export function useSubscription(session) {
     subscription,
     subLoading,
     isActive,
+    isPastDue,
     status,
     cancelAtPeriodEnd,
     periodEnd,

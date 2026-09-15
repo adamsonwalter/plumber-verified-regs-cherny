@@ -10,7 +10,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
  * the one outcome this must never produce.
  *
  * Deleting the auth user cascades to saves, jobs, job_items and
- * stripe_customers (see 20260915090200_account_deletion_cascade.sql). The Stripe
+ * stripe_customers (see the account_deletion_cascade migration). The Stripe
  * customer itself is kept, so past invoices stay intact for the business's
  * records; only its subscriptions are cancelled.
  */

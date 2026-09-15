@@ -128,7 +128,7 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
   const everSubscribed = Boolean(subscription.status)
   const dateFmt = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
   // Lapsed: jobs are hidden by the database, then deleted 90 days after the
-  // paid period ended (see 20260915090100_purge_lapsed_jobs.sql).
+  // paid period ended (see the purge_lapsed_jobs migration).
   const purgeDate = subscription.periodEnd ? dateFmt.format(new Date(subscription.periodEnd.getTime() + 90 * 86400000)) : null
 
   return <section className="screen jobs-screen">

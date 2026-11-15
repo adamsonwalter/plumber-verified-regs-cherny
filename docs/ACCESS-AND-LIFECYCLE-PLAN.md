@@ -90,8 +90,13 @@ Keeping jobs readable forever after cancelling gives away the paid tier.
 - **Failed card:** 7 days' grace while Stripe retries, then locked.
 - **Before lockout:** one-time "download your jobs" offer. Downloaded dated
   records are the customer's to keep.
-- **After lockout:** jobs hidden (not deleted) for 90 days for win-back, then
-  hard-deleted. The user drops back to a free account.
+- **After lockout:** jobs hidden and kept, with no deletion date. The user
+  drops back to a free account and gets the jobs back on resubscribing.
+  *Revised 2026-11-15 (Walter).* The original rule hard-deleted after 90 days.
+  That was convention, not a privacy requirement, and it meant owing every
+  leaving subscriber a warning the app cannot reliably deliver without email.
+  A job is a few rows of entry ids, so it is kept until the user closes their
+  account. Migration: `20261115090000_keep_lapsed_jobs.sql`.
 - The existing migrations' "readable forever" intent must be replaced, not
   timer-patched (§2 already notes this).
 
@@ -118,7 +123,7 @@ Keeping jobs readable forever after cancelling gives away the paid tier.
 | No saves without an account | Built and verified on the dev server (`e8846e6`). |
 | Dated job record | Built and verified in Chrome against a real job (`c523e54`). Records the register as at printing, not per-job snapshots. |
 | Lock jobs after lapse, grace on failed card | Applied by Bolt 2026-09-15. Verified against the live database as the subscribed test account: `has_jobs_access()` returns `true`, jobs are readable, and an anonymous caller is refused (42501). The locked state is still untested (needs a cancelled subscription). Grace length is a Stripe setting (see below). |
-| Delete 90 days after lockout | Applied by Bolt 2026-09-15. **Whether it is scheduled is unknown** — Bolt did not say if pg_cron was installed. Ask Bolt to run `select jobname, schedule from cron.job where jobname = 'purge-lapsed-jobs';` |
+| ~~Delete 90 days after lockout~~ | **Withdrawn 2026-11-15.** `20261115090000_keep_lapsed_jobs.sql` unschedules the job and drops `purge_lapsed_jobs()`. Written, **not yet applied by Bolt**; until it is, the old purge may still be scheduled. After applying, `select jobname from cron.job where jobname = 'purge-lapsed-jobs';` should return no rows. |
 | Change alerts and weekly digest email | On hold — Walter believes Bolt has email built in; check before choosing a provider. |
 | Close my account | Built, migration applied and function deployed by Bolt 2026-09-15. Verified live without deleting anything: with the user's token and no confirmation the function returns 400 "Confirmation required" (the guard in this repo's source, so the deployed code is current), and with no token it returns 401. A real close is still untested — use a throwaway account. |
 

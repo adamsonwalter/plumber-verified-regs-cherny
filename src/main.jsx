@@ -524,7 +524,7 @@ function SettingsScreen({ register, session, onSignOut, onAccountClosed, onShowA
       )}
       {session && subscription.isActive && (
         <div className="subscription-cta">
-          <p>{subscription.cancelAtPeriodEnd ? `Your access remains active until ${formatDate(subscription.periodEnd)}.` : 'This is a separate billing subscription for Jobs — it has nothing to do with your account sign-in. Manage payment method or cancel it in Stripe.'}</p>
+          <p>{subscription.cancelAtPeriodEnd ? `Jobs stays open until ${formatDate(subscription.periodEnd)}. After that we keep your jobs, locked, and they come back if you resubscribe.` : 'This is a separate billing subscription for Jobs — it has nothing to do with your account sign-in. Manage payment method or cancel it in Stripe.'}</p>
           {subscription.portalError && <div className="auth-error">{subscription.portalError}</div>}
           <button className="checkout-btn secondary" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>
             {subscription.portalLoading ? 'Opening…' : 'Manage billing'}
@@ -539,7 +539,7 @@ function SettingsScreen({ register, session, onSignOut, onAccountClosed, onShowA
       )}
       {session && !subscription.isActive && !subscription.subLoading && !subscription.loadError && (
         <div className="subscription-cta">
-          <p>{subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Your jobs are retained and available to read. Resubscribe to edit them.' : 'Unlock Jobs to group regs by project.'}</p>
+          <p>{subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Your jobs are safe, just locked. Resubscribe any time and they come back exactly as you left them.' : 'Unlock Jobs to group regs by project.'}</p>
           {subscription.checkoutError && <div className="auth-error">{subscription.checkoutError}</div>}
           <button className="checkout-btn" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>
             {subscription.checkoutLoading ? 'Redirecting…' : 'Subscribe now'}

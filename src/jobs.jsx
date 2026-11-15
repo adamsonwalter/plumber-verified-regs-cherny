@@ -131,9 +131,8 @@ export function JobsScreen({ jobs, jobItems, jobsError, onRetryJobs, allEntries,
   // had, on the screen where we are asking them to buy one.
   const everSubscribed = Boolean(subscription.status)
   const dateFmt = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
-  // Lapsed: jobs are hidden by the database, then deleted 90 days after the
-  // paid period ended (see the purge_lapsed_jobs migration).
-  const purgeDate = subscription.periodEnd ? dateFmt.format(new Date(subscription.periodEnd.getTime() + 90 * 86400000)) : null
+  // Lapsed: jobs are hidden by the database and kept. Nothing deletes them
+  // except Close account (see the keep_lapsed_jobs migration).
 
   return <section className="screen jobs-screen">
     <div className="eyebrow">YOUR ACCOUNT</div>
@@ -143,10 +142,10 @@ export function JobsScreen({ jobs, jobItems, jobsError, onRetryJobs, allEntries,
     </div>
     <p className="intro">Group your saved regs by job, so you can pull up just the rules for one site.</p>
     {!subscription.subLoading && subscription.isPastDue && <div className="jobs-readonly-notice"><strong>Your last payment didn't go through.</strong> Jobs keep working while Stripe retries your card. Update it so you don't lose access. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Update card'}</button></div>}
-    {!subscription.subLoading && canEdit && subscription.cancelAtPeriodEnd && subscription.periodEnd && <div className="jobs-readonly-notice"><strong>Jobs ends on {dateFmt.format(subscription.periodEnd)}.</strong> Download any job records you want to keep before then. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Keep Jobs'}</button></div>}
+    {!subscription.subLoading && canEdit && subscription.cancelAtPeriodEnd && subscription.periodEnd && <div className="jobs-readonly-notice"><strong>Your jobs lock on {dateFmt.format(subscription.periodEnd)}.</strong> We keep them for you: resubscribe any time and they come back exactly as you left them. Download a job record first if you'll need one while you're away. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Keep Jobs'}</button></div>}
     {!subscription.subLoading && subscription.loadError && <div className="jobs-readonly-notice" role="alert"><strong>We couldn't check your subscription.</strong> Nothing has changed on your account. Check your connection and try again. <button className="inline-checkout" onClick={subscription.reload}>Try again</button></div>}
     {jobsError && <div className="jobs-readonly-notice" role="alert"><strong>Your jobs couldn't be loaded.</strong> They are still saved. Check your connection and try again. <button className="inline-checkout" onClick={onRetryJobs}>Try again</button></div>}
-    {!subscription.subLoading && !subscription.loadError && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your jobs are locked.</strong> {purgeDate ? `Resubscribe by ${purgeDate} and they come back as you left them. After that they are deleted.` : 'Resubscribe and they come back as you left them.'} <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
+    {!subscription.subLoading && !subscription.loadError && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your jobs are safe, just locked.</strong> We keep them for you. Resubscribe any time and they come back exactly as you left them. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. Cancel any time: we keep your jobs, and they come back if you do. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
 
     {showCreate && (
       <form className="job-create-card" onSubmit={handleCreate}>

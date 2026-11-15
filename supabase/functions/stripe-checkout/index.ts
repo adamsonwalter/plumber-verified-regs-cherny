@@ -55,7 +55,8 @@ Deno.serve(async (req) => {
       {
         cancel_url: 'string',
         success_url: 'string',
-        mode: { values: ['payment', 'subscription'] },
+        // Jobs is a subscription; the configured price is recurring.
+        mode: { values: ['subscription'] },
       },
     );
 
@@ -63,24 +64,26 @@ Deno.serve(async (req) => {
       return corsResponse({ error }, 400);
     }
 
+    // Same rule as stripe-portal: Stripe may only send the customer back to the
+    // site that started the checkout.
+    const requestOrigin = req.headers.get('origin');
+    if (!requestOrigin || !isSameOrigin(success_url, requestOrigin) || !isSameOrigin(cancel_url, requestOrigin)) {
+      return corsResponse({ error: 'Invalid return address' }, 400);
+    }
+
     if (!SERVER_PRICE_ID) {
       console.error('No STRIPE_PRICE_ID configured on the server');
       return corsResponse({ error: 'Payment is not configured' }, 500);
     }
 
-    const authHeader = req.headers.get('Authorization')!;
-    const token = authHeader.replace('Bearer ', '');
+    const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '');
     const {
       data: { user },
       error: getUserError,
     } = await supabase.auth.getUser(token);
 
-    if (getUserError) {
-      return corsResponse({ error: 'Failed to authenticate user' }, 401);
-    }
-
-    if (!user) {
-      return corsResponse({ error: 'User not found' }, 404);
+    if (getUserError || !user) {
+      return corsResponse({ error: 'Not authenticated' }, 401);
     }
 
     const { data: customer, error: getCustomerError } = await supabase
@@ -208,9 +211,18 @@ Deno.serve(async (req) => {
     return corsResponse({ sessionId: session.id, url: session.url });
   } catch (error: any) {
     console.error(`Checkout error: ${error.message}`);
-    return corsResponse({ error: error.message }, 500);
+    return corsResponse({ error: 'Could not start checkout' }, 500);
   }
 });
+
+function isSameOrigin(value: string, origin: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.origin === origin && ['http:', 'https:'].includes(url.protocol);
+  } catch {
+    return false;
+  }
+}
 
 type ExpectedType = 'string' | { values: string[] };
 type Expectations<T> = { [K in keyof T]: ExpectedType };

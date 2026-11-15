@@ -46,12 +46,16 @@ Deno.serve(async (req) => {
       return new Response(`Webhook signature verification failed: ${error.message}`, { status: 400, headers: corsHeaders });
     }
 
-    EdgeRuntime.waitUntil(handleEvent(event));
+    // Sync before acknowledging. A 200 tells Stripe the event is handled and it
+    // never retries; if the database write then fails, access drifts from what
+    // the customer is paying for. A 500 makes Stripe redeliver, and the sync is
+    // an upsert of Stripe's current state, so redelivery is safe.
+    await handleEvent(event);
 
     return Response.json({ received: true }, { headers: corsHeaders });
   } catch (error: any) {
     console.error('Error processing webhook:', error);
-    return Response.json({ error: error.message }, { status: 500, headers: corsHeaders });
+    return Response.json({ error: 'Webhook processing failed' }, { status: 500, headers: corsHeaders });
   }
 });
 

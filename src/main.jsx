@@ -112,9 +112,16 @@ function App() {
   const [activeJob, setActiveJob] = useState(null)
   const [showAddToJob, setShowAddToJob] = useState(false)
   const [theme, setTheme] = useState(readTheme)
-  const { jobs, jobItems, jobsLoading, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob } = useJobs(session)
+  const { jobs, jobItems, jobsLoading, jobsError, loadJobs, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob } = useJobs(session)
   const subscription = useSubscription(session)
   const [checkoutStatus, setCheckoutStatus] = useState(null)
+  const [notice, setNotice] = useState('')
+
+  useEffect(() => {
+    if (!notice) return undefined
+    const timer = setTimeout(() => setNotice(''), 6000)
+    return () => clearTimeout(timer)
+  }, [notice])
 
   useEffect(() => {
     if (theme === 'system') delete document.documentElement.dataset.theme
@@ -146,7 +153,8 @@ function App() {
         if (s?.user) {
           setSavesLoading(true)
           await migrateLocalSaves(s.user.id)
-          await loadRemoteSaves(setSavedIds)
+          const loaded = await loadRemoteSaves(setSavedIds)
+          if (!loaded && mounted) setNotice('Your saved regs could not be loaded. Check your connection and reload.')
           setSavesLoading(false)
         } else {
           setSavedIds([])
@@ -175,8 +183,9 @@ function App() {
 
   async function loadRemoteSaves(setter) {
     const { data, error: loadError } = await supabase.from('saves').select('entry_id').order('created_at', { ascending: false })
-    if (loadError) return
+    if (loadError) return false
     setter((data || []).map((row) => row.entry_id))
+    return true
   }
 
   useEffect(() => {
@@ -229,10 +238,15 @@ function App() {
     if (session) {
       const isSaved = savedIds.includes(id)
       setSavedIds((current) => isSaved ? current.filter((savedId) => savedId !== id) : [...current, id])
-      if (isSaved) {
-        await supabase.from('saves').delete().eq('entry_id', id)
-      } else {
-        await supabase.from('saves').insert({ entry_id: id })
+      const { error: saveError } = isSaved
+        ? await supabase.from('saves').delete().eq('entry_id', id)
+        : await supabase.from('saves').insert({ entry_id: id })
+      // 23505: already saved (another tab or device got there first).
+      if (saveError && saveError.code !== '23505') {
+        // Put the bookmark back the way the database has it, and say so. A
+        // save that only looks saved is gone on the next visit.
+        setSavedIds((current) => isSaved ? (current.includes(id) ? current : [...current, id]) : current.filter((savedId) => savedId !== id))
+        setNotice(isSaved ? 'Could not remove that reg from your saves. Try again.' : 'Could not save that reg. Try again.')
       }
     } else {
       // Saving needs a free account. Lookup stays open to everyone; keeping
@@ -324,6 +338,7 @@ function App() {
 
     <main className="main-content">
       {checkoutStatus && <CheckoutBanner status={checkoutStatus} />}
+      {notice && <div className="checkout-banner cancelled" role="alert">{notice}</div>}
       <header className="mobile-header">
         <button className="mobile-brand brand-button" onClick={() => { setActiveScreen('find'); clearFilters() }} aria-label="Go to Find a reg"><div className="brand-mark">PR</div><div><strong>PlumberRegs</strong><span>VICTORIA</span></div></button>
         <div className="mobile-status">
@@ -333,7 +348,7 @@ function App() {
       {activeScreen === 'find' && <FindScreen entries={entries} query={query} setQuery={setQuery} startSearch={startSearch} chooseJob={chooseJob} session={session} />}
       {activeScreen === 'results' && <ResultsScreen entries={filteredEntries} total={entries.length} query={query} setQuery={setQuery} selectedJob={selectedJob} obligations={obligations} setObligations={setObligations} jurisdictions={jurisdictions} setJurisdictions={setJurisdictions} clearFilters={clearFilters} onOpen={setSelectedEntry} savedIds={savedIds} toggleSaved={toggleSaved} onBack={() => { setActiveScreen('find'); clearFilters() }} />}
       {activeScreen === 'saved' && <SavedScreen entries={savedEntries} allEntries={entries} savedIds={savedIds} onOpen={setSelectedEntry} toggleSaved={toggleSaved} session={session} savesLoading={savesLoading} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} />}
-      {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
+      {activeScreen === 'jobs' && <JobsScreen jobs={jobs} jobItems={jobItems} jobsError={jobsError} onRetryJobs={loadJobs} allEntries={entries} onOpenJob={(job) => { setActiveJob(job); setActiveScreen('job-detail') }} onCreateJob={createJob} session={session} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} />}
       {activeScreen === 'job-detail' && activeJob && <JobDetailScreen job={activeJob} items={jobItems[activeJob.id] || []} allEntries={entries} register={register} onBack={() => { setActiveScreen('jobs'); setActiveJob(null) }} onRemoveReg={removeRegFromJob} onOpenEntry={setSelectedEntry} onRenameJob={renameJob} onDeleteJob={deleteJob} readOnly={!subscription.isActive} />}
       {activeScreen === 'settings' && <SettingsScreen register={register} session={session} onSignOut={handleSignOut} onAccountClosed={async () => { await supabase.auth.signOut().catch(() => {}); setSavedIds([]); setActiveScreen('find'); clearFilters() }} onShowAuth={(v) => { setAuthView(v); setAuthError(''); setAuthMessage('') }} subscription={subscription} theme={theme} setTheme={setTheme} />}
     </main>
@@ -466,7 +481,7 @@ function SavedScreen({ entries, allEntries, savedIds, onOpen, toggleSaved, sessi
 }
 
 function SettingsScreen({ register, session, onSignOut, onAccountClosed, onShowAuth, subscription, theme, setTheme }) {
-  const subStatus = subscription.subLoading ? 'Checking…' : subscription.isPastDue ? 'Payment failed' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status ? 'Locked' : 'No subscription'
+  const subStatus = subscription.subLoading ? 'Checking…' : subscription.loadError ? 'Could not check' : subscription.isPastDue ? 'Payment failed' : subscription.isActive ? (subscription.cancelAtPeriodEnd ? `Cancels ${formatDate(subscription.periodEnd)}` : 'Active') : subscription.status ? 'Locked' : 'No subscription'
   return <section className="screen settings-screen">
     <div className="eyebrow">REGISTER INFO</div>
     <h1>Settings</h1>
@@ -516,7 +531,13 @@ function SettingsScreen({ register, session, onSignOut, onAccountClosed, onShowA
           </button>
         </div>
       )}
-      {session && !subscription.isActive && !subscription.subLoading && (
+      {session && subscription.loadError && !subscription.subLoading && (
+        <div className="subscription-cta">
+          <p>We couldn't check your subscription. Nothing has changed on your account.</p>
+          <button className="checkout-btn secondary" onClick={subscription.reload}>Try again</button>
+        </div>
+      )}
+      {session && !subscription.isActive && !subscription.subLoading && !subscription.loadError && (
         <div className="subscription-cta">
           <p>{subscription.status === 'canceled' || subscription.status === 'unpaid' || subscription.status === 'past_due' ? 'Your jobs are retained and available to read. Resubscribe to edit them.' : 'Unlock Jobs to group regs by project.'}</p>
           {subscription.checkoutError && <div className="auth-error">{subscription.checkoutError}</div>}

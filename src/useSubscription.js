@@ -7,13 +7,14 @@ const CANCEL_PATH = '/?checkout=cancelled'
 export function useSubscription(session) {
   const [subscription, setSubscription] = useState(null)
   const [subLoading, setSubLoading] = useState(false)
+  const [loadError, setLoadError] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
   const [portalLoading, setPortalLoading] = useState(false)
   const [portalError, setPortalError] = useState('')
 
   const loadSubscription = useCallback(async () => {
-    if (!session) { setSubscription(null); return }
+    if (!session) { setSubscription(null); setLoadError(false); return }
     setSubLoading(true)
     try {
       const { data, error } = await supabase
@@ -22,8 +23,12 @@ export function useSubscription(session) {
         .maybeSingle()
       if (error) throw error
       setSubscription(data)
+      setLoadError(false)
     } catch {
+      // "Could not ask" is not "has no subscription". Without the flag a
+      // paying customer on a bad connection is shown the Subscribe offer.
       setSubscription(null)
+      setLoadError(true)
     } finally {
       setSubLoading(false)
     }
@@ -117,6 +122,7 @@ export function useSubscription(session) {
   return {
     subscription,
     subLoading,
+    loadError,
     isActive,
     isPastDue,
     status,

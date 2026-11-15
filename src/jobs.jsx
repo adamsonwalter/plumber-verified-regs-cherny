@@ -7,9 +7,10 @@ export function useJobs(session) {
   const [jobs, setJobs] = useState([])
   const [jobItems, setJobItems] = useState({})
   const [jobsLoading, setJobsLoading] = useState(false)
+  const [jobsError, setJobsError] = useState(false)
 
   async function loadJobs() {
-    if (!session) { setJobs([]); setJobItems({}); return }
+    if (!session) { setJobs([]); setJobItems({}); setJobsError(false); return }
     setJobsLoading(true)
     try {
       const { data: jobRows, error: jobsError } = await supabase.from('jobs').select('*').order('created_at', { ascending: false })
@@ -23,8 +24,11 @@ export function useJobs(session) {
       }
       setJobs(jobRows || [])
       setJobItems(itemsMap)
+      setJobsError(false)
     } catch {
-      // best-effort
+      // Keep whatever was already loaded, but say so: an empty list here would
+      // read as "No jobs yet" to someone whose jobs simply failed to load.
+      setJobsError(true)
     } finally {
       setJobsLoading(false)
     }
@@ -77,10 +81,10 @@ export function useJobs(session) {
     }))
   }
 
-  return { jobs, jobItems, jobsLoading, loadJobs, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob }
+  return { jobs, jobItems, jobsLoading, jobsError, loadJobs, createJob, renameJob, deleteJob, addRegToJob, removeRegFromJob }
 }
 
-export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob, session, onShowAuth, subscription }) {
+export function JobsScreen({ jobs, jobItems, jobsError, onRetryJobs, allEntries, onOpenJob, onCreateJob, session, onShowAuth, subscription }) {
   const [showCreate, setShowCreate] = useState(false)
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
@@ -140,7 +144,9 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
     <p className="intro">Group your saved regs by job, so you can pull up just the rules for one site.</p>
     {!subscription.subLoading && subscription.isPastDue && <div className="jobs-readonly-notice"><strong>Your last payment didn't go through.</strong> Jobs keep working while Stripe retries your card. Update it so you don't lose access. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Update card'}</button></div>}
     {!subscription.subLoading && canEdit && subscription.cancelAtPeriodEnd && subscription.periodEnd && <div className="jobs-readonly-notice"><strong>Jobs ends on {dateFmt.format(subscription.periodEnd)}.</strong> Download any job records you want to keep before then. <button className="inline-checkout" onClick={subscription.manageSubscription} disabled={subscription.portalLoading}>{subscription.portalLoading ? 'Opening…' : 'Keep Jobs'}</button></div>}
-    {!subscription.subLoading && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your jobs are locked.</strong> {purgeDate ? `Resubscribe by ${purgeDate} and they come back as you left them. After that they are deleted.` : 'Resubscribe and they come back as you left them.'} <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
+    {!subscription.subLoading && subscription.loadError && <div className="jobs-readonly-notice" role="alert"><strong>We couldn't check your subscription.</strong> Nothing has changed on your account. Check your connection and try again. <button className="inline-checkout" onClick={subscription.reload}>Try again</button></div>}
+    {jobsError && <div className="jobs-readonly-notice" role="alert"><strong>Your jobs couldn't be loaded.</strong> They are still saved. Check your connection and try again. <button className="inline-checkout" onClick={onRetryJobs}>Try again</button></div>}
+    {!subscription.subLoading && !subscription.loadError && !canEdit && (everSubscribed ? <div className="jobs-readonly-notice"><strong>Your jobs are locked.</strong> {purgeDate ? `Resubscribe by ${purgeDate} and they come back as you left them. After that they are deleted.` : 'Resubscribe and they come back as you left them.'} <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Resubscribe'}</button></div> : <div className="jobs-readonly-notice"><strong>Jobs are a paid feature.</strong> Subscribe to group your saved regs by job and pull up just the rules for one site. <button className="inline-checkout" onClick={subscription.startCheckout} disabled={subscription.checkoutLoading}>{subscription.checkoutLoading ? 'Opening…' : 'Subscribe'}</button></div>)}
 
     {showCreate && (
       <form className="job-create-card" onSubmit={handleCreate}>
@@ -155,7 +161,7 @@ export function JobsScreen({ jobs, jobItems, allEntries, onOpenJob, onCreateJob,
       </form>
     )}
 
-    {jobs.length === 0 && !showCreate ? (
+    {jobs.length === 0 && (jobsError || subscription.loadError) ? null : jobs.length === 0 && !showCreate ? (
       <div className="empty-state saved-empty"><div className="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></svg></div><h2>No jobs yet</h2><p>Create a job to start grouping your regs.</p></div>
     ) : (
       <div className="jobs-list">

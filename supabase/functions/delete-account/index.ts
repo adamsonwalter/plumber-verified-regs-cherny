@@ -56,7 +56,11 @@ Deno.serve(async (req) => {
       try {
         const subs = await stripe.subscriptions.list({ customer: customer.customer_id, status: 'all', limit: 100 });
         for (const sub of subs.data) {
-          if (LIVE_STATUSES.has(sub.status)) await stripe.subscriptions.cancel(sub.id);
+          if (LIVE_STATUSES.has(sub.status)) {
+            // The comment tells stripe-webhook this is an account closure, so it
+            // does not email "your jobs are safe" to someone deleting them.
+            await stripe.subscriptions.cancel(sub.id, { cancellation_details: { comment: 'account_closed' } });
+          }
         }
       } catch (error: any) {
         console.error(`Stripe cancel failed for ${customer.customer_id}: ${error.message}`);

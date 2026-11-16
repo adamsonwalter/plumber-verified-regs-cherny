@@ -140,8 +140,16 @@ hardened:
       ~2.6:1 (below the 3:1 WCAG floor for UI controls) and the search field sat
       at 1.12:1 against the page, effectively invisible; now 6.85:1 / 7.9:1 and a
       9.8:1 edge (`d41af18`). Trust-warning bands measure 4.56–7.85:1.
-- [ ] **Full accessibility pass** — contrast is done; screen-reader labels,
-      focus order, and keyboard navigation remain untested.
+- [~] **Full accessibility pass** — contrast is done. Focus order on the home
+      screen is correct (Sign in → search field → Search → task cards) and every
+      button carries a visible focus ring. One real defect found and fixed: the
+      register's two search fields (`.hero-search input`, `.results-search
+      input`) set `outline: 0` at `styles.css:55`, and unlike `.auth-input-wrap`
+      no wrapper carried a `:focus-within` ring — so they were the only
+      focusable controls in the app with **no visible focus state at all**
+      (WCAG 2.4.7). Both wrappers now take the same ring the auth form uses;
+      measured 9.5:1 border against white. Screen-reader labels and full
+      keyboard activation remain untested — see the note on tooling below.
 
 - [x] **`scripts/build_register.py` neutralised.** Regeneration was rejected as
       incoherent, not merely stale: `register.json` carries agent-written
@@ -185,3 +193,227 @@ hardened:
 
 The publish gate and the three-verdict agent logic are proven; the remaining
 gaps are deploy-time, plus the two content/tooling items above.
+
+---
+
+# Manual acceptance test plan — accounts, saves, jobs, subscriptions
+
+Bolt built Steps 1–4 and deployed them, then reported every behavioural line as
+**not observed**: it has no browser session, no inbox, no second account and no
+Stripe test card. That report is honest, and it leaves the entire paid product
+unproven. This plan is the missing half. A human runs it.
+
+Run it **in the Bolt preview**, not on Netlify — production is still `main`,
+which serves the old vanilla app. Fill in the result column as you go; a blank
+is a fail, not a pass.
+
+## Before you start
+
+- Two email addresses you can actually read. Call them **A** and **B**.
+- Stripe in **test mode**, with the Stripe dashboard open in another tab.
+- Test cards: `4242 4242 4242 4242` succeeds, `4000 0000 0000 0002` is declined.
+  Any future expiry, any CVC.
+- **`STRIPE_PRICE_ID` must be set in the payment function's own server
+  environment.** This is a different setting from the `VITE_STRIPE_PRICE_ID` on
+  Netlify — the browser no longer sends the price, so the client-side one is now
+  unused. If the server one is missing, checkout returns "Payment is not
+  configured" and tests C onward cannot run.
+
+## A — Accounts (Step 1)
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| A1 | Load the preview signed out | Register lists 60 entries, fully browsable | **PASS** — 60 entries, browse + filter + search all work signed out (local dev, 375×812, 2026-09-10) |
+| A2 | Sign up as **A** | Account created, you land signed in | **PASS** — account created via the real form (by Walter), lands signed in, email in sidebar |
+| A3 | Reload the page | Still signed in | **PASS** — session survives reload, sidebar still shows the account |
+| A4 | Sign out | Register still loads and is fully usable | **PASS** — register, search, filters and Saved all work signed out |
+| A5 | Request a password reset for **A** | Email arrives | **PASS** — Supabase reset email received (observed by Walter, 2026-09-10) |
+| A6 | Follow the link, set a new password | New password signs in; **old one does not** | |
+
+A5 is the one most likely to fail quietly — a reset flow that never sends is
+indistinguishable from a slow inbox. If nothing arrives in five minutes, treat
+it as failed and check the mail settings rather than waiting.
+
+## B — Saves follow the user (Step 2)
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| B1 | Signed out, save two regs | They appear on Saved | **PASS** — both appear on Saved, nav badge reads 2, and they survive a reload (real clicks, Chrome, 2026-09-10) |
+| B2 | Sign in as **A** | Those two are adopted into the account, once, no duplicates | **PASS** — heading flips to "Synced to your account"; `saves` holds exactly 2 rows (WATER-STD, SAN-STD), no duplicates |
+| B3 | Save a third; sign out and back in | All three present | **PASS** — all three returned, plus the job (observed by Walter) |
+| B4 | Open a *different browser*, sign in as **A** | The same three are there | |
+| B5 | Sign in as **B** | **B** sees none of A's saves | |
+
+## C — Paying for the first time (Step 4)
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| C1 | As **A** (unsubscribed), open Jobs | Upgrade prompt, no "New job" button | **PASS after a fix** — originally showed the *lapsed* copy to a never-subscribed user ("Your subscription is not active … Resubscribe", plus a "Read only" badge). Now shows "Jobs are a paid feature … Subscribe". No "New job" button in either case |
+| C2 | Click Subscribe, pay with `4242…` | Return to app; Jobs unlocks **without a manual refresh** | **PASS** — paid with the 100%-off code `HEATHFREE`, **no card collected**; Jobs unlocked on return with no manual refresh (observed by Walter) |
+| C3 | Check Stripe dashboard | Subscription active for A's email | **PASS** — one active subscription against the account's email, A$0.00/month, invoice `19G22SFR-0001` paid |
+| C4 | Check the `stripe_subscriptions` table | One row, status `active` | **PASS** — one row, `subscription_status: active`, `cancel_at_period_end: false`, `payment_method_last4: null` (no card, as expected on a $0 checkout) |
+| C5 | Retry from a fresh account with `4000…0002` | Declined cleanly, told why, no access granted | **NOT RUN** — needs a card number, and the account is in live mode. Defer until Stripe is switched to test keys |
+
+C2 is the whole payment mechanism in one line: it only passes if the webhook
+fired, matched the customer to the user, and the app re-read the status. If
+Jobs stays locked but C3 shows a payment, **the customer paid and got nothing** —
+stop and fix that before anything else.
+
+## D — Jobs (Step 3)
+
+Run as subscribed **A**.
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| D1 | Create two jobs, put the same reg in both | Both read correctly | **PASS** — observed by Walter |
+| D2 | Rename one; delete the other | The shared reg survives in the remaining job | **PASS** — renamed job kept the shared reg after the other was deleted (observed by Walter) |
+| D3 | Put a degraded entry in a job | The job view flags it **without opening it** | **PASS** — with WATER-STD forced to `unverified` via a temporary fixture, the jobs list row read "2 regs · **Has warnings**" in amber. Register restored byte-identical afterwards (sha256 verified, offline gate passes) |
+| D4 | As **B**, look for A's jobs | None visible | |
+
+## E — Entitlement is real, not decorative
+
+This is the test that distinguishes a paywall from a suggestion, and it cannot
+be done through the UI — the UI is the thing being bypassed.
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| E1 | As free signed-in **B**, call the jobs API directly with B's token | **Rejected** | **PASS** — HTTP 403, `42501 new row violates row-level security policy for table "jobs"` (run as the unsubscribed account) |
+| E2 | As free signed-in **B**, call the `create_job` function directly | **Rejected** | **PASS** — HTTP 403, same policy. Note `create_job` is SECURITY INVOKER since `20260908080632`, so E1 and E2 exercise the same policy by two paths |
+| E3 | Repeat E1 as subscribed **A** | Succeeds | **PASS** — RPC 200, direct insert 201, both as the same account that was refused 403 while unsubscribed. Probe jobs deleted (204) |
+
+If E1 succeeds, the paywall is cosmetic and anyone can take the paid feature for
+free. E3 is not optional: a rule that blocks everyone is not entitlement, it is
+an outage.
+
+## F — Losing and regaining access
+
+Do not wait a month. Cancel in the Stripe dashboard to force each state.
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| F1 | Cancel at period end | Jobs stay fully editable until the period ends | |
+| F2 | Settings | Shows the plan and that it ends, with a way to manage it | **PARTIAL** — "Manage subscription" opens the Stripe billing portal showing the plan, next billing date and invoice history. The *ends* half is untested until F1 runs |
+| F3 | Cancel immediately | Existing jobs **still readable**, marked read only | |
+| F4 | Try to create or edit a job while lapsed | Blocked in the UI **and** by the API (repeat E1) | |
+| F5 | Resubscribe | Everything comes back, nothing was lost | |
+
+F3 and F5 are the ones that would end the product's reputation if wrong.
+Deleting a tradesperson's job records because a card expired is not a bug they
+forgive.
+
+## G — Ship checks (Step 5)
+
+| # | Do this | Expect | Result |
+|---|---|---|---|
+| G1 | Count entries on the register | 60, and Settings shows the register version | **PASS** — "60 regulations", version `2026-09-08-agent.2`, check result "60 verified" |
+| G2 | Combine filters across Level, Type, Task | OR within an axis, AND across them; chips toggle off; re-run with real clicks in Chrome, same numbers | **PASS** — task ResReno = 46/60 (AND across axes); Victoria 45, Federal 1, both 46 (OR within axis); Federal+Documentation = 1; chips toggle off |
+| G3 | Open a reg's detail | Quote shown; source opens in a **new tab** | **PASS** — detail shows value, where-to-find-it, verified date and the verbatim supporting quote; "Open government source" opened the live BPC page in a **new tab** with the app tab intact |
+| G4 | Install to iPhone Home Screen, open from there | A source link opens as a **dismissible overlay** that returns you to the app | |
+| G5 | Phone, outdoors | Readable; every control reachable with a thumb | |
+
+G4 is the only reason the PWA shell exists, and it behaves differently from a
+browser tab, so it must be checked from the Home Screen icon.
+
+### Six defects found while running the interactive rows
+
+Both were found by driving the app with real clicks and keystrokes, and both
+are fixed:
+
+1. **No visible focus ring on either search field** (above).
+2. **Modals ignored Escape.** All three — the reg detail, the auth form and
+   add-to-job — are `role="dialog" aria-modal="true"`, and the ARIA dialog
+   pattern says Escape dismisses. None listened for it. Backdrop click and the
+   close button worked, so this was invisible to anyone testing with a mouse.
+   Fixed with a shared `useEscapeToClose` hook (its own module — `main.jsx`
+   already imports from `jobs.jsx`, so importing back would have made the cycle
+   real). Verified open → Escape → closed.
+
+3. **A never-subscribed user was shown the lapsed-customer copy.** `canEdit`
+   was the only branch, so someone who had never paid opened Jobs and read
+   "Your subscription is not active. Existing jobs are still available to view.
+   **Resubscribe** to create or edit jobs", next to a "Read only" badge over an
+   empty screen. That is an error message about a subscription they never had,
+   on the one screen where the product asks them to buy. The distinction was
+   already available — a user with no history has no row, so `status` is
+   absent. Never-subscribed now reads "Jobs are a paid feature … **Subscribe**"
+   with no read-only badge; the lapsed copy is unchanged.
+
+4. **Signed-out saves and account saves could bleed into each other.** The
+   signed-out buffer was mirrored from React state by an effect that fired on
+   every change where `session` was falsy — including the instant of signing
+   out, before `savedIds` had been reset. An account's saves could therefore be
+   captured into the device buffer and reappear as though they had always been
+   local, including regs the account no longer held. Reported by Walter as "one
+   remains and it's the local buffer"; confirmed on disk (`saves` held SAN-STD
+   and RS-STANDARD while the buffer held a stale WATER-STD). The buffer is now
+   written only by the one deliberate signed-out save action. Verified: signed
+   out with two account saves present, the buffer stayed empty and Saved
+   correctly read "Nothing saved yet".
+
+5. **The sidebar's status badge could only ever say "current".** It was the
+   literal string "Source checks current" beside a green dot, rendered
+   unconditionally — no data behind it. On a product whose entire promise is
+   telling a tradesperson when a source has moved, a light that cannot report
+   anything but OK is worse than no light: it asserts the one thing it does not
+   know. Found by forcing an entry to `unverified` for D3 and watching the badge
+   stay green. Now derived from the entry statuses, and the text changes as well
+   as the colour ("1 source needs review"), so the meaning does not rest on
+   colour alone.
+
+6. **No way back from the results screen on a phone.** Reported by Walter from
+   the branch deploy on an iPhone: tap a job type, and there is no obvious exit.
+   On desktop the sidebar is always there, which is why this never showed up in
+   testing. On a phone the only ways out were a small "Reset" text link, which
+   does not read as "back", and the "Find" tab, which is already highlighted, so
+   it looks like where you already are. The job detail screen already had a
+   proper back control; the results screen now uses the same one, at a 44 px
+   tap target.
+
+Still open on the dialogs, not fixed here: no focus trap and no focus restore
+to the element that opened them.
+
+## A note on what the browser tooling could and could not do
+
+The rows above were split by hand between "needs a person" and "was only ever
+labelled a browser test". That split is honest, but a second limit turned up
+while running it, and it is worth recording so the next person does not
+rediscover it:
+
+**Use Chrome, not the built-in browser pane.** In the pane, `computer` clicks
+time out after 30 s regardless of window focus, and injected keystrokes reach
+the page with an empty `key`, so the browser never synthesises the click a real
+Enter would. Reads work fine there — screenshots, DOM, computed styles — which
+is enough for counts, filter logic and styling, but not for anything
+interactive.
+
+Driving the same app through Chrome works completely: real coordinate clicks,
+real keystrokes, new-tab behaviour, multi-tab state. Every interactive row
+recorded above (B1, G2, G3, both defects) was run that way. Note that
+ref-based clicks (`ref_N` from `find`) reported success without activating the
+element — use screenshot coordinates.
+
+One near-miss worth recording: the empty-`key` behaviour initially looked like
+an app bug (task cards ignoring Enter). It is not — the cards are plain
+buttons outside any form, and a real Enter activates them. The fault was the
+harness. Instrument before believing a negative.
+
+## Two things to follow up
+
+- **Stripe is in LIVE mode, not test.** Checkout redirects to a `cs_live_`
+  session on Digital Investor Pty Ltd. The `HEATHFREE` coupon is 100% off with
+  duration **forever** (confirmed in the billing portal: the 10 Oct–10 Nov
+  period already shows −A$9.00, total A$0.00), so the live subscription created
+  during testing will not start charging. But C5 and all of F cycle real
+  subscription states on a real merchant account — switch the three Supabase
+  functions to `sk_test_` keys, a test-mode price, a test-mode webhook secret
+  and a test-mode promo code before running them.
+- **No email arrived on signup.** Stripe recorded a paid A$0.00 invoice but no
+  receipt or welcome mail was observed. Check Stripe's customer-email settings
+  (Settings → Customer emails; successful-payment receipts are often off by
+  default, and $0 invoices may be excluded regardless). Decide whether a
+  free-tier subscriber should get anything at all.
+
+## When this is done
+
+Every row filled. Then, and only then, is the branch a candidate for `main` —
+merging is the cutover, and the first real user arrives immediately after it.

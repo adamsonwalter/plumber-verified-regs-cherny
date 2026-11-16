@@ -409,6 +409,72 @@ events." Verified against Stripe's own docs, 2026-09-09:
 
 ---
 
+## 11. The register can go backwards through a branch merge — 2026-11-16
+
+What happened, in full, because every part of it was plausible at the time:
+
+1. **Bolt was pointed at `main`.** `main` had never contained the app — at
+   `50f77c0` its tree was the old static `public/` site, with no `src/`, no
+   `supabase/`, no `package.json`, no `index.html`, no `vite.config.js`. The
+   React app and the Supabase functions have only ever lived on `bolt-app-v1`.
+2. Bolt pulled `main`, found no front-end, and reported the app code as
+   missing. **That reading was wrong but the facts were right**, and its refusal
+   to rebuild from memory is what kept this cheap. Nothing was ever lost.
+3. Restoring from Bolt's Version History pushed its snapshot onto `main`
+   (`5e8f876`, `547bd46`, `9e4448b`, `db2dd6b`), which performed the cutover
+   by accident, switched `netlify.toml` from `publish = "public"` to
+   `publish = "dist"` + `npm run build`, and took `register.json` and
+   `public/register.json` from `2026-11-02-agent.10` (serial 10) back to
+   `2026-09-15-agent.3` (serial 3).
+4. **The deploy succeeded.** The live site returned 200 while serving
+   15 September verification dates.
+
+**The trap, stated generally:** Stan publishes the register to `main`.
+`bolt-app-v1` branched before those runs and `50f77c0` is not an ancestor of
+it, so *any* merge or restore that takes the feature branch's copy of
+`register.json` silently reverts every verification run since the branch
+point. This is not a Bolt bug — Bolt pushed exactly what its branch held. It
+will fire again on the real cutover unless the register files are taken from
+`main`, not from the app branch. Restored in `52b7706`.
+
+**Why the gate cannot catch it.** The build runs
+`verify_register.py --offline`: structure, domain allow-list, self-consistency,
+no network. A two-month-old register is well-formed, so it passes, and nothing
+compared the incoming register against what was already deployed.
+
+**Fixed the same day.** `verify_register.py` gained two checks that run in
+`--offline` mode as well:
+
+- **(1d) serial gate.** Fetches the deployed `/register.json` and blocks when
+  the local `register_serial` is lower. It also blocks when the deployed serial
+  cannot be read at all — an unverifiable claim about freshness is the one
+  thing this product must not ship — so the escape hatch is
+  `REGISTER_SERIAL_CHECK=off` in the Netlify build environment, settable
+  without a commit if the check itself ever stands in the way. Verified against
+  the actual file Bolt pushed (`db2dd6b`, serial 3 vs live serial 10): blocked,
+  exit 1.
+- **(1e) mirror gate.** Found while writing (1d): the gate loads the repo-root
+  `register.json`, but Netlify serves `public/register.json` via Vite's
+  publicDir. A gate on the root file alone proves nothing about what ships, so
+  the two must now agree on version and serial.
+
+The deployed site is the only source of truth for "what is live" that a branch
+merge or an editor's restore cannot roll back along with the code. That is why
+(1d) reads it over HTTPS rather than trusting anything in the repo: a committed
+high-water mark would have been reverted by the same restore it is meant to
+catch.
+
+**Standing rules from this.**
+
+- Point Bolt at `bolt-app-v1`, never `main`. While it sits on `main`, every
+  Bolt restore is a production deploy.
+- At any merge touching the register, take `register.json` and
+  `public/register.json` from whichever branch Stan published to, and confirm
+  the serial did not drop before pushing.
+- Read a tool's "your code is gone" as "not on this ref" until a tree listing
+  of the ref says otherwise. `git ls-tree --name-only <ref>` settles it in one
+  command.
+
 ## TL;DR for the next AI coder
 
 1. Write fetch/verify logic in **Python with `requests`**, one **`Session`

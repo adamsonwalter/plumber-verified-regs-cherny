@@ -231,6 +231,32 @@ accept the drift.
 
 ---
 
+## 6b. Halted on purpose — from 2026-11-09, by Walter
+
+The weekly runs stop at **2026-11-02** (`2026-11-02-agent.10`, serial 10, the
+sixth consecutive Monday from 2026-09-28). The slots on 2026-11-09 and
+2026-11-16 are **empty because Walter asked Stan to halt**, pending the first
+paying customer being signed. This is not the September failure mode — not a
+dead clock, and not a verified-but-unpublished run.
+
+Recorded because a gap in this history reads exactly like a fault: a status
+check on 2026-11-16 diagnosed it as a stalled desk before Walter said
+otherwise. Check this subsection before investigating a missing Monday.
+
+**Open while it stays halted:** the live site serves the 2026-11-02 register
+with nothing on it saying the checks are paused, and the dates drift further
+from "this week" every Monday. With no customer that is harmless; the register
+must be running again, or the site must say what it is, before anyone is sold
+on freshness. This is the "no freshness fail-closed" item in
+[`TEST-AND-VERIFICATION-LOG.md`](TEST-AND-VERIFICATION-LOG.md), now the live
+consequence rather than a hypothetical.
+
+When restarting, confirm the first run publishes to `origin/main` and reaches
+the served `register.json`, since the halt has not exercised the push path for
+weeks.
+
+---
+
 ## 7. Related
 
 - Sequence: [`MIGRATION-PLAN.md`](MIGRATION-PLAN.md) §2.0a

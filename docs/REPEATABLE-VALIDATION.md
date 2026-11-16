@@ -22,7 +22,7 @@ node --version                                         # need >= 18 for global f
 
 ---
 
-## 1. Structure + domain gate (offline, fast, no network)
+## 1. Structure + domain gate (offline: no source checks)
 
 Asserts every entry carries `source_url`, `jurisdiction`, `fails_if`,
 `key_substring`; that no entry is simultaneously verified AND
@@ -31,6 +31,15 @@ unverified/unreachable; that every source host is on the official allow-list.
 ```bash
 python3 scripts/verify_register.py --offline
 ```
+
+Since 2026-11-16 this also runs the **(1d) serial** and **(1e) mirror** gates,
+which make one HTTPS request to the deployed `/register.json` — our own host,
+never a gov.au source. So "offline" here means no source checks, not no
+network. (1d) blocks a register older than the one already serving, and blocks
+when the deployed serial cannot be read; (1e) blocks when
+`public/register.json` disagrees with the root `register.json`, which is what
+actually ships. To run the structure checks with no network at all, add
+`--no-serial-check`. See `LESSONS-LEARNED.md` section 11.
 
 **Expected:** exit 0, last line
 `STRUCTURE/DOMAIN/CONSISTENCY PASSED (run with --live to enforce freshness).`

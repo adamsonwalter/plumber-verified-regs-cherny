@@ -18,8 +18,14 @@
   # The root / serves the plumber/roofer-facing production app.
   # The scheduled re-verification function lives in functions/.
   functions = "functions"
-  # Build CI check: the OFFLINE gate only — structure, domain allow-list and
-  # self-consistency, no network. It fails the deploy on a malformed register.
+  # Build CI check: the offline gate — structure, domain allow-list and
+  # self-consistency. It fails the deploy on a malformed register, and since
+  # 2026-11-16 also on a register OLDER than the one already serving, or on
+  # public/register.json disagreeing with the gated root file. Those two make
+  # one HTTPS request to our own deployed /register.json (never a gov.au
+  # source), so "--offline" means "no source checks", not "no network".
+  # Set REGISTER_SERIAL_CHECK=off here in the build environment if that check
+  # ever blocks a deploy that must go out; it needs no commit.
   #
   # It is offline deliberately. The build command was previously --live, but
   # Netlify's build servers are consistently 403'd by Cloudflare on

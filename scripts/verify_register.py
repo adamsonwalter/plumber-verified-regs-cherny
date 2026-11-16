@@ -20,6 +20,15 @@ Implements the five required checks:
   (5) Publish gate (HARD FAIL, exit 1): any entry marked status=verified in
       register.json without a matching successful check in the CURRENT run is
       a hard failure.
+  (1d) Serial gate (HARD FAIL, exit 1): the register being published must not
+      carry a lower register_serial than the one already deployed, and it is
+      blocked rather than waved through when the deployed serial cannot be
+      read. Runs in --offline mode as well, because a stale register is
+      perfectly well-formed and no other check looks at what is live.
+  (1e) Mirror gate (HARD FAIL, exit 1): public/register.json is what Netlify
+      actually serves at /register.json, so it must agree with the register
+      this gate loads. Without this, the gate can pass on a file nobody
+      downloads.
 
 Modes:
   --live        perform real HTTP GETs against the internet (default gate).
@@ -45,6 +54,16 @@ from urllib.parse import urlparse
 import requests
 
 REGISTER_PATH_DEFAULT = "register.json"
+
+# (1d) Serial-regression gate. The deployed register is the ONLY source of
+# truth for "what is live" that a branch merge or an editor's restore cannot
+# roll back with the code, which is exactly how 2026-11-16 happened: a restore
+# pushed a feature branch's two-month-old register onto main and the build
+# passed, because a stale register is still a well-formed one. See
+# docs/LESSONS-LEARNED.md section 11.
+DEPLOYED_REGISTER_URL_DEFAULT = "https://plumber-cherny.netlify.app/register.json"
+DEPLOYED_FETCH_TIMEOUT = 15      # seconds per attempt
+DEPLOYED_FETCH_ATTEMPTS = 2      # one retry; this is our own host, not Cloudflare
 
 # Official domains. A host is accepted if it equals or ends with one of these
 # (handles www. prefix and subdomains like ncc.abcb.gov.au).
@@ -260,6 +279,129 @@ def check_version_serial(reg):
     return None
 
 
+def fetch_deployed_serial(url: str):
+    """Read register_serial from the currently-deployed register.
+
+    Returns (verdict, serial, detail) where verdict is one of:
+      "ok"        — fetched and parsed; `serial` is an int
+      "none"      — nothing is deployed to compare against (404, or a register
+                    with no serial); not an error, the gate passes
+      "unknown"   — could not tell (network error, 5xx, unparseable body).
+                    The caller BLOCKS on this: an unverifiable claim about
+                    freshness is the one thing this project does not ship.
+    """
+    last = "no attempt made"
+    for attempt in range(1, DEPLOYED_FETCH_ATTEMPTS + 1):
+        try:
+            r = requests.get(
+                url,
+                timeout=DEPLOYED_FETCH_TIMEOUT,
+                headers={"User-Agent": "verify-register/1.0", "Accept": "application/json"},
+            )
+        except Exception as exc:                       # network, DNS, TLS, timeout
+            last = f"{type(exc).__name__}: {exc}"
+            continue
+        if r.status_code == 404:
+            return ("none", None, "404 — nothing deployed at that URL yet")
+        if r.status_code >= 500:
+            last = f"HTTP {r.status_code} from the deployed site"
+            continue
+        if r.status_code != 200:
+            return ("unknown", None, f"HTTP {r.status_code} from the deployed site")
+        try:
+            deployed = r.json()
+        except Exception as exc:
+            return ("unknown", None, f"deployed register is not JSON ({type(exc).__name__})")
+        serial = deployed.get("register_serial")
+        if not isinstance(serial, int) or isinstance(serial, bool):
+            return ("none", None,
+                    "deployed register carries no register_serial — nothing to compare")
+        return ("ok", serial, deployed.get("register_version") or "<no version>")
+    return ("unknown", None, last)
+
+
+def check_public_mirror(reg, register_path):
+    """(1e) The gated file must match the file that actually ships.
+
+    netlify.toml publishes Vite's `dist`, and `public/` is Vite's publicDir, so
+    the register served at /register.json is `public/register.json` — NOT the
+    root `register.json` this gate loads. If the two ever disagree the gate is
+    checking a file nobody downloads. Returns (blocked, lines).
+    """
+    root = os.path.abspath(register_path)
+    mirror = os.path.join(os.path.dirname(root), "public", "register.json")
+    # Only meaningful when the gate was pointed at the repo-root register.
+    if os.path.basename(root) != "register.json" or not os.path.exists(mirror):
+        return (False, [])
+    try:
+        with open(mirror) as f:
+            pub = json.load(f)
+    except Exception as exc:
+        return (True, [("FAIL", f"(1e) MIRROR GATE: public/register.json is unreadable "
+                                f"({type(exc).__name__}: {exc}) -> BLOCK")])
+    pairs = [("register_serial", reg.get("register_serial"), pub.get("register_serial")),
+             ("register_version", reg.get("register_version"), pub.get("register_version"))]
+    bad = [(k, a, b) for k, a, b in pairs if a != b]
+    if bad:
+        lines = [("FAIL", "(1e) MIRROR GATE: public/register.json does not match the "
+                          "gated register, and public/ is what ships -> BLOCK")]
+        for k, a, b in bad:
+            lines.append(("FAIL", f"  {k}: register.json={a!r} public/register.json={b!r}"))
+        lines.append(("FAIL", "  Write both files together. The served /register.json comes "
+                              "from public/, so a gate on the root file alone proves nothing."))
+        return (True, lines)
+    return (False, [("INFO", "(1e) mirror: public/register.json matches the gated register")])
+
+
+def check_serial_regression(reg, url):
+    """(1d) Refuse a register older than the one already serving.
+
+    Returns (blocked: bool, lines: list[(kind, message)]) so the caller keeps
+    ownership of exit codes and logging, as the other checks do.
+    """
+    local = reg.get("register_serial")
+    if not isinstance(local, int) or isinstance(local, bool):
+        # check_version_serial already blocks on this; nothing to add.
+        return (False, [("INFO", "(1d) serial: skipped, local serial is malformed")])
+
+    verdict, deployed, detail = fetch_deployed_serial(url)
+
+    if verdict == "none":
+        return (False, [("INFO", f"(1d) serial: no deployed serial to compare ({detail})")])
+
+    if verdict == "unknown":
+        return (True, [
+            ("FAIL", "(1d) SERIAL GATE: could not read the deployed register, so "
+                     "whether this register moves backwards is UNKNOWN -> BLOCK"),
+            ("FAIL", f"  url    : {url}"),
+            ("FAIL", f"  reason : {detail}"),
+            ("FAIL", "  This blocks deliberately. A register that cannot be shown to be "
+                     "at least as new as the live one must not replace it."),
+            ("FAIL", "  To deploy anyway, set REGISTER_SERIAL_CHECK=off in the build "
+                     "environment (no commit needed) or pass --no-serial-check."),
+        ])
+
+    if deployed > local:
+        return (True, [
+            ("FAIL", f"(1d) SERIAL GATE: this register is OLDER than the live one "
+                     f"(local serial {local} < deployed serial {deployed}) -> BLOCK"),
+            ("FAIL", f"  deployed: {detail} (serial {deployed})"),
+            ("FAIL", f"  local   : {reg.get('register_version')} (serial {local})"),
+            ("FAIL", "  Deploying this would silently discard every verification run "
+                     "between the two serials."),
+            ("FAIL", "  Almost always this means the register came from a branch that "
+                     "predates the published runs: take register.json and "
+                     "public/register.json from the branch the verification desk "
+                     "publishes to, then re-run. See docs/LESSONS-LEARNED.md section 11."),
+        ])
+
+    if deployed == local:
+        return (False, [("INFO", f"(1d) serial: unchanged at {local} — a re-deploy of the "
+                                 f"register already live")])
+
+    return (False, [("INFO", f"(1d) serial: {local} > deployed {deployed} — moves forward")])
+
+
 def check_also_requires(entries):
     """also_requires, when present, must be a list of non-empty strings."""
     failures = []
@@ -357,6 +499,14 @@ def main(argv=None):
                     help="perform live HTTP GETs against the real internet")
     ap.add_argument("--offline", action="store_true",
                     help="skip network; structure + domain + self-consistency only")
+    ap.add_argument("--deployed-url",
+                    default=os.environ.get("DEPLOYED_REGISTER_URL",
+                                           DEPLOYED_REGISTER_URL_DEFAULT),
+                    help="deployed register.json to compare serials against "
+                         "(env: DEPLOYED_REGISTER_URL)")
+    ap.add_argument("--no-serial-check", action="store_true",
+                    help="skip the (1d) serial-regression gate "
+                         "(env: REGISTER_SERIAL_CHECK=off)")
     args = ap.parse_args(argv)
 
     if not os.path.exists(args.register):
@@ -399,6 +549,28 @@ def main(argv=None):
     else:
         log(f"(1c) version: {register.get('register_version')} "
             f"(serial {register.get('register_serial')})")
+
+    # ---- (1e) the shipped mirror must match the gated file ----
+    mirror_blocked, mirror_lines = check_public_mirror(register, args.register)
+    for kind, message in mirror_lines:
+        log(message, kind)
+    if mirror_blocked:
+        hard_failures.append("public/register.json diverges from the gated register")
+
+    # ---- (1d) serial regression vs what is already deployed ----
+    # Runs in --offline mode too: it is one request to our own host, not a
+    # source check, and it is the only gate that can catch a register moving
+    # backwards. Turned off with REGISTER_SERIAL_CHECK=off in the build
+    # environment, which needs no commit when the check itself is in the way.
+    if args.no_serial_check or os.environ.get("REGISTER_SERIAL_CHECK", "").lower() in ("off", "0", "false"):
+        log("(1d) serial: SKIPPED by request — nothing is checking that this "
+            "register is at least as new as the live one", "WARN")
+    else:
+        serial_blocked, serial_lines = check_serial_regression(register, args.deployed_url)
+        for kind, message in serial_lines:
+            log(message, kind)
+        if serial_blocked:
+            hard_failures.append("register serial regression vs deployed")
 
     # ---- (1b) also_requires shape ----
     ar_fail = check_also_requires(entries)
